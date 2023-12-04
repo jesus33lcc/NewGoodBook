@@ -1,0 +1,45 @@
+Objetivos propuestos:
+
+Objetivos alcanzados:
+
+Fases del sprint:
+Analisis:
+Actores:
+	Todos los usuarios, de momento la aplicacion no tendra ninguna restriccion, y todos los usuarios podran usar la app sin necesidad de iniciar sesion o registrarse
+Entidades:
+	???
+Acciones:
+	Reduciremos las acciones que se puedan realizar en las distintas vistas las acciones seran:
+principal: 
+	me gusta
+	marcar leido
+	añadir a lista	
+Mis Listas:
+	borrar lista
+	Nueva lista
+	click en lista
+Lista:
+	click en libro
+Diseño:
+Explicar:
+Nos hubiera gustado incluir una api de libros y hacer las consultas desde ahi, para poder hacer la aplicacion funcional, lo que haremos es cargar en la aplicacion una lista de datos de prueba que haran la funcionon de la api, que contendra objetos tipo libro
+las clases que utlizaremos seran: Libro y MisLista
+2. Aspectos que se han tenido en cuenta en el diseño de las interfaces:
+Los aspectos que se han tenido en cuenta a la hora de hacer el diseño de las interfaces es que se parezcan estructuralmente a los bocetos y que sigan un mismo esquema de colores
+3 Interfaces generadas:
+Las interfaces generados son: Principal, Mis Listas y Lista
+a) Comparativa con el prototipo
+b) Cambios de funcionalidades o problemas que se han encontrado
+
+Pruebas:
+
+Pila de Sprint
+Descomposicion en tareas
+
+Tiemplos empleados
+Mostrar una reflexion
+Problemas que se han encontrado...
+Mostrar si se han añadido tareas...Aun no
+
+
+
