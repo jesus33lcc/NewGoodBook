@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "886664636506",
+    "firebase_url": "https://newgoodbook-fb4ff-default-rtdb.firebaseio.com",
+    "project_id": "newgoodbook-fb4ff",
+    "storage_bucket": "newgoodbook-fb4ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886664636506:android:854cf6f2876eb205bbd063",
+        "android_client_info": {
+          "package_name": "com.example.newgoodbooks"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1KUVqVWaCrU6AUI51_dJ4r4_zZUx7zAs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
