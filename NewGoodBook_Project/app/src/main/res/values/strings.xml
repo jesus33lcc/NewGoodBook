@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NewGoodBook</string>
+    <string name="eslogan">Soy el eslogan</string>
+    <string name="descripcion_inicio">Esta aplicación esta creada por estudiantes</string>
+</resources>
