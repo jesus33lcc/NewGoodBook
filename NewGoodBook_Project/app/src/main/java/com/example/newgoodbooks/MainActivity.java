@@ -3,21 +3,36 @@ package com.example.newgoodbooks;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    Button Btn_Login, Btn_Register;
+    Button btn_Login, btn_Register;
+    TextView nombre, eslogan, desc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Btn_Login=findViewById(R.id.btn_iniciosesion);
-        Btn_Register=findViewById(R.id.btn_registrarse);
+        btn_Login=findViewById(R.id.btn_iniciosesion);
+        btn_Register=findViewById(R.id.btn_registrarse);
 
-        Btn_Login.setOnClickListener(new View.OnClickListener() {
+        nombre=findViewById(R.id.txtview_nombre);
+        eslogan=findViewById(R.id.txtview_descripcion_inicio);
+        desc=findViewById(R.id.textview_desc);
+
+        Typeface fuenteActual=Typeface.createFromAsset(getAssets(),"fonts/"+getResources().getString(R.string.fuente1));
+        nombre.setTypeface(fuenteActual);
+        eslogan.setTypeface(fuenteActual);
+        desc.setTypeface(fuenteActual);
+        btn_Login.setTypeface(fuenteActual);
+        btn_Register.setTypeface(fuenteActual);
+
+        btn_Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, Login.class));
@@ -25,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Btn_Register.setOnClickListener(new View.OnClickListener() {
+        btn_Register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, Registro.class));
