@@ -35,9 +35,9 @@
         android:layout_width="300dp"
         android:layout_height="130dp"
         android:layout_marginTop="33dp"
-        android:text="@string/descripcion_inicio"
-        android:textAlignment="viewStart"
-        android:textSize="16sp"
+        android:text="@string/eslogan"
+        android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,5 +68,15 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_registrarse" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/descripcion_inicio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_iniciosesion" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

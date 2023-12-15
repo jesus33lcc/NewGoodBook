@@ -1,16 +1,14 @@
-package com.example.newgoodbooks;
+package com.example.newgoodbooks.modelos;
 
 public class Usuario {
-    String nombre;
-    String nombreUser;
-    String email;
-    String password;
-    public Usuario(){
+    private String nombre;
+    private String nombreUsuario;
+    private String email;
+    private String password;
 
-    }
-    public Usuario(String nombre, String nombreUser, String email, String password){
+    public Usuario(String nombre, String nombreUsuario, String email, String password) {
         this.nombre = nombre;
-        this.nombreUser = nombreUser;
+        this.nombreUsuario = nombreUsuario;
         this.email = email;
         this.password = password;
     }
@@ -23,12 +21,12 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public String getNombreUser() {
-        return nombreUser;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setNombreUser(String nombreUser) {
-        this.nombreUser = nombreUser;
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
     public String getEmail() {
@@ -46,4 +44,6 @@ public class Usuario {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }
+

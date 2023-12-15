@@ -1,24 +1,23 @@
-package com.example.newgoodbooks;
+package com.example.newgoodbooks.modelos;
 
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 public class Libro {
-    String titulo;
-    String autor;
-    int numPag;
-    LocalDateTime fechaPublicacion;
-    String generos;
-    String descripción;
-    public Libro(){
+    private String titulo;
+    private String autor;
+    private int numPag;
+    private Date fechaPublicacion;
+    private List<String> generos;
+    private String descripcion;
 
-    }
-    public Libro(String titulo, String autor, int numPag, LocalDateTime fechaPublicacion, String generos, String descripción) {
+    public Libro(String titulo, String autor, int numPag, Date fechaPublicacion, List<String> generos, String descripcion) {
         this.titulo = titulo;
         this.autor = autor;
         this.numPag = numPag;
         this.fechaPublicacion = fechaPublicacion;
         this.generos = generos;
-        this.descripción = descripción;
+        this.descripcion = descripcion;
     }
 
     public String getTitulo() {
@@ -45,27 +44,27 @@ public class Libro {
         this.numPag = numPag;
     }
 
-    public LocalDateTime getFechaPublicacion() {
+    public Date getFechaPublicacion() {
         return fechaPublicacion;
     }
 
-    public void setFechaPublicacion(LocalDateTime fechaPublicacion) {
+    public void setFechaPublicacion(Date fechaPublicacion) {
         this.fechaPublicacion = fechaPublicacion;
     }
 
-    public String getGeneros() {
+    public List<String> getGeneros() {
         return generos;
     }
 
-    public void setGeneros(String generos) {
+    public void setGeneros(List<String> generos) {
         this.generos = generos;
     }
 
-    public String getDescripción() {
-        return descripción;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescripción(String descripción) {
-        this.descripción = descripción;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

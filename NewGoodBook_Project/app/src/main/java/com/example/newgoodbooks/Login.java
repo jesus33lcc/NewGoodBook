@@ -24,16 +24,18 @@ public class Login extends AppCompatActivity {
         txt_passwordlost=findViewById(R.id.txt_passwordlost);
         txt_noCuenta=findViewById(R.id.txt_sincuenta);
 
-        btn_loginGoogle.setOnClickListener(new View.OnClickListener() {
+        btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(Login.this, Principal.class));
+                finish();
             }
         });
         btn_loginGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(Login.this, Principal.class));
+                finish();
             }
         });
         txt_noCuenta.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +43,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(Login.this, Registro.class));
                 finish();
+
             }
         });
         txt_passwordlost.setOnClickListener(new View.OnClickListener() {

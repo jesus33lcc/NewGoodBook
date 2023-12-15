@@ -26,6 +26,15 @@ public class Registro extends AppCompatActivity {
                 finish();
             }
         });
+
+        btn_registrarse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Registro.this, Principal.class));
+                finish();
+            }
+        });
+
     }
 
 }
