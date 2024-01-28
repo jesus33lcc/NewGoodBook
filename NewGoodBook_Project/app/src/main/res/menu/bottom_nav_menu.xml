@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/itemPrincipal"
+        android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home"
-        android:title="Principal"/>
+        android:title="@string/title_principal" />
+
     <item
-        android:id="@+id/itemExplorar"
+        android:id="@+id/explorar"
         android:icon="@drawable/ic_explorar"
-        android:title="Explorar"/>
+        android:title="@string/title_explorar" />
+
     <item
-        android:id="@+id/itemListas"
+        android:id="@+id/listas"
         android:icon="@drawable/ic_listas"
-        android:title="Listas"/>
+        android:title="@string/title_listas" />
 
 </menu>

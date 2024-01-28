@@ -1,52 +1,37 @@
 package com.example.newgoodbooks;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import androidx.fragment.app.Fragment;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.FrameLayout;
 
-import com.example.newgoodbooks.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.example.newgoodbooks.databinding.ActivityPrincipalBinding;
 
 public class Principal extends AppCompatActivity {
-    LibroFragment libroFragment=new LibroFragment();
-    ExplorarFragment explorarFragment=new ExplorarFragment();
-    ListasFragment listasFragment=new ListasFragment();
-    BottomNavigationView menuNavegacion;
-    FrameLayout frameLayout;
+
+    private ActivityPrincipalBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_principal);
-        frameLayout=findViewById(R.id.frameContainer);
-        menuNavegacion=findViewById(R.id.menuNavegacion);
-        menuNavegacion.setOnItemSelectedListener(item -> {
-           switch (item.getItemId()){
-               case R.id.itemPrincipal:
-                   reemplazarFragment(libroFragment);
-                   break;
-               case R.id.itemExplorar:
-                   reemplazarFragment(explorarFragment);
-                   break;
-               case R.id.itemListas:
-                   reemplazarFragment(listasFragment);
-                   break;
-           }
-           return false;
-        });
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameContainer, libroFragment).commit();
+
+        binding = ActivityPrincipalBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.explorar, R.id.listas)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_principal);
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
     }
-    private void reemplazarFragment(Fragment fragment){
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frameContainer, fragment);
-        fragmentTransaction.commit();
-    }
+
 }
