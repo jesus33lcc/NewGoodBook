@@ -30,6 +30,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packagingOptions {
+        exclude ("META-INF/DEPENDENCIES")
+        exclude ("META-INF/NOTICE")
+        exclude ("META-INF/LICENSE")
+        exclude ("META-INF/LICENSE.txt")
+        exclude ("META-INF/NOTICE.txt")
+    }
 }
 
 dependencies {
@@ -47,5 +54,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("com.google.apis:google-api-services-books:v1-rev20230203-2.0.0")
+
 }
 
