@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteBooks {
-
-    // Ejemplo de peticion
     public static List<Libro> buscarTitulo(String nombre) {
         Books books=ClienteApi.getClient();
         Books.Volumes.List volumeList = null;
@@ -41,7 +39,21 @@ public class ClienteBooks {
         }
         return listaLibros;
     }
-
+    public static Libro getLibro(String id){
+        Books books=ClienteApi.getClient();
+        try {
+            return new Libro(books.volumes().get(id).execute());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static List<Libro>getLista(List<String>listaId){
+        List<Libro>listaLibros=new ArrayList<>();
+        for(String id:listaId){
+            listaLibros.add(getLibro(id));
+        }
+        return listaLibros;
+    }
     public static boolean esValido(Volume volume) {
         if (volume == null || volume.getVolumeInfo() == null) {
             return false;

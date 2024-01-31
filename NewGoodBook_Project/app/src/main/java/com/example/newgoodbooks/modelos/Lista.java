@@ -3,28 +3,28 @@ package com.example.newgoodbooks.modelos;
 import java.util.List;
 
 public class Lista {
-    private int id;
-    private List<Libro> libros;
+    private String nombre;
+    private List<String> librosId;
 
-    public Lista(int id, List<Libro> libros) {
-        this.id = id;
-        this.libros = libros;
+    public Lista(String nombre, List<String> librosId) {
+        this.nombre = nombre;
+        this.librosId = librosId;
     }
 
-    public int getId() {
-        return id;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public List<Libro> getLibros() {
-        return libros;
+    public List<String> getLibrosId() {
+        return librosId;
     }
 
-    public void setLibros(List<Libro> libros) {
-        this.libros = libros;
+    public void setLibrosId(List<String> librosId) {
+        this.librosId = librosId;
     }
 
 }
