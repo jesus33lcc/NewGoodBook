@@ -1,45 +1,59 @@
 package com.example.newgoodbooks.Cliente;
 
+import com.example.newgoodbooks.modelos.Libro;
 import com.google.api.services.books.v1.Books;
 import com.google.api.services.books.v1.model.Volume;
+import com.google.api.services.books.v1.model.Volume.VolumeInfo;
 import com.google.api.services.books.v1.model.Volumes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteBooks {
 
     // Ejemplo de peticion
-    public static ArrayList<String> getList(String nombre) {
+    public static List<Libro> buscarTitulo(String nombre) {
         Books books=ClienteApi.getClient();
         Books.Volumes.List volumeList = null;
-
-        ArrayList<String>titulos=new ArrayList<>();
-
+        ArrayList<Libro>listaLibros=new ArrayList<>();
+        long max = 40;
+        int num = 0;
         try {
             volumeList = books.volumes().list(nombre);
             volumeList.setOrderBy("relevance");
-            Volumes volumes = volumeList.execute();
-            for (Volume v : volumes.getItems()) {
-                titulos.add(v.getVolumeInfo().getTitle());
+            volumeList.setMaxResults(max);
+            volumeList.setStartIndex(max * num++);
+            Volumes volumes;
+            volumes=volumeList.execute();
+            while (volumes.getItems()!=null) {
+                for (Volume v : volumes.getItems()) {
+                    if (esValido(v)) {
+                        Libro libro = new Libro(v);
+                        listaLibros.add(libro);
+                    }
+                }
+                volumeList.setStartIndex(max * num++);
+                volumes = volumeList.execute();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return titulos;
+        return listaLibros;
     }
-    //Ejemplo de peticion
-    public static Volumes getListV(String nombre){
-        Books books=ClienteApi.getClient();
-        Books.Volumes.List volumeList = null;
-        Volumes volumes=null;
-        try {
-            volumeList = books.volumes().list(nombre);
-            volumeList.setOrderBy("relevance");
-            volumes = volumeList.execute();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+    public static boolean esValido(Volume volume) {
+        if (volume == null || volume.getVolumeInfo() == null) {
+            return false;
         }
-        return volumes;
+        VolumeInfo info = volume.getVolumeInfo();
+        return volume.getId() != null && !volume.getId().isEmpty()
+                && info.getTitle() != null && !info.getTitle().isEmpty()
+                && info.getAuthors() != null && !info.getAuthors().isEmpty()
+                && info.getPageCount() != null && info.getPageCount() > 0
+                && info.getPublishedDate() != null && !info.getPublishedDate().isEmpty()
+                && info.getCategories() != null && !info.getCategories().isEmpty()
+                && info.getDescription() != null && !info.getDescription().isEmpty()
+                && info.getImageLinks() != null && !info.getImageLinks().isEmpty();
     }
 }

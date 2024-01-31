@@ -13,6 +13,7 @@ import java.security.GeneralSecurityException;
 
 public class ClienteApi {
     private static Books books;
+    private final static String CLAVE_API="AIzaSyBJvT0i6y_bX_9xhs2-ZzSaoq8T2vzyHZE";
     public static Books getClient(){
         HttpTransport httpTransport = null;
         try {
@@ -26,7 +27,7 @@ public class ClienteApi {
         HttpRequestInitializer httpRequestInitializer = null;
         books = new Books.Builder(httpTransport, jsonFactory, httpRequestInitializer)
                 .setApplicationName("NewGoodBooks")
-                .setGoogleClientRequestInitializer(new BooksRequestInitializer("AIzaSyBJvT0i6y_bX_9xhs2-ZzSaoq8T2vzyHZE"))
+                .setGoogleClientRequestInitializer(new BooksRequestInitializer(CLAVE_API))
                 .build();
         return books;
     }
