@@ -1,4 +1,4 @@
-package com.example.newgoodbooks.modelos;
+package com.example.newgoodbooks.Modelos;
 
 import com.example.newgoodbooks.Cliente.ClienteBooks;
 

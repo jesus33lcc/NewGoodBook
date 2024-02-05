@@ -1,4 +1,4 @@
-package com.example.newgoodbooks.modelos;
+package com.example.newgoodbooks.Modelos;
 
 public class Usuario {
     private String nombre;

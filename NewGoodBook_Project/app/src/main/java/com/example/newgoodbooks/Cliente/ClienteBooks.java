@@ -1,6 +1,6 @@
 package com.example.newgoodbooks.Cliente;
 
-import com.example.newgoodbooks.modelos.Libro;
+import com.example.newgoodbooks.Modelos.Libro;
 import com.google.api.services.books.v1.Books;
 import com.google.api.services.books.v1.model.Volume;
 import com.google.api.services.books.v1.model.Volume.VolumeInfo;

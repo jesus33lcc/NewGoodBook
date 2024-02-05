@@ -1,9 +1,8 @@
-package com.example.newgoodbooks.modelos;
+package com.example.newgoodbooks.Modelos;
 
 import com.google.api.services.books.v1.model.Volume;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Libro {

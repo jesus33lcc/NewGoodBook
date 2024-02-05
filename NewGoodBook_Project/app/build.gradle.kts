@@ -56,5 +56,6 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("com.google.apis:google-api-services-books:v1-rev20230203-2.0.0")
 
+    implementation("com.squareup.picasso:picasso:2.71828")
 }
 
