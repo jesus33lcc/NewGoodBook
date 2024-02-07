@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_listas" />
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.newgoodbooks.Fragments.Home"
+        android:name="com.example.newgoodbooks.Fragments.HomeIU.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
 

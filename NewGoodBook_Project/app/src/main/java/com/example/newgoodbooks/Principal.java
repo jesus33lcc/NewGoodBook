@@ -2,9 +2,16 @@ package com.example.newgoodbooks;
 
 import android.os.Bundle;
 
+import com.example.newgoodbooks.Fragments.Explorar;
+import com.example.newgoodbooks.Fragments.Home;
+import com.example.newgoodbooks.Fragments.HomeIU.HomeFragment;
+import com.example.newgoodbooks.Fragments.Listas;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -15,6 +22,9 @@ import com.example.newgoodbooks.databinding.ActivityPrincipalBinding;
 public class Principal extends AppCompatActivity {
 
     private ActivityPrincipalBinding binding;
+    private HomeFragment home;
+    private Explorar explorar;
+    private Listas listas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,5 +43,4 @@ public class Principal extends AppCompatActivity {
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
-
 }

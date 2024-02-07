@@ -3,49 +3,34 @@ package com.example.newgoodbooks;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.newgoodbooks.Cliente.ClienteBooks;
+import com.example.newgoodbooks.Modelos.Datos;
+import com.example.newgoodbooks.Modelos.Libro;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity {
-    Button btn_Login, btn_Register;
-    TextView nombre, eslogan, desc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        btn_Login=findViewById(R.id.btn_iniciosesion);
-        btn_Register=findViewById(R.id.btn_registrarse);
-
-        nombre=findViewById(R.id.txtview_nombre);
-        eslogan=findViewById(R.id.txtview_descripcion_inicio);
-        desc=findViewById(R.id.textview_desc);
-
-        Typeface fuenteActual=Typeface.createFromAsset(getAssets(),"fonts/"+getResources().getString(R.string.fuente1));
-        nombre.setTypeface(fuenteActual);
-        eslogan.setTypeface(fuenteActual);
-        desc.setTypeface(fuenteActual);
-        btn_Login.setTypeface(fuenteActual);
-        btn_Register.setTypeface(fuenteActual);
-
-        btn_Login.setOnClickListener(new View.OnClickListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, Login.class));
+            public void run() {
+                Datos.DatosComunes.cargarDatos();
+                Intent intent=new Intent(MainActivity.this, Inicio.class);
+                startActivity(intent);
                 finish();
             }
-        });
-
-        btn_Register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, Registro.class));
-                finish();
-            }
-        });
+        }).start();
     }
 }

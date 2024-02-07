@@ -1,5 +1,6 @@
 package com.example.newgoodbooks.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,18 +16,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.newgoodbooks.Cliente.ClienteBooks;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Home#newInstance} factory method to
+ * Use the {@link HomeIU#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class Home extends Fragment {
@@ -52,7 +58,6 @@ public class Home extends Fragment {
     public Home() {
         // Required empty public constructor
     }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -89,6 +94,7 @@ public class Home extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
 
         titulo= view.findViewById(R.id.textTitulo);
@@ -99,6 +105,7 @@ public class Home extends Fragment {
         descripcion=view.findViewById(R.id.textDescripcion);
         botonSig=view.findViewById(R.id.btnSiguiente);
         portada=view.findViewById(R.id.imageVPortada);
+
         cargarLista();
         botonSig.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +121,7 @@ public class Home extends Fragment {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                listaRecomendar=new LinkedList<>(ClienteBooks.buscarTitulo("Harry Potter"));
+                cargar();
                 actualizar();
             }
         });
@@ -124,15 +131,44 @@ public class Home extends Fragment {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                mostrado=listaRecomendar.poll();
+                Picasso.get().load(mostrado.getLinkImg().replace("http", "https")).placeholder(R.drawable.ic_home).into(portada);
                 titulo.setText(mostrado.getTitulo());
                 autor.setText(mostrado.getAutor().get(0));
                 numPag.setText(String.valueOf(mostrado.getNumPag()));
                 fecha.setText(mostrado.getFechaPublicacion());
                 genero.setText(mostrado.getGeneros().get(0));
                 descripcion.setText(mostrado.getDescripcion());
-                Picasso.get().load(mostrado.getLinkImg().replace("http", "https")).placeholder(R.drawable.ic_home).into(portada);
+                mostrado=listaRecomendar.poll();
             }
         });
     }
+    private void grabar(){
+        String nombreFile="Inicio";
+        try {
+            FileOutputStream fos=getContext().openFileOutput(nombreFile, Context.MODE_PRIVATE);
+            ObjectOutputStream os=new ObjectOutputStream(fos);
+            os.writeObject(listaRecomendar);
+            os.writeObject(mostrado);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void cargar(){
+        String nombreFile="Inicio";
+        try {
+            FileInputStream fis=getContext().openFileInput(nombreFile);
+            ObjectInputStream is=new ObjectInputStream(fis);
+            listaRecomendar=(LinkedList<Libro>) is.readObject();
+            mostrado=(Libro) is.readObject();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -2,10 +2,11 @@ package com.example.newgoodbooks.Modelos;
 
 import com.google.api.services.books.v1.model.Volume;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Libro {
+public class Libro implements Serializable {
     private String id;
     private String titulo;
     private List<String> autor;
@@ -36,7 +37,7 @@ public class Libro {
         fechaPublicacion=volume.getVolumeInfo().getPublishedDate();
         generos=new ArrayList<>(volume.getVolumeInfo().getCategories());
         descripcion=volume.getVolumeInfo().getDescription();
-        linkImg=volume.getVolumeInfo().getImageLinks().getThumbnail();
+        linkImg=volume.getVolumeInfo().getImageLinks().getThumbnail().replace("http","https");
     }
     public String toString() {
         StringBuilder builder=new StringBuilder();
