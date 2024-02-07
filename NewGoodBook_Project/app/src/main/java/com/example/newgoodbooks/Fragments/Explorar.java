@@ -1,66 +1,120 @@
 package com.example.newgoodbooks.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.newgoodbooks.Cliente.ClienteBooks;
+import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
+import com.example.newgoodbooks.Modelos.Datos;
+import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Explorar#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+
 public class Explorar extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static Explorar instance;
+    private View view;
+    private RecyclerView librosRecyclerView;
+    LibroListAdapter libroListAdapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    List<Libro> librosRecyclerList;
+    Toolbar toolbarSearch;
+    private MenuItem menuItem;
+    private SearchView searchViewExplorar;
+    public Explorar() { }
 
-    public Explorar() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Explorar.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Explorar newInstance(String param1, String param2) {
-        Explorar fragment = new Explorar();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static Explorar getInstance() {
+        if(instance == null){
+            instance = new Explorar();
+        }
+        return instance;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_explorar, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_explorar,container,false);
+
+        // Obtener referencia del Toolbar desde el layout "fragment_explorar"
+        toolbarSearch = view.findViewById(R.id.myToolbarExplorer);
+        /*searchViewExplorar = view.findViewById(R.id.app_searchViewBook);
+        searchViewExplorar.setQueryHint("Buscar...");*/
+
+        //toolbarSearch.setTitle("Explorar");
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        int whiteColor = ContextCompat.getColor(getActivity(), android.R.color.white);
+        toolbarSearch.setTitleTextColor(whiteColor);
+        activity.setSupportActionBar(toolbarSearch);
+        activity.getSupportActionBar().setTitle("Explorar");
+
+
+        // Sobre el RecyclerView
+        librosRecyclerView = view.findViewById(R.id.listRecyclerLibros);
+        librosRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //Buscar info sobre: FirebaseRecyclerOptions<Libro> listaFill
+        List<Libro> listaLibrosFill = new ArrayList<>();
+        initialize_ListFillBook(listaLibrosFill);
+
+        // Establezco el Toolbar como ActionBar del fragmento
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbarSearch);
+        buscar();
+        return view;
+    }
+
+    public void initialize_ListFillBook(List<Libro> listaLibrosFill){
+        libroListAdapter = new LibroListAdapter(getActivity(),listaLibrosFill);
+        librosRecyclerView.setAdapter(libroListAdapter);
+    }
+
+    private void buscar(){
+        Executor executor= Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                librosRecyclerList=new ArrayList<>(Datos.DatosComunes.descargarDatos());
+                fillRecycleList();
+                /*getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initialize_ListFillBook(librosRecyclerList);
+                    }
+                });*/
+            }
+        });
+    }
+    private void fillRecycleList(){
+        Handler handler=new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                initialize_ListFillBook(librosRecyclerList);
+            }
+        });
     }
 }
