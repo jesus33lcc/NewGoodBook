@@ -20,6 +20,7 @@ import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

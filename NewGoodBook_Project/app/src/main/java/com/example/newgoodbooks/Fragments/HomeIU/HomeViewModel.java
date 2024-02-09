@@ -4,13 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.newgoodbooks.Cliente.ClienteBooks;
-import com.example.newgoodbooks.Modelos.Datos;
+import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class HomeViewModel extends ViewModel {
     private Libro libroMostrado;
@@ -32,9 +29,8 @@ public class HomeViewModel extends ViewModel {
         descripcion=new MutableLiveData<>();
         linkImagen=new MutableLiveData<>();
 
-        listaLibrosMostrar=new LinkedList<>(Datos.DatosComunes.descargarDatos());
-        libroMostrado=listaLibrosMostrar.poll();
-
+        listaLibrosMostrar=new LinkedList<>(Datos.DatosComunes.getListaRecomendar());
+        libroMostrado=Datos.DatosComunes.getLibroRecomendar();
 
         linkImagen.setValue(libroMostrado.getLinkImg());
         titulo.setValue(libroMostrado.getTitulo());
@@ -43,7 +39,6 @@ public class HomeViewModel extends ViewModel {
         fechaPublicacion.setValue(libroMostrado.getFechaPublicacion());
         generos.setValue(libroMostrado.getGeneros().get(0));
         descripcion.setValue(libroMostrado.getDescripcion());
-
     }
 
     public LiveData<String> getTitulo() {

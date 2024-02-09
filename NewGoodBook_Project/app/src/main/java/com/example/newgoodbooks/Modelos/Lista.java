@@ -1,8 +1,9 @@
 package com.example.newgoodbooks.Modelos;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Lista {
+public class Lista implements Serializable {
     private String nombre;
     private List<String> librosId;
 

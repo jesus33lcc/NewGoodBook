@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 
 import com.example.newgoodbooks.Cliente.ClienteBooks;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
-import com.example.newgoodbooks.Modelos.Datos;
+import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 
@@ -97,7 +97,7 @@ public class Explorar extends Fragment {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                librosRecyclerList=new ArrayList<>(Datos.DatosComunes.descargarDatos());
+                librosRecyclerList=new ArrayList<>(Datos.DatosComunes.getListaRecomendar());
                 fillRecycleList();
                 /*getActivity().runOnUiThread(new Runnable() {
                     @Override
