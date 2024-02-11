@@ -19,7 +19,9 @@
             android:background="#153464"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            android:titleTextAppearance="@color/white" />
+            app:title="Explorar"
+            app:titleTextColor="@color/white"
+            app:menu="@menu/toolbar_search_explorar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listRecyclerLibros"

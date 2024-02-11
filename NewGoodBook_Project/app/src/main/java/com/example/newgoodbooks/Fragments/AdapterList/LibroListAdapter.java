@@ -7,15 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.newgoodbooks.LibroData;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.LibroViewHolder> {
@@ -64,16 +61,4 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
             autorLibro = itemView.findViewById(R.id.autorBook_txt);
         }
     }
-/*
-class LibroDiffCallback extends DiffUtil.ItemCallback<Libro>{
-    @Override
-    public boolean areItemsTheSame(Libro oldItem,Libro newItem) {
-        return oldItem.getId() == newItem.getId();
-    }
-
-    @Override
-    public boolean areContentsTheSame(Libro oldItem,Libro newItem) {
-        return oldItem.equals(newItem);
-    }
-*/
 }
