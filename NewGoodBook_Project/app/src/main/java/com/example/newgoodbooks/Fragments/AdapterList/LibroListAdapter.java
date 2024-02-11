@@ -1,6 +1,7 @@
 package com.example.newgoodbooks.Fragments.AdapterList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.newgoodbooks.LibroData;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.squareup.picasso.Picasso;
@@ -31,9 +33,19 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
 
     @Override
     public void onBindViewHolder(@NonNull LibroViewHolder holder, int position) {
-        holder.tituloLibro.setText(listLibroDatos.get(position).getTitulo());
-        holder.autorLibro.setText(listLibroDatos.get(position).getAutor().toString());
-        Picasso.get().load(listLibroDatos.get(position).getLinkImg()).into(holder.portadaLibro);
+        Libro itemLibro = listLibroDatos.get(position);
+        holder.tituloLibro.setText(itemLibro.getTitulo());
+        holder.autorLibro.setText(itemLibro.getAutor().toString());
+        Picasso.get().load(itemLibro.getLinkImg()).into(holder.portadaLibro);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent viewLibroData = new Intent(v.getContext(), LibroData.class);
+                viewLibroData.putExtra("libro", itemLibro);
+                context.startActivity(viewLibroData);
+            }
+        });
     }
 
     @Override
