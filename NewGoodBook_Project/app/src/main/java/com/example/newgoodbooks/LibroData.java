@@ -28,10 +28,8 @@ public class LibroData extends AppCompatActivity {
         setContentView(R.layout.fragment_home);
 
         bookSelected = (Libro) getIntent().getSerializableExtra("libro");
-        //this.libroDetail = getIntent().getParcelableExtra("libro");
         initView();
         setDetailsLibro();
-
     }
 
     private void initView(){

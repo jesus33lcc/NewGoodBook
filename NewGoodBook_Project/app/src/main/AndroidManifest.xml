@@ -19,6 +19,9 @@
         android:theme="@style/Theme.NewGoodBooks"
         tools:targetApi="31">
         <activity
+            android:name=".ResultadoSearchView"
+            android:exported="false" />
+        <activity
             android:name=".LibroData"
             android:exported="false" />
         <activity
