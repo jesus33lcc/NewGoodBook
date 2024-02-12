@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Lista implements Serializable {
     private String nombre;
-    private List<String> librosId;
+    private List<Libro> libros;
 
-    public Lista(String nombre, List<String> librosId) {
+    public Lista(String nombre, List<Libro> libros) {
         this.nombre = nombre;
-        this.librosId = librosId;
+        this.libros = libros;
     }
 
     public String getNombre() {
@@ -20,12 +20,12 @@ public class Lista implements Serializable {
         this.nombre = nombre;
     }
 
-    public List<String> getLibrosId() {
-        return librosId;
+    public List<Libro> getLibros() {
+        return libros;
     }
 
-    public void setLibrosId(List<String> librosId) {
-        this.librosId = librosId;
+    public void setLibrosId(List<Libro> libros) {
+        this.libros = libros;
     }
 
 }

@@ -29,8 +29,8 @@ public class ClienteApi {
         JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
         HttpRequestInitializer httpRequestInitializer = null;
         books = new Books.Builder(httpTransport, jsonFactory, httpRequestInitializer)
-                .setApplicationName(NOMBRE_PROYECTO)
-                .setGoogleClientRequestInitializer(new BooksRequestInitializer(CLAVE_API))
+                .setApplicationName(NOMBRE_PROYECTO_2)
+                .setGoogleClientRequestInitializer(new BooksRequestInitializer(CLAVE_API_2))
                 .build();
         return books;
     }

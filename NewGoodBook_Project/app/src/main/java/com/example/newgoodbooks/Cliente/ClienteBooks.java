@@ -83,7 +83,7 @@ public class ClienteBooks {
             volumeList.setOrderBy("relevance");
             volumeList.setMaxResults(max);
             Volumes volumes=volumeList.execute();
-            if(volumes.isEmpty()){
+            if(volumes==null || volumes.isEmpty() || volumes.getItems()==null){
                 return null;
             }
             for (Volume v : volumes.getItems()) {

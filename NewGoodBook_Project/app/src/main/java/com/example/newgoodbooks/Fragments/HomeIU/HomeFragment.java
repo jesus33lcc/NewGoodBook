@@ -15,7 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
+import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
 
@@ -30,6 +33,8 @@ public class HomeFragment extends Fragment {
     private TextView descripcion;
     private Button botonSig;
     private ImageView portada;
+    private ToggleButton btnFav;
+    private ToggleButton btnCheck;
 
     public HomeFragment(){
     }
@@ -48,8 +53,8 @@ public class HomeFragment extends Fragment {
         descripcion=binding.textDescripcion;
         botonSig=binding.btnSiguiente;
         portada=binding.imageVPortada;
-
-
+        btnFav=binding.tBtnFavorite;
+        btnCheck=binding.tBtnCheck;
         homeViewModel.getLinkImagen().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -63,11 +68,50 @@ public class HomeFragment extends Fragment {
         homeViewModel.getFechaPublicacion().observe(getViewLifecycleOwner(),fecha::setText);
         homeViewModel.getGeneros().observe(getViewLifecycleOwner(),genero::setText);
         homeViewModel.getDescripcion().observe(getViewLifecycleOwner(),descripcion::setText);
-
+        homeViewModel.getEstadoTBtnFav().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                btnFav.setChecked(aBoolean);
+            }
+        });
+        homeViewModel.getEstadoTBtnCheck().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                btnCheck.setChecked(aBoolean);
+            }
+        });
         botonSig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 homeViewModel.cambioLibro(getContext());
+            }
+        });
+        btnFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AccesoFicheros accesoFicheros=new AccesoFicheros(getContext());
+                if(homeViewModel.getEstadoTBtnFav().getValue()){
+                    Datos.DatosComunes.getListasUsuario().getLibrosLike().remove(homeViewModel.getLibroMostrado());
+                    homeViewModel.setEstadoTBtnFav(false);
+                }else {
+                    Datos.DatosComunes.getListasUsuario().getLibrosLike().add(homeViewModel.getLibroMostrado());
+                    homeViewModel.setEstadoTBtnFav(true);
+                }
+                accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
+            }
+        });
+        btnCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AccesoFicheros accesoFicheros=new AccesoFicheros(getContext());
+                if(homeViewModel.getEstadoTBtnCheck().getValue()){
+                    Datos.DatosComunes.getListasUsuario().getLibrosCheck().remove(homeViewModel.getLibroMostrado());
+                    homeViewModel.setEstadoTBtnCheck(false);
+                }else {
+                    Datos.DatosComunes.getListasUsuario().getLibrosCheck().add(homeViewModel.getLibroMostrado());
+                    homeViewModel.setEstadoTBtnCheck(true);
+                }
+                accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
             }
         });
 

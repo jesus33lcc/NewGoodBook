@@ -5,6 +5,7 @@ import com.google.api.services.books.v1.model.Volume;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Libro implements Serializable {
     private String id;
@@ -115,5 +116,25 @@ public class Libro implements Serializable {
     public void setLinkImg(String linkImg) {
         this.linkImg = linkImg;
     }
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Libro other = (Libro) obj;
+        return Objects.equals(this.id, other.id);
+    }
 }

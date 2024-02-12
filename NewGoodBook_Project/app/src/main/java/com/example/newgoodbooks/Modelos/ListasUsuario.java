@@ -6,18 +6,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 public class ListasUsuario implements Serializable {
-    private List<String>librosLike;
-    private List<String>librosCheck;
+    private List<Libro>librosLike;
+    private List<Libro>librosCheck;
     private List<Lista>listas;
     public ListasUsuario(){
         librosLike=new ArrayList<>();
         librosCheck=new ArrayList<>();
         listas=new ArrayList<>();
     }
-    public List<String> getLibrosLike() {
+    public List<Libro> getLibrosLike() {
         return librosLike;
     }
-    public List<String> getLibrosCheck() {
+    public List<Libro> getLibrosCheck() {
         return librosCheck;
     }
     public List<Lista> getListas() {
@@ -26,18 +26,16 @@ public class ListasUsuario implements Serializable {
 
 
     public List<String> getGeneros(){
-        List<Libro>librosFav= ClienteBooks.getLista(librosLike);
         List<String>listaGeneros=new ArrayList<>();
-        for(Libro libro:librosFav){
+        for(Libro libro:librosLike){
             listaGeneros.addAll(libro.getGeneros());
         }
         return listaGeneros;
     }
 
     public List<String> getAutores(){
-        List<Libro>librosFav=ClienteBooks.getLista(librosLike);
         List<String>listaAutores=new ArrayList<>();
-        for (Libro libro:librosFav){
+        for (Libro libro:librosLike){
             listaAutores.addAll(libro.getAutor());
         }
         return listaAutores;

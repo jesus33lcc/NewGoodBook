@@ -7,6 +7,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
+import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.squareup.picasso.Picasso;
 
@@ -21,6 +25,8 @@ public class LibroData extends AppCompatActivity {
     TextView generosTXT;
     TextView descripcionTXT;
     Button btnNext;
+    ToggleButton btnFav;
+    ToggleButton btnCheck;
     public LibroData(){ }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,8 @@ public class LibroData extends AppCompatActivity {
         generosTXT = findViewById(R.id.textGeneros);
         descripcionTXT = findViewById(R.id.textDescripcion);
         btnNext = findViewById(R.id.btnSiguiente);
+        btnFav=findViewById(R.id.tBtnFavorite);
+        btnCheck=findViewById(R.id.tBtnCheck);
         btnNext.setVisibility(View.GONE);
     }
 
@@ -53,6 +61,40 @@ public class LibroData extends AppCompatActivity {
             fechaPubTXT.setText(bookSelected.getFechaPublicacion());
             generosTXT.setText(bookSelected.getGeneros().toString());
             descripcionTXT.setText(bookSelected.getDescripcion());
+            if (Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(bookSelected)){
+                btnFav.setChecked(true);
+            }else {
+                btnFav.setChecked(false);
+            }
+            if (Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(bookSelected)){
+                btnCheck.setChecked(true);
+            }else {
+                btnCheck.setChecked(false);
+            }
+            btnFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AccesoFicheros accesoFicheros=new AccesoFicheros(getBaseContext());
+                    if(!btnFav.isChecked()){
+                        Datos.DatosComunes.getListasUsuario().getLibrosLike().remove(bookSelected);
+                    }else{
+                        Datos.DatosComunes.getListasUsuario().getLibrosLike().add(bookSelected);
+                    }
+                    accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
+                }
+            });
+            btnCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AccesoFicheros accesoFicheros=new AccesoFicheros(getBaseContext());
+                    if(!btnCheck.isChecked()){
+                        Datos.DatosComunes.getListasUsuario().getLibrosCheck().remove(bookSelected);
+                    }else{
+                        Datos.DatosComunes.getListasUsuario().getLibrosCheck().add(bookSelected);
+                    }
+                    accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
+                }
+            });
         } else {
             Toast.makeText(this, "Error: bookSelected is NULL", Toast.LENGTH_SHORT).show();
             finish();

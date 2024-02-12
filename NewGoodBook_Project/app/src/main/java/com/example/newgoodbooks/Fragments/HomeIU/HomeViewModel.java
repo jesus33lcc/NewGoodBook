@@ -25,6 +25,8 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<String> generos;
     private MutableLiveData<String> descripcion;
     private MutableLiveData<String> linkImagen;
+    private MutableLiveData<Boolean> estadoTBtnFav;
+    private MutableLiveData<Boolean> estadoTBtnCheck;
 
     public HomeViewModel(){
         titulo=new MutableLiveData<>();
@@ -34,6 +36,8 @@ public class HomeViewModel extends ViewModel {
         generos=new MutableLiveData<>();
         descripcion=new MutableLiveData<>();
         linkImagen=new MutableLiveData<>();
+        estadoTBtnFav=new MutableLiveData<>();
+        estadoTBtnCheck=new MutableLiveData<>();
 
         listaLibrosMostrar=new LinkedList<>(Datos.DatosComunes.getListaRecomendar());
         libroMostrado=Datos.DatosComunes.getLibroRecomendar();
@@ -45,6 +49,16 @@ public class HomeViewModel extends ViewModel {
         fechaPublicacion.setValue(libroMostrado.getFechaPublicacion());
         generos.setValue(libroMostrado.getGeneros().get(0));
         descripcion.setValue(libroMostrado.getDescripcion());
+        if(Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(libroMostrado)){
+            estadoTBtnFav.setValue(true);
+        }else{
+            estadoTBtnFav.setValue(false);
+        }
+        if(Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(libroMostrado)){
+            estadoTBtnCheck.setValue(true);
+        }else{
+            estadoTBtnCheck.setValue(false);
+        }
     }
 
     public LiveData<String> getTitulo() {
@@ -69,6 +83,12 @@ public class HomeViewModel extends ViewModel {
     public LiveData<String> getLinkImagen() {
         return linkImagen;
     }
+    public LiveData<Boolean> getEstadoTBtnFav() {
+        return estadoTBtnFav;
+    }
+    public LiveData<Boolean> getEstadoTBtnCheck() {
+        return estadoTBtnCheck;
+    }
 
     public void cambiarVistaLibro(){
         titulo.postValue(libroMostrado.getTitulo());
@@ -78,6 +98,16 @@ public class HomeViewModel extends ViewModel {
         generos.postValue(libroMostrado.getGeneros().get(0));
         descripcion.postValue(libroMostrado.getDescripcion());
         linkImagen.postValue(libroMostrado.getLinkImg());
+        if (Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(libroMostrado)){
+            estadoTBtnFav.postValue(true);
+        }else {
+            estadoTBtnFav.postValue(false);
+        }
+        if (Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(libroMostrado)){
+            estadoTBtnCheck.postValue(true);
+        }else {
+            estadoTBtnCheck.postValue(false);
+        }
     }
     public void cambioLibro(Context contexto){
         if(listaLibrosMostrar.size()>3){
@@ -105,5 +135,16 @@ public class HomeViewModel extends ViewModel {
                 }
             });
         }
+    }
+    public void setEstadoTBtnFav(boolean bool){
+        estadoTBtnFav.setValue(bool);
+    }
+
+    public void setEstadoTBtnCheck(boolean bool) {
+        estadoTBtnCheck.setValue(bool);
+    }
+
+    public Libro getLibroMostrado() {
+        return libroMostrado;
     }
 }
