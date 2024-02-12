@@ -119,7 +119,7 @@ public class Explorar extends Fragment {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                listadoLibrosList =new ArrayList<>(Datos.DatosComunes.getListaRecomendar());
+                listadoLibrosList =new ArrayList<>(Datos.DatosComunes.getHistorialLibros());
                 fillRecycleList();
             }
         });

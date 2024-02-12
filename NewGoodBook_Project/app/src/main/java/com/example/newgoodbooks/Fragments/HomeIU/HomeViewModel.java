@@ -1,13 +1,19 @@
 package com.example.newgoodbooks.Fragments.HomeIU;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.newgoodbooks.Cliente.ClienteBooks;
+import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
 import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 
 import java.util.LinkedList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class HomeViewModel extends ViewModel {
     private Libro libroMostrado;
@@ -64,14 +70,40 @@ public class HomeViewModel extends ViewModel {
         return linkImagen;
     }
 
-    public void cambiarLibro(){
-        libroMostrado=listaLibrosMostrar.poll();
-        titulo.setValue(libroMostrado.getTitulo());
-        autor.setValue(libroMostrado.getAutor().get(0));
-        numPag.setValue(String.valueOf(libroMostrado.getNumPag()));
-        fechaPublicacion.setValue(libroMostrado.getFechaPublicacion());
-        generos.setValue(libroMostrado.getGeneros().get(0));
-        descripcion.setValue(libroMostrado.getDescripcion());
-        linkImagen.setValue(libroMostrado.getLinkImg());
+    public void cambiarVistaLibro(){
+        titulo.postValue(libroMostrado.getTitulo());
+        autor.postValue(libroMostrado.getAutor().get(0));
+        numPag.postValue(String.valueOf(libroMostrado.getNumPag()));
+        fechaPublicacion.postValue(libroMostrado.getFechaPublicacion());
+        generos.postValue(libroMostrado.getGeneros().get(0));
+        descripcion.postValue(libroMostrado.getDescripcion());
+        linkImagen.postValue(libroMostrado.getLinkImg());
+    }
+    public void cambioLibro(Context contexto){
+        if(listaLibrosMostrar.size()>3){
+            Executor executor= Executors.newSingleThreadExecutor();
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    AccesoFicheros accesoFicheros=new AccesoFicheros(contexto);
+                    LinkedList<Libro>historial= (LinkedList<Libro>) Datos.DatosComunes.getHistorialLibros();
+                    historial.addFirst(libroMostrado);
+                    if(historial.size()>10){
+                        historial.removeLast();
+                    }
+                    libroMostrado=listaLibrosMostrar.poll();
+                    cambiarVistaLibro();
+                    accesoFicheros.setHistorial(Datos.DatosComunes.getHistorialLibros());
+
+                    while(listaLibrosMostrar.size()<20){
+                        Libro l= ClienteBooks.getLibroAleatorio();
+                        if(l!=null){
+                            listaLibrosMostrar.add(l);
+                        }
+                    }
+                    accesoFicheros.setPrincipal(libroMostrado,listaLibrosMostrar);
+                }
+            });
+        }
     }
 }

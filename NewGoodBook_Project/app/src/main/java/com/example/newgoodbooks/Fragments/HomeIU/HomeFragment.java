@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
 
@@ -68,7 +67,7 @@ public class HomeFragment extends Fragment {
         botonSig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeViewModel.cambiarLibro();
+                homeViewModel.cambioLibro(getContext());
             }
         });
 

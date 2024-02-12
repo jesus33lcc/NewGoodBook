@@ -41,13 +41,15 @@ public class AccesoFicheros {
                 throw new RuntimeException(e);
             }
         }else{
-            // Buscar Libro Aleatorio
-            // Crear Lista Libros Aleatorios
-            LinkedList<Libro>listaRecomendar= new LinkedList<>(ClienteBooks.buscarTitulo("Los Juegos del Hambre"));
-            Libro libroRecomendar=listaRecomendar.poll();
-
+            Libro libroRecomendar=ClienteBooks.getLibroAleatorio();
+            List <Libro> listaRecomendar=new LinkedList<>();
+            while(listaRecomendar.size()<10){
+                Libro l=ClienteBooks.getLibroAleatorio();
+                if(l!=null){
+                    listaRecomendar.add(l);
+                }
+            }
             setPrincipal(libroRecomendar,listaRecomendar);
-
             libroYLista.add(libroRecomendar);
             libroYLista.add(listaRecomendar);
             return libroYLista;
@@ -60,7 +62,7 @@ public class AccesoFicheros {
             try {
                 FileInputStream fis=context.openFileInput(nombreFile);
                 ObjectInputStream objectInputStream=new ObjectInputStream(fis);
-                listaHistorial=new LinkedList<>((LinkedList<Libro>)objectInputStream.readObject());
+                listaHistorial=new LinkedList<>((List<Libro>)objectInputStream.readObject());
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
