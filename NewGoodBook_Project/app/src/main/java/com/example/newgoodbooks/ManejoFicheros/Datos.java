@@ -2,6 +2,7 @@ package com.example.newgoodbooks.ManejoFicheros;
 
 import com.example.newgoodbooks.Cliente.ClienteBooks;
 import com.example.newgoodbooks.Modelos.Libro;
+import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.Modelos.ListasUsuario;
 
 import java.util.ArrayList;
@@ -92,6 +93,20 @@ public class Datos {
             Random numR = new Random();
             int indice = numR.nextInt(generos.length);
             return generos[indice];
+        }
+        public static Lista getListaFav(){
+            Lista listaFav=new Lista("Libros Favoritos", getListasUsuario().getLibrosLike());
+            return listaFav;
+        }
+        public static Lista getListaCheck(){
+            Lista listaCheck=new Lista("Libros Leidos", getListasUsuario().getLibrosLike());
+            return listaCheck;
+        }
+        public static List<Lista>getListasImborrables(){
+            List<Lista>listas=new ArrayList<>();
+            listas.add(getListaFav());
+            listas.add(getListaCheck());
+            return listas;
         }
     }
 }

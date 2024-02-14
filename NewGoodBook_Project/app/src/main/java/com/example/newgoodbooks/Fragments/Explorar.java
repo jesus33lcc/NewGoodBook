@@ -36,24 +36,14 @@ import java.util.concurrent.Executors;
 
 
 public class Explorar extends Fragment {
-
-    private static Explorar instance;
     private View view;
     private RecyclerView librosRecyclerView;
     LibroListAdapter libroListAdapter;
     List<Libro> listadoLibrosList;
     Toolbar toolbarSearch;
-    ImageView imgSearch;
-    private MenuItem menuItem;
     private SearchView searchViewExplorar;
-    public Explorar() { }
 
-    /*public static Explorar getInstance() {
-        if(instance == null){
-            instance = new Explorar();
-        }
-        return instance;
-    }*/
+    public Explorar() { } // Se requiere de un constructor vacio.
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,7 +105,7 @@ public class Explorar extends Fragment {
     }
 
     private void buscar(){
-        Executor executor= Executors.newSingleThreadExecutor();
+        Executor executor=Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             @Override
             public void run() {

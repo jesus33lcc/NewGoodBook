@@ -2,6 +2,8 @@ package com.example.newgoodbooks.Modelos;
 
 import com.google.api.services.books.v1.model.Volume;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

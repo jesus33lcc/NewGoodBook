@@ -5,82 +5,80 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import com.example.newgoodbooks.Fragments.AdapterList.ListaListAdapter;
+import com.example.newgoodbooks.Fragments.AdapterList.ListaImborrableAdapter;
+import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
 import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
+import com.example.newgoodbooks.Modelos.Lista;
+import com.example.newgoodbooks.Modelos.ListasUsuario;
 import com.example.newgoodbooks.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Listas#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+
 public class Listas extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private TextView textView;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private View view;
+    private RecyclerView listasRecyclerView;
+    private RecyclerView misListasRecyclerView;
+    ListaListAdapter listaListAdapter;
+    ListaImborrableAdapter listaImborrableAdapter;
+    List<Lista> milistadoListasList;
+    List<Lista> listadoListasList;
 
     public Listas() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Listas.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Listas newInstance(String param1, String param2) {
-        Listas fragment = new Listas();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    } // Se requiere de un constructor vacio.
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_listas, container, false);
 
-        textView=view.findViewById(R.id.textoListas);
-        // PRUEBA !!!!!!!!!!
-        String libros="";
-        for (Libro l: Datos.DatosComunes.getListasUsuario().getLibrosLike()){
-            libros+=" - "+l.getTitulo();
-        }
-        textView.setText(libros);
+        // Sobre el RecyclerView
+        listasRecyclerView = view.findViewById(R.id.misListasCheckFav);
+        misListasRecyclerView = view.findViewById(R.id.misListaPersonalizadas);
+
+        listasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        misListasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Insertar Libros en lista.
+        List<Lista> listaLibrosVacia = new ArrayList<>();
+
+
+        // Insertar listas en el RecyclerList
+        listadoListasList = Datos.DatosComunes.getListasImborrables();
+        initialize_ListFillInmborrable(listadoListasList);
+
+        milistadoListasList = Datos.DatosComunes.getListasUsuario().getListas();
+        initialize_ListFillList(milistadoListasList);
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_listas, container, false);
+    public void initialize_ListFillInmborrable(List<Lista> listaListasFill) {
+        listaImborrableAdapter = new ListaImborrableAdapter(getActivity(),listaListasFill);
+        listasRecyclerView.setAdapter(listaImborrableAdapter);
+    }
+    public void initialize_ListFillList(List<Lista> listaListasFill) {
+        listaListAdapter = new ListaListAdapter(getActivity(),listaListasFill);
+        misListasRecyclerView.setAdapter(listaListAdapter);
     }
 }

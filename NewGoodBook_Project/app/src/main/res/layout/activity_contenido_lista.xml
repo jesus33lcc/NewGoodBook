@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     android:orientation="vertical"
-    tools:context=".ResultadoSearchView">
+    tools:context=".ContenidoLista">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/myToolbarResultados"
+        android:id="@+id/toolbarContentList"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#153464"
@@ -19,7 +19,7 @@
         app:titleTextColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listRecyclerResultadosLibros"
+        android:id="@+id/listRecyclerContentLista"
         android:layoutAnimation="@anim/explore_animation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
