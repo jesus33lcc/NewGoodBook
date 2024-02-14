@@ -13,6 +13,7 @@
 
     <TextView
         android:id="@+id/tituloBook_txt"
+        android:textStyle="bold"
         android:layout_width="318dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"

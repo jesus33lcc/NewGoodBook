@@ -61,6 +61,8 @@ public class LibroData extends AppCompatActivity {
             fechaPubTXT.setText(bookSelected.getFechaPublicacion());
             generosTXT.setText(bookSelected.getGeneros().toString());
             descripcionTXT.setText(bookSelected.getDescripcion());
+
+
             if (Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(bookSelected)){
                 btnFav.setChecked(true);
             }else {
