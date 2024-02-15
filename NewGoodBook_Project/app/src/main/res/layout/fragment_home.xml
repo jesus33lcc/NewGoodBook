@@ -8,10 +8,10 @@
 
     <ImageView
         android:id="@+id/imageVPortada"
-        android:layout_width="164dp"
-        android:layout_height="252dp"
+        android:layout_width="142dp"
+        android:layout_height="226dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toTopOf="@+id/space"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,29 +19,24 @@
 
     <TextView
         android:id="@+id/textTitulo"
-        android:layout_width="180dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="188dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="184dp"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
+        android:ellipsize="end"
+        android:lineSpacingExtra="8sp"
+        android:maxLines="3"
+        android:singleLine="false"
         android:text="Titulo"
         android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:textStyle="bold|italic"
         android:typeface="normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
-        app:layout_constraintStart_toEndOf="@+id/imageVPortada"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="20dp"
-        android:text="Autor:"
-        app:layout_constraintStart_toEndOf="@+id/imageVPortada"
-        app:layout_constraintTop_toBottomOf="@+id/textTitulo" />
+        app:layout_constraintBottom_toTopOf="@+id/space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.07" />
 
     <TextView
         android:id="@+id/textView3"
@@ -60,8 +55,18 @@
         android:layout_marginTop="20dp"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.119"
+        app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textTitulo" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:text="Autor:"
+        app:layout_constraintStart_toEndOf="@+id/imageVPortada"
         app:layout_constraintTop_toBottomOf="@+id/textTitulo" />
 
     <TextView
@@ -90,13 +95,13 @@
         android:id="@+id/textFechaPub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="92dp"
         android:text="2134"
+        app:layout_constraintBottom_toTopOf="@+id/space"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageVPortada"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintHorizontal_bias="0.865"
+        app:layout_constraintStart_toEndOf="@+id/imageVPortada" />
 
     <TextView
         android:id="@+id/textView8"
@@ -158,10 +163,12 @@
         app:layout_constraintTop_toBottomOf="@+id/space" />
 
     <ToggleButton
-        android:id="@+id/toggleButton4"
+        android:id="@+id/tBtnShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="48dp"
+        android:layout_marginEnd="44dp"
+        android:background="@android:drawable/ic_input_add"
+        android:backgroundTint="#000000"
         android:text="ToggleButton"
         app:layout_constraintBottom_toBottomOf="@+id/space2"
         app:layout_constraintEnd_toStartOf="@+id/tBtnCheck"
@@ -176,6 +183,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space" />
+
 
     <TextView
         android:id="@+id/textDescripcion"
@@ -195,6 +203,7 @@
         android:paddingRight="16dp"
         android:paddingBottom="16dp"
         android:text="TextView"
+        android:ellipsize="end"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/btnSiguiente"
         app:layout_constraintEnd_toEndOf="parent"
@@ -202,6 +211,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space2"
         app:layout_constraintVertical_bias="0.65999997" />
+
 
     <Button
         android:id="@+id/btnSiguiente"
@@ -217,5 +227,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textDescripcion"
         app:layout_constraintVertical_bias="0.51" />
+
+    <ScrollView
+        android:layout_width="29dp"
+        android:layout_height="248dp"
+        android:visibility="visible"
+        tools:layout_editor_absoluteX="366dp"
+        tools:layout_editor_absoluteY="346dp"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
