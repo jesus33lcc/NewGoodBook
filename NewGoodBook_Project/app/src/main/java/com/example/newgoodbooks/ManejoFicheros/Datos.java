@@ -67,7 +67,7 @@ public class Datos {
             return palabras[indice];
         }
         public static String getAutorRandom(){
-            /* if(!listasUsuario.getAutores().isEmpty()){
+            if(!listasUsuario.getAutores().isEmpty()){
                 Random numR=new Random();
                 int indice=numR.nextInt(listasUsuario.getAutores().size());
                 return listasUsuario.getAutores().get(indice);
@@ -75,13 +75,10 @@ public class Datos {
                 Random numR = new Random();
                 int indice = numR.nextInt(autores.length);
                 return autores[indice];
-            }*/
-            Random numR = new Random();
-            int indice = numR.nextInt(autores.length);
-            return autores[indice];
+            }
         }
         public static String getGeneroRandom(){
-            /*if(!listasUsuario.getGeneros().isEmpty()){
+            if(!listasUsuario.getGeneros().isEmpty()){
                 Random numR = new Random();
                 int indice = numR.nextInt(listasUsuario.getGeneros().size());
                 return listasUsuario.getGeneros().get(indice);
@@ -89,17 +86,14 @@ public class Datos {
                 Random numR = new Random();
                 int indice = numR.nextInt(generos.length);
                 return generos[indice];
-            }*/
-            Random numR = new Random();
-            int indice = numR.nextInt(generos.length);
-            return generos[indice];
+            }
         }
         public static Lista getListaFav(){
             Lista listaFav=new Lista("Libros Favoritos", getListasUsuario().getLibrosLike());
             return listaFav;
         }
         public static Lista getListaCheck(){
-            Lista listaCheck=new Lista("Libros Leidos", getListasUsuario().getLibrosLike());
+            Lista listaCheck=new Lista("Libros Leidos", getListasUsuario().getLibrosCheck());
             return listaCheck;
         }
         public static List<Lista>getListasImborrables(){
