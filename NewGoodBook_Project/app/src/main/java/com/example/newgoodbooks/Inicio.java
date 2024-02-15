@@ -23,13 +23,13 @@ public class Inicio extends AppCompatActivity {
         eslogan=findViewById(R.id.txtview_descripcion_inicio);
         desc=findViewById(R.id.textview_desc);
 
-        Typeface fuenteActual=Typeface.createFromAsset(getAssets(),"fonts/"+getResources().getString(R.string.fuente1));
+        /*Typeface fuenteActual=Typeface.createFromAsset(getAssets(),"fonts/"+getResources().getString(R.string.fuenteC));
         nombre.setTypeface(fuenteActual);
         eslogan.setTypeface(fuenteActual);
         desc.setTypeface(fuenteActual);
         btn_Login.setTypeface(fuenteActual);
         btn_Register.setTypeface(fuenteActual);
-
+        */
         btn_Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

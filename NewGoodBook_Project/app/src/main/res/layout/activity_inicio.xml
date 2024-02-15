@@ -22,6 +22,7 @@
         android:layout_width="240dp"
         android:layout_height="50dp"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/chamberi_text_semibold"
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textSize="33sp"
@@ -32,9 +33,10 @@
 
     <TextView
         android:id="@+id/txtview_descripcion_inicio"
-        android:layout_width="300dp"
-        android:layout_height="130dp"
+        android:layout_width="303dp"
+        android:layout_height="84dp"
         android:layout_marginTop="33dp"
+        android:fontFamily="@font/chamberi_text_regular"
         android:text="@string/eslogan"
         android:textAlignment="center"
         android:textSize="20sp"
@@ -48,6 +50,8 @@
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="32dp"
+        android:backgroundTint="@color/dark_blue"
+        android:fontFamily="@font/chamberi_text_semibold"
         android:text="Registrarse"
         android:textSize="20sp"
         app:cornerRadius="5dp"
@@ -61,6 +65,8 @@
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="33dp"
+        android:backgroundTint="@color/dark_blue"
+        android:fontFamily="@font/chamberi_text_semibold"
         android:text="Iniciar Sesión"
         android:textSize="20sp"
         app:cornerRadius="5dp"
@@ -73,10 +79,13 @@
         android:id="@+id/textview_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/chamberi_text_light"
         android:text="@string/descripcion_inicio"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_iniciosesion" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_iniciosesion"
+        app:layout_constraintVertical_bias="0.333" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
