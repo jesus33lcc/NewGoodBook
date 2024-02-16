@@ -49,7 +49,6 @@ public class Listas extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
     }
 
     @Override
@@ -82,7 +81,7 @@ public class Listas extends Fragment {
         MySwipeHelper swipeHelper = new MySwipeHelper(getContext(), misListasRecyclerView, 200) {
             @Override
             public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
-                buffer.add(new MyButton(getActivity(),
+                buffer.add(new MyButton(getContext(),
                         "Delete",
                         30,
                         R.drawable.ic_delete4ever,
@@ -90,12 +89,11 @@ public class Listas extends Fragment {
                         new MyButtonClickListener() {
                             @Override
                             public void onClick(int pos) {
-                                Toast.makeText(getActivity(), "Lista eliminada", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Lista eliminada", Toast.LENGTH_SHORT).show();
                             }
                         }));
             }
         };
-
         return view;
     }
 
