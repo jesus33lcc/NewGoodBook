@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 public class ClienteBooks {
+    //metodo que devuelve una lista de libros por un nombre
     public static List<Libro> buscarTitulo(String nombre) {
         Books books=ClienteApi.getClient();
         Books.Volumes.List volumeList = null;
@@ -44,6 +45,7 @@ public class ClienteBooks {
         }
         return listaLibros;
     }
+    //mediante un id devuelve el libro
     public static Libro getLibro(String id){
         Books books=ClienteApi.getClient();
         try {
@@ -52,6 +54,7 @@ public class ClienteBooks {
             throw new RuntimeException(e);
         }
     }
+    //mediante una lista de ids devuelve los libros
     public static List<Libro>getLista(List<String>listaId){
         List<Libro>listaLibros=new ArrayList<>();
         for(String id:listaId){
@@ -59,6 +62,8 @@ public class ClienteBooks {
         }
         return listaLibros;
     }
+
+    //devuelve un Libro Aleatorio o en base a tus libros favoritos
     public static Libro getLibroAleatorio(){
         Libro libroAleatorio=null;
 
@@ -102,7 +107,7 @@ public class ClienteBooks {
         int indice=new Random().nextInt(listaLibros.size());
         return listaLibros.get(indice);
     }
-
+    //comprueba de que un Volume cumple con los campos requeridos
     public static boolean esValido(Volume volume) {
         if (volume == null || volume.getVolumeInfo() == null) {
             return false;

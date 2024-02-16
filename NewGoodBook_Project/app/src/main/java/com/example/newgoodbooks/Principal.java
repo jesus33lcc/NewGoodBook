@@ -24,6 +24,7 @@ public class Principal extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Actividad Principal que contiene los fragmentos y el menu de navegacion
         super.onCreate(savedInstanceState);
 
         binding = ActivityPrincipalBinding.inflate(getLayoutInflater());

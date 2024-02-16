@@ -29,6 +29,7 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<Boolean> estadoTBtnCheck;
 
     public HomeViewModel(){
+        //Creacion de variables locales
         titulo=new MutableLiveData<>();
         autor=new MutableLiveData<>();
         numPag=new MutableLiveData<>();
@@ -42,6 +43,7 @@ public class HomeViewModel extends ViewModel {
         listaLibrosMostrar=new LinkedList<>(Datos.DatosComunes.getListaRecomendar());
         libroMostrado=Datos.DatosComunes.getLibroRecomendar();
 
+        //asignacion de valor el las variables locales
         linkImagen.setValue(libroMostrado.getLinkImg());
         titulo.setValue(libroMostrado.getTitulo());
         autor.setValue(libroMostrado.getAutor().get(0));
@@ -90,6 +92,7 @@ public class HomeViewModel extends ViewModel {
         return estadoTBtnCheck;
     }
 
+    //metodo que actualiza los datos del fragment por el libro seleccionado
     public void cambiarVistaLibro(){
         titulo.postValue(libroMostrado.getTitulo());
         autor.postValue(libroMostrado.getAutor().get(0));
@@ -109,6 +112,7 @@ public class HomeViewModel extends ViewModel {
             estadoTBtnCheck.postValue(false);
         }
     }
+    //metodo que cambia el libro por el siguiente libro de la lista y rellena la lista
     public void cambioLibro(Context contexto){
         if(listaLibrosMostrar.size()>3){
             Executor executor= Executors.newSingleThreadExecutor();

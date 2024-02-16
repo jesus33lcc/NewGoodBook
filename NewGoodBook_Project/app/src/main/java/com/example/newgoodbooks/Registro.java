@@ -28,14 +28,14 @@ public class Registro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
+        // asignacion de las variables locales
         mAuth=FirebaseAuth.getInstance();
         txt_cuentaCreada=findViewById(R.id.txtview_cuentacreada);
         btn_registrarse=findViewById(R.id.btn_registrarse_register);
         editTextEmail=findViewById(R.id.edittxt_emailregister);
         editTextPassword=findViewById(R.id.edittxt_passwordRegister);
 
-
-
+        //metodo click, si tiene una cuenta lo lleva al Login
         txt_cuentaCreada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +43,7 @@ public class Registro extends AppCompatActivity {
                 finish();
             }
         });
-
+        //coge los campos de email y password e intenta crear una cuenta, luego de eso lo lleva al login
         btn_registrarse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

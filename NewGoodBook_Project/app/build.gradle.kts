@@ -38,6 +38,7 @@ android {
         exclude ("META-INF/LICENSE.txt")
         exclude ("META-INF/NOTICE.txt")
     }
+    buildToolsVersion = "34.0.0"
 }
 
 dependencies {

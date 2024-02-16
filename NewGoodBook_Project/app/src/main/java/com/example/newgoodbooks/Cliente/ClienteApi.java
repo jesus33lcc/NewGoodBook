@@ -13,10 +13,12 @@ import java.security.GeneralSecurityException;
 
 public class ClienteApi {
     private static Books books;
+    //Claves de la api y nombres, y nombres del proyecto
     private final static String CLAVE_API="AIzaSyBJvT0i6y_bX_9xhs2-ZzSaoq8T2vzyHZE";
     private final static String NOMBRE_PROYECTO="NewGoodBook";
     private final static String CLAVE_API_2="AIzaSyAzPpXG_8OTDowZqDZ-k6yKe8nWTXf1iQI";
     private final static String NOMBRE_PROYECTO_2="NewGoodB";
+    //devuelve objeto Books que es al cual se le hacen las peticiones
     public static Books getClient(){
         HttpTransport httpTransport = null;
         try {

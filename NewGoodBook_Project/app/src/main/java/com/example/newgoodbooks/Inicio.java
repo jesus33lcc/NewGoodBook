@@ -16,20 +16,13 @@ public class Inicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
+        // asignacion de las variables locales
         btn_Login=findViewById(R.id.btn_iniciosesion);
         btn_Register=findViewById(R.id.btn_registrarse);
-
         nombre=findViewById(R.id.txtview_nombre);
         eslogan=findViewById(R.id.txtview_descripcion_inicio);
         desc=findViewById(R.id.textview_desc);
-
-        /*Typeface fuenteActual=Typeface.createFromAsset(getAssets(),"fonts/"+getResources().getString(R.string.fuenteC));
-        nombre.setTypeface(fuenteActual);
-        eslogan.setTypeface(fuenteActual);
-        desc.setTypeface(fuenteActual);
-        btn_Login.setTypeface(fuenteActual);
-        btn_Register.setTypeface(fuenteActual);
-        */
+        //metodo click, lo lleva al Login
         btn_Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,7 +30,7 @@ public class Inicio extends AppCompatActivity {
                 finish();
             }
         });
-
+        //metodo click, lo lleva al Register
         btn_Register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

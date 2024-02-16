@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
+        //Asignacion de variables locales
         mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         binding=FragmentHomeBinding.inflate(inflater, container, false);
         View root =binding.getRoot();
@@ -66,6 +66,8 @@ public class HomeFragment extends Fragment {
         btnFav=binding.tBtnFavorite;
         btnCheck=binding.tBtnCheck;
         btnAddList=binding.tBtnAddList;
+
+        //vincula el dato del viewmodel con su componente
         mViewModel.getLinkImagen().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -135,6 +137,7 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+    //Muestra el dialog que te permite seleccionar la lista para añadir el libro
     private void showAlertDialogSingleChoice_addToList(){
         String[] nomListas = Datos.DatosComunes.getNomListasPersonal();
         AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
@@ -157,6 +160,7 @@ public class HomeFragment extends Fragment {
         addDialog.show();
         //alertDialog_Builder.show();
     }
+    //metodo que añade el libro a la lista seleccionada
     private void addLibro_To_Lista(int index){
         Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
         listaSelected.getLibros().add(mViewModel.getLibroMostrado());

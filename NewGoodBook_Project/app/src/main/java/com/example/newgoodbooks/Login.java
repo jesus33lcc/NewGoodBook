@@ -29,16 +29,17 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        // asignacion de las variables locales
         mAuth=FirebaseAuth.getInstance();
         btn_login=findViewById(R.id.btn_iniciosesion);
         btn_loginGoogle=findViewById(R.id.btn_iniciocongoogle);
-
         txt_passwordlost=findViewById(R.id.txt_passwordlost);
         txt_noCuenta=findViewById(R.id.txt_sincuenta);
-
         editTextEmail=findViewById(R.id.editxt_email);
         editTextPassword=findViewById(R.id.edittxt_password);
 
+        //metodo click, recoge el email y la contraseña introducida.
+        //si la cuenta esta registrada lo lleva a la vista Principal
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,6 +68,7 @@ public class Login extends AppCompatActivity {
                         });
             }
         });
+        //metodo click, si no tiene una cuenta lo lleva al Registro
         txt_noCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

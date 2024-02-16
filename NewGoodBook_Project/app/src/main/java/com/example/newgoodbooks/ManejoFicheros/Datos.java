@@ -26,22 +26,23 @@ public class Datos {
         private static List<String>listaGeneros;
         private static List<String>listaAutores;
 
+        //Palabras Comunes
         private static String[] palabras = new String[]{
                 "El", "La", "Los", "Las", "Un", "Una", "Unos", "Unas", "Y", "O",
                 "De", "En", "A", "Para", "Con", "Por", "Sin", "Hacia", "Sobre", "Entre",
                 "Tras", "Durante", "Ante", "Desde", "Hasta"};
+        //autores de prueba
         private static String[] autores = new String[]{
                 "Stephen King", "Agatha Christie", "Danielle Steel", "James Patterson",
                 "Nora Roberts", "J.K. Rowling", "Enid Blyton", "Terry Pratchett",
                 "Isaac Asimov", "Barbara Cartland"
         };
+        //generos de prueba
         private static String[] generos = new String[]{
                 "Thriller", "Fiction", "Science", "Romance", "Terror", "Drama", "Suspense", "Juvenil"
         };
 
         public static void setPrincipal(ArrayList<Object>libroYLista) {
-            //listaRecomendar = ClienteBooks.buscarTitulo("Harry Potter");
-            //libroRecomendar=listaRecomendar.get(0);
             libroRecomendar=(Libro)libroYLista.get(0);
             listaRecomendar=(List<Libro>) libroYLista.get(1);
         }
@@ -58,14 +59,14 @@ public class Datos {
         public static Libro getLibroRecomendar(){ return libroRecomendar; }
         public static List<Libro>getHistorialLibros(){ return historialLibros; }
         public static ListasUsuario getListasUsuario(){ return listasUsuario; }
-        public static List<String> getListaGeneros(){ return listaGeneros; }
-        public static List<String> getListaAutores(){ return listaAutores; }
 
+        //Devuelve una palabra aleatoria para hacer una busqueda
         public static String getPalabraRandom(){
             Random numR = new Random();
             int indice = numR.nextInt(palabras.length);
             return palabras[indice];
         }
+        //Devuelve un autor aleatorio o de los libros favoritos
         public static String getAutorRandom(){
             if(!listasUsuario.getAutores().isEmpty()){
                 Random numR=new Random();
@@ -77,6 +78,7 @@ public class Datos {
                 return autores[indice];
             }
         }
+        //Devuelve un genero aleatorio o de los libros favoritos
         public static String getGeneroRandom(){
             if(!listasUsuario.getGeneros().isEmpty()){
                 Random numR = new Random();
@@ -102,7 +104,7 @@ public class Datos {
             listas.add(getListaCheck());
             return listas;
         }
-
+        //devuelve una lista de con los nombres de las listas personalizadas
         public static String[] getNomListasPersonal(){
             List<Lista> listas = getListasUsuario().getListas();
             int tam = listas.size();
@@ -113,6 +115,7 @@ public class Datos {
             }
             return nomListas;
         }
+        //devuelve la lista por nombre introducido de las listas personalizadas
         public static Lista searchByIndexListas(int index){
             Lista listaSelected = getListasUsuario().getListas().get(index);
             return listaSelected;

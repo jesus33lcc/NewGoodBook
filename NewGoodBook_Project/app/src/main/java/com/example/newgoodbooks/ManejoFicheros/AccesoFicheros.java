@@ -20,9 +20,13 @@ import java.util.List;
 
 public class AccesoFicheros {
     private Context context;
+    //Constructor que pide el contexto de una actividad de donde se llama
     public AccesoFicheros(Context context){
         this.context=context;
     }
+    // comprueba si existe el fichero Principal, que contiene un libro y una lista de libros
+    // en caso de que exista lee sus datos y los devuelve
+    // sino crea una nueva lista y libro y lo devuelve
     public ArrayList<Object> getPrincipal(){
         String nombreFile="Principal";
         ArrayList<Object>libroYLista=new ArrayList<>();
@@ -55,6 +59,9 @@ public class AccesoFicheros {
             return libroYLista;
         }
     }
+    // comprueba si existe el fichero Historial, que contiene la lista del historial
+    // en caso de que exista lee su objeto y lo devuelve
+    // sino crea una lista vacia y lo devuelve
     public List<Libro> getHistorial(){
         String nombreFile="Historial";
         List<Libro>listaHistorial;
@@ -76,6 +83,9 @@ public class AccesoFicheros {
         }
         return listaHistorial;
     }
+    // comprueba si existe el fichero Listas, que contiene las listas del usuario
+    // en caso de que exista lee su objeto y lo devuelve
+    // sino crea un nuevo objeto vacio y lo devuelve
     public ListasUsuario getListas(){
         String nombreFile="Listas";
         ListasUsuario listasUsuario;
@@ -99,7 +109,7 @@ public class AccesoFicheros {
         return listasUsuario;
     }
 
-
+    //Recibe un libro y una lista, comprueba de que exista el fichero y reescribe el fichero Principal
     public void setPrincipal(Libro escribirLibro, List<Libro>listaRecomendar){
         String nombreFile="Principal";
         comprobarFichero(nombreFile);
@@ -114,6 +124,7 @@ public class AccesoFicheros {
             throw new RuntimeException(e);
         }
     }
+    //Recibe una lista, comprueba de que exista el fichero y reescribe el fichero Historial
     public void setHistorial(List<Libro>historial){
         String nombreFile="Historial";
         comprobarFichero(nombreFile);
@@ -127,6 +138,7 @@ public class AccesoFicheros {
             throw new RuntimeException(e);
         }
     }
+    //Recibe las listas del usuario, comprueba de que exista el fichero y reescribe el fichero Listas
     public void setListas(ListasUsuario listasUsuario){
         String nombreFile="Listas";
         comprobarFichero(nombreFile);
@@ -140,7 +152,8 @@ public class AccesoFicheros {
             throw new RuntimeException(e);
         }
     }
-
+    //recibe un nombre, en caso de que no exista lo crea y devuelve un false
+    //en caso de que exista devuelve un true
     public boolean comprobarFichero(String nombreFichero){
         File file=new File(context.getFilesDir(), nombreFichero);
         if(file.exists()){
