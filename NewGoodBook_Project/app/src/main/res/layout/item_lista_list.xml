@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="#FFFFFFFF"
     android:padding="8dp">
 
     <ImageView
@@ -14,15 +13,14 @@
         android:layout_marginLeft="4dp"
         tools:ignore="MissingConstraints" />
 
-    <TextView 
+    <TextView
         android:id="@+id/nombreLista_txt"
         android:layout_width="307dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="130dp"
+        android:layout_marginStart="82dp"
+        android:paddingLeft="1dp"
         android:layout_marginTop="28dp"
         android:text="Nombre lista"
-
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
