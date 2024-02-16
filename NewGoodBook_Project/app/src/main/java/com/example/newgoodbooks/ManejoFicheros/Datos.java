@@ -102,5 +102,20 @@ public class Datos {
             listas.add(getListaCheck());
             return listas;
         }
+
+        public static String[] getNomListasPersonal(){
+            List<Lista> listas = getListasUsuario().getListas();
+            int tam = listas.size();
+            String[] nomListas = new String[tam];
+            for(int i=0 ; i<tam ; i++) {
+
+                nomListas[i] = listas.get(i).getNombre();
+            }
+            return nomListas;
+        }
+        public static Lista searchByIndexListas(int index){
+            Lista listaSelected = getListasUsuario().getListas().get(index);
+            return listaSelected;
+        }
     }
 }

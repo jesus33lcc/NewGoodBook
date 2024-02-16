@@ -3,15 +3,11 @@ package com.example.newgoodbooks;
 import android.os.Bundle;
 
 import com.example.newgoodbooks.Fragments.Explorar;
-import com.example.newgoodbooks.Fragments.Home;
 import com.example.newgoodbooks.Fragments.HomeIU.HomeFragment;
 import com.example.newgoodbooks.Fragments.Listas;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;

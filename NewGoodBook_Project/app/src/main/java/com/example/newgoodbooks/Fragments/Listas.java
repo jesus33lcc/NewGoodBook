@@ -1,6 +1,8 @@
 package com.example.newgoodbooks.Fragments;
 
 import android.app.AlertDialog;
+//import androidx.appcompat.app.AlertDialog;
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -21,10 +23,7 @@ import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
 import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
-import com.example.newgoodbooks.Modelos.ListasUsuario;
 import com.example.newgoodbooks.R;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class Listas extends Fragment {
         btn_newAddLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showInputTextDialog_addList();
+                showInputTextDialog_newList();
             }
         });
 
@@ -106,11 +105,7 @@ public class Listas extends Fragment {
         misListasRecyclerView.setAdapter(listaListAdapter);
     }
 
-    public void showInputTextDialog_addList(){
-        /*TextInputEditText editText = view.fi
-        AlertDialog alertDialog = new MaterialAlertDialogBuilder(getContext())
-                .setTitle("Nueva Lista")
-                .setView(view)*/
+    public void showInputTextDialog_newList(){
         AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
         alertDialog_Builder.setTitle("Nueva Lista");
 
@@ -146,6 +141,7 @@ public class Listas extends Fragment {
 
         vaciarRecyclerView_listasImborrables();
         rellenarRecylerView_listasImborrables();
+
         Toast.makeText(getActivity(), "Lista '" + nomLista + "' creada", Toast.LENGTH_SHORT).show();
     }
 }
