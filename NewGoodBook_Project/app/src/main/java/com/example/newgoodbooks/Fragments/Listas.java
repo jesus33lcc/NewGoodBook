@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 //import androidx.appcompat.app.AlertDialog;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 
 import com.example.newgoodbooks.Fragments.AdapterList.ListaListAdapter;
 import com.example.newgoodbooks.Fragments.AdapterList.ListaImborrableAdapter;
+import com.example.newgoodbooks.Helper.MyButtonClickListener;
+import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
 import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
@@ -45,6 +48,8 @@ public class Listas extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -73,6 +78,23 @@ public class Listas extends Fragment {
                 showInputTextDialog_newList();
             }
         });
+
+        MySwipeHelper swipeHelper = new MySwipeHelper(getContext(), misListasRecyclerView, 200) {
+            @Override
+            public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
+                buffer.add(new MyButton(getActivity(),
+                        "Delete",
+                        30,
+                        R.drawable.ic_delete4ever,
+                        Color.parseColor("#FF3C30"),
+                        new MyButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                Toast.makeText(getActivity(), "Lista eliminada", Toast.LENGTH_SHORT).show();
+                            }
+                        }));
+            }
+        };
 
         return view;
     }

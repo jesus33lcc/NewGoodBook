@@ -172,7 +172,8 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="69dp">
+            android:layout_height="69dp"
+            android:background="@color/distinct_brown">
 
             <ToggleButton
                 android:id="@+id/tBtnFavorite"
