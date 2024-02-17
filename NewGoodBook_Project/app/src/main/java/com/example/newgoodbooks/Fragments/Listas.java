@@ -29,6 +29,7 @@ import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -89,7 +90,7 @@ public class Listas extends Fragment {
                         new MyButtonClickListener() {
                             @Override
                             public void onClick(int pos) {
-                                Toast.makeText(getContext(), "Lista eliminada", Toast.LENGTH_SHORT).show();
+                                showTextDialog_ConfirmDelete(pos);
                             }
                         }));
             }
@@ -136,7 +137,11 @@ public class Listas extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nombre_newList = inputText.getText().toString();
-                crearNuevaLista(nombre_newList);
+                if(!Arrays.asList(Datos.DatosComunes.getNomListasPersonal()).contains(nombre_newList)){
+                    crearNuevaLista(nombre_newList);
+                }else{
+                    Toast.makeText(getActivity(), "Nombre de Lista existente", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         alertDialog_Builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -163,5 +168,36 @@ public class Listas extends Fragment {
         rellenarRecylerView_listasImborrables();
 
         Toast.makeText(getActivity(), "Lista '" + nomLista + "' creada", Toast.LENGTH_SHORT).show();
+    }
+    private void showTextDialog_ConfirmDelete(int index){
+        AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
+        alertDialog_Builder.setTitle("¿Estas seguro que deseas elimniar esta lista?");
+        alertDialog_Builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteLista(index);
+                dialog.cancel();
+            }
+        });
+        alertDialog_Builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog_Builder.show();
+    }
+    private void deleteLista(int index){
+        Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
+        Datos.DatosComunes.getListasUsuario().getListas().remove(listaSelected);
+
+        vaciarRecyclerView_misListas();
+        rellenarRecylerView_misListas();
+
+        AccesoFicheros accesoFicheros = new AccesoFicheros(getContext());
+        accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
+
+        Toast.makeText(getActivity(), "Lista eliminada", Toast.LENGTH_SHORT).show();
     }
 }

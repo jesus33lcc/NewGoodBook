@@ -120,5 +120,14 @@ public class Datos {
             Lista listaSelected = getListasUsuario().getListas().get(index);
             return listaSelected;
         }
+        public static Lista searchByNameListas(String name) {
+            List<Lista> listas = DatosComunes.getListasUsuario().getListas();
+            for (Lista lista : listas) {
+                if (lista.getNombre().equals(name)) {
+                    return lista;
+                }
+            }
+            return null;
+        }
     }
 }
