@@ -20,5 +20,10 @@
         android:name="com.example.newgoodbooks.Fragments.HomeIU.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/fragmentLogout"
+        android:name="com.example.newgoodbooks.FragmentLogout"
+        android:label="fragment_logout"
+        tools:layout="@layout/fragment_logout" />
 
 </navigation>

@@ -5,5 +5,24 @@
         <item name="android:fontFamily">@font/chamberi_text_regular</item>
     </style>
 
+    <style name="AppBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/dark_blue</item>
+        <item name="itemIconTint">@color/distinct_brown</item>
+        <item name="itemTextColor">@color/white</item>
+        <item name="itemTextAppearanceActive">@style/BottomNavigationViewActive</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavigationViewInactive</item>
+    </style>
+
+    <!-- Estilo para el texto del ítem activo -->
+    <style name="BottomNavigationViewActive">
+        <item name="android:textColor">@color/light_brown</item>
+    </style>
+
+    <!-- Estilo para el texto del ítem inactivo -->
+    <style name="BottomNavigationViewInactive">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
     <style name="Theme.NewGoodBooks" parent="Base.Theme.NewGoodBooks" />
+
 </resources>
