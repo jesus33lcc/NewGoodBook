@@ -12,54 +12,44 @@ import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 
 import java.util.LinkedList;
-import java.util.concurrent.Executor;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class HomeViewModel extends ViewModel {
-    private Libro libroMostrado;
-    private LinkedList<Libro> listaLibrosMostrar;
-    private MutableLiveData<String> titulo;
-    private MutableLiveData<String> autor;
-    private MutableLiveData<String> numPag;
-    private MutableLiveData<String> fechaPublicacion;
-    private MutableLiveData<String> generos;
-    private MutableLiveData<String> descripcion;
-    private MutableLiveData<String> linkImagen;
-    private MutableLiveData<Boolean> estadoTBtnFav;
-    private MutableLiveData<Boolean> estadoTBtnCheck;
+    //cuantos libros intentamos tener en cola y a partir de cuantos volvemos a rellenar
+    private static final int OBJETIVO_COLA = 20;
+    private static final int MINIMO_COLA = 4;
+    //cortafuegos: si la api falla seguidas veces dejamos de insistir en vez de girar sin fin
+    private static final int MAX_FALLOS_SEGUIDOS = 5;
 
-    public HomeViewModel(){
-        //Creacion de variables locales
-        titulo=new MutableLiveData<>();
-        autor=new MutableLiveData<>();
-        numPag=new MutableLiveData<>();
-        fechaPublicacion=new MutableLiveData<>();
-        generos=new MutableLiveData<>();
-        descripcion=new MutableLiveData<>();
-        linkImagen=new MutableLiveData<>();
-        estadoTBtnFav=new MutableLiveData<>();
-        estadoTBtnCheck=new MutableLiveData<>();
+    //volatile: se lee y escribe desde el hilo principal y desde el executor
+    private volatile Libro libroMostrado;
+    private final LinkedList<Libro> listaLibrosMostrar;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private volatile boolean cargando;
 
-        listaLibrosMostrar=new LinkedList<>(Datos.DatosComunes.getListaRecomendar());
-        libroMostrado=Datos.DatosComunes.getLibroRecomendar();
+    private final MutableLiveData<String> titulo = new MutableLiveData<>();
+    private final MutableLiveData<String> autor = new MutableLiveData<>();
+    private final MutableLiveData<String> numPag = new MutableLiveData<>();
+    private final MutableLiveData<String> fechaPublicacion = new MutableLiveData<>();
+    private final MutableLiveData<String> generos = new MutableLiveData<>();
+    private final MutableLiveData<String> descripcion = new MutableLiveData<>();
+    private final MutableLiveData<String> linkImagen = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> estadoTBtnFav = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> estadoTBtnCheck = new MutableLiveData<>();
+    //false mientras no haya libro que mostrar: la pantalla usa esto para pasar a modo "Reintentar"
+    private final MutableLiveData<Boolean> hayLibro = new MutableLiveData<>();
 
-        //asignacion de valor el las variables locales
-        linkImagen.setValue(libroMostrado.getLinkImg());
-        titulo.setValue(libroMostrado.getTitulo());
-        autor.setValue(libroMostrado.getAutor().get(0));
-        numPag.setValue(String.valueOf(libroMostrado.getNumPag()));
-        fechaPublicacion.setValue(libroMostrado.getFechaPublicacion());
-        generos.setValue(libroMostrado.getGeneros().get(0));
-        descripcion.setValue(libroMostrado.getDescripcion());
-        if(Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(libroMostrado)){
-            estadoTBtnFav.setValue(true);
-        }else{
-            estadoTBtnFav.setValue(false);
-        }
-        if(Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(libroMostrado)){
-            estadoTBtnCheck.setValue(true);
-        }else{
-            estadoTBtnCheck.setValue(false);
+    public HomeViewModel() {
+        listaLibrosMostrar = new LinkedList<>(Datos.DatosComunes.getListaRecomendar());
+        libroMostrado = Datos.DatosComunes.getLibroRecomendar();
+        //valor inicial sincrono: si no, al volver a la pestana el boton parpadea a "Reintentar"
+        hayLibro.setValue(libroMostrado != null);
+        if (libroMostrado != null) {
+            cambiarVistaLibro();
+        } else {
+            mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
         }
     }
 
@@ -81,7 +71,6 @@ public class HomeViewModel extends ViewModel {
     public LiveData<String> getDescripcion() {
         return descripcion;
     }
-
     public LiveData<String> getLinkImagen() {
         return linkImagen;
     }
@@ -91,56 +80,149 @@ public class HomeViewModel extends ViewModel {
     public LiveData<Boolean> getEstadoTBtnCheck() {
         return estadoTBtnCheck;
     }
+    public LiveData<Boolean> getHayLibro() {
+        return hayLibro;
+    }
 
     //metodo que actualiza los datos del fragment por el libro seleccionado
-    public void cambiarVistaLibro(){
-        titulo.postValue(libroMostrado.getTitulo());
-        autor.postValue(libroMostrado.getAutor().get(0));
-        numPag.postValue(String.valueOf(libroMostrado.getNumPag()));
-        fechaPublicacion.postValue(libroMostrado.getFechaPublicacion());
-        generos.postValue(libroMostrado.getGeneros().get(0));
-        descripcion.postValue(libroMostrado.getDescripcion());
-        linkImagen.postValue(libroMostrado.getLinkImg());
-        if (Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(libroMostrado)){
-            estadoTBtnFav.postValue(true);
-        }else {
-            estadoTBtnFav.postValue(false);
+    public void cambiarVistaLibro() {
+        Libro libro = libroMostrado;
+        if (libro == null) {
+            return;
         }
-        if (Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(libroMostrado)){
-            estadoTBtnCheck.postValue(true);
-        }else {
-            estadoTBtnCheck.postValue(false);
-        }
+        titulo.postValue(libro.getTitulo());
+        autor.postValue(primero(libro.getAutor()));
+        numPag.postValue(String.valueOf(libro.getNumPag()));
+        fechaPublicacion.postValue(libro.getFechaPublicacion());
+        generos.postValue(primero(libro.getGeneros()));
+        descripcion.postValue(libro.getDescripcion());
+        linkImagen.postValue(libro.getLinkImg());
+        estadoTBtnFav.postValue(Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(libro));
+        estadoTBtnCheck.postValue(Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(libro));
+        hayLibro.postValue(true);
     }
-    //metodo que cambia el libro por el siguiente libro de la lista y rellena la lista
-    public void cambioLibro(Context contexto){
-        if(listaLibrosMostrar.size()>3){
-            Executor executor= Executors.newSingleThreadExecutor();
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    AccesoFicheros accesoFicheros=new AccesoFicheros(contexto);
-                    LinkedList<Libro>historial= (LinkedList<Libro>) Datos.DatosComunes.getHistorialLibros();
-                    historial.addFirst(libroMostrado);
-                    if(historial.size()>10){
-                        historial.removeLast();
-                    }
-                    libroMostrado=listaLibrosMostrar.poll();
-                    cambiarVistaLibro();
-                    accesoFicheros.setHistorial(Datos.DatosComunes.getHistorialLibros());
 
-                    while(listaLibrosMostrar.size()<20){
-                        Libro l= ClienteBooks.getLibroAleatorio();
-                        if(l!=null){
-                            listaLibrosMostrar.add(l);
-                        }
+    //deja la pantalla en un estado informativo cuando no hay ningun libro que ensenar
+    private void mostrarMensaje(String tit, String texto) {
+        titulo.postValue(tit);
+        descripcion.postValue(texto);
+        autor.postValue("");
+        numPag.postValue("");
+        fechaPublicacion.postValue("");
+        generos.postValue("");
+        linkImagen.postValue(null);
+        estadoTBtnFav.postValue(false);
+        estadoTBtnCheck.postValue(false);
+        hayLibro.postValue(false);
+    }
+
+    private static String primero(List<String> lista) {
+        return (lista == null || lista.isEmpty()) ? "" : lista.get(0);
+    }
+
+    //pide libros a la api en segundo plano. si falla lo dice por pantalla, nunca tumba la app.
+    public void cargarRecomendaciones(Context contexto) {
+        if (cargando) {
+            return;
+        }
+        cargando = true;
+        final Context appContext = contexto.getApplicationContext();
+        if (libroMostrado == null) {
+            mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
+        }
+        executor.execute(() -> {
+            try {
+                rellenarCola();
+                if (libroMostrado == null) {
+                    synchronized (listaLibrosMostrar) {
+                        libroMostrado = listaLibrosMostrar.poll();
                     }
-                    accesoFicheros.setPrincipal(libroMostrado,listaLibrosMostrar);
                 }
-            });
+                if (libroMostrado == null) {
+                    mostrarMensaje("Sin conexion",
+                            "No se han podido cargar libros. Comprueba tu conexion y pulsa Reintentar.");
+                } else {
+                    cambiarVistaLibro();
+                    guardar(appContext);
+                }
+            } finally {
+                cargando = false;
+            }
+        });
+    }
+
+    //metodo que cambia el libro por el siguiente de la cola y la vuelve a rellenar por detras
+    public void cambioLibro(Context contexto) {
+        final Libro anterior = libroMostrado;
+        Libro siguiente;
+        synchronized (listaLibrosMostrar) {
+            siguiente = listaLibrosMostrar.poll();
+        }
+        //sin libro actual o sin cola, el boton hace de "Reintentar"
+        if (anterior == null || siguiente == null) {
+            if (siguiente != null) {
+                libroMostrado = siguiente;
+                cambiarVistaLibro();
+            }
+            cargarRecomendaciones(contexto);
+            return;
+        }
+        libroMostrado = siguiente;
+        cambiarVistaLibro();
+
+        final Context appContext = contexto.getApplicationContext();
+        executor.execute(() -> {
+            List<Libro> historial = Datos.DatosComunes.getHistorialLibros();
+            historial.add(0, anterior);
+            while (historial.size() > 10) {
+                historial.remove(historial.size() - 1);
+            }
+            new AccesoFicheros(appContext).setHistorial(historial);
+
+            int enCola;
+            synchronized (listaLibrosMostrar) {
+                enCola = listaLibrosMostrar.size();
+            }
+            if (enCola < MINIMO_COLA) {
+                rellenarCola();
+            }
+            guardar(appContext);
+        });
+    }
+
+    //rellena la cola hasta OBJETIVO_COLA, rindiendose tras varios fallos seguidos de la api
+    private void rellenarCola() {
+        int fallosSeguidos = 0;
+        while (fallosSeguidos < MAX_FALLOS_SEGUIDOS) {
+            synchronized (listaLibrosMostrar) {
+                if (listaLibrosMostrar.size() >= OBJETIVO_COLA) {
+                    return;
+                }
+            }
+            Libro libro = ClienteBooks.getLibroAleatorio();
+            if (libro == null) {
+                fallosSeguidos++;
+                continue;
+            }
+            fallosSeguidos = 0;
+            synchronized (listaLibrosMostrar) {
+                listaLibrosMostrar.add(libro);
+            }
         }
     }
-    public void setEstadoTBtnFav(boolean bool){
+
+    //persiste el estado en disco y tambien en memoria, para que al volver de otra pestana
+    //la pantalla siga por el libro donde estaba
+    private void guardar(Context appContext) {
+        List<Libro> copia;
+        synchronized (listaLibrosMostrar) {
+            copia = new LinkedList<>(listaLibrosMostrar);
+        }
+        Datos.DatosComunes.setPrincipal(libroMostrado, copia);
+        new AccesoFicheros(appContext).setPrincipal(libroMostrado, copia);
+    }
+
+    public void setEstadoTBtnFav(boolean bool) {
         estadoTBtnFav.setValue(bool);
     }
 
@@ -150,5 +232,11 @@ public class HomeViewModel extends ViewModel {
 
     public Libro getLibroMostrado() {
         return libroMostrado;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executor.shutdown();
     }
 }

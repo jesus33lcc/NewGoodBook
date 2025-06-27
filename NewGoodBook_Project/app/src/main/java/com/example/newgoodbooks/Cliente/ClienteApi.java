@@ -1,39 +1,40 @@
 package com.example.newgoodbooks.Cliente;
 
+import android.util.Log;
+
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.books.v1.Books;
 import com.google.api.services.books.v1.BooksRequestInitializer;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 public class ClienteApi {
+    private static final String TAG = "ClienteApi";
+    //Clave de la api y nombre del proyecto
+    private final static String CLAVE_API = "AIzaSyAzPpXG_8OTDowZqDZ-k6yKe8nWTXf1iQI";
+    private final static String NOMBRE_PROYECTO = "NewGoodB";
+
     private static Books books;
-    //Claves de la api y nombres, y nombres del proyecto
-    private final static String CLAVE_API="AIzaSyBJvT0i6y_bX_9xhs2-ZzSaoq8T2vzyHZE";
-    private final static String NOMBRE_PROYECTO="NewGoodBook";
-    private final static String CLAVE_API_2="AIzaSyAzPpXG_8OTDowZqDZ-k6yKe8nWTXf1iQI";
-    private final static String NOMBRE_PROYECTO_2="NewGoodB";
-    //devuelve objeto Books que es al cual se le hacen las peticiones
-    public static Books getClient(){
-        HttpTransport httpTransport = null;
-        try {
-            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        } catch (GeneralSecurityException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+    //devuelve el objeto Books al cual se le hacen las peticiones.
+    //se construye una sola vez y se reutiliza. devuelve null si no se pudo crear.
+    public static synchronized Books getClient() {
+        if (books != null) {
+            return books;
         }
-        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-        HttpRequestInitializer httpRequestInitializer = null;
-        books = new Books.Builder(httpTransport, jsonFactory, httpRequestInitializer)
-                .setApplicationName(NOMBRE_PROYECTO_2)
-                .setGoogleClientRequestInitializer(new BooksRequestInitializer(CLAVE_API_2))
-                .build();
+        try {
+            HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+            books = new Books.Builder(httpTransport, jsonFactory, null)
+                    .setApplicationName(NOMBRE_PROYECTO)
+                    .setGoogleClientRequestInitializer(new BooksRequestInitializer(CLAVE_API))
+                    .build();
+        } catch (Exception e) {
+            //sin cliente no hay peticiones, pero no se tumba la app: quien llame maneja el null
+            Log.e(TAG, "No se pudo crear el cliente de Google Books", e);
+            books = null;
+        }
         return books;
     }
 }

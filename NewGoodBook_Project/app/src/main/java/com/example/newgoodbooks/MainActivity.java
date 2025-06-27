@@ -4,44 +4,47 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
 import com.example.newgoodbooks.ManejoFicheros.Datos;
-import com.example.newgoodbooks.Modelos.Libro;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Creo un hilo mientras se esta ejecutando esta actividad a modo de splash screen
+        //Hilo mientras se ejecuta esta actividad a modo de splash screen.
+        //Solo lee ficheros locales: las recomendaciones se piden ya dentro de Home,
+        //asi que un fallo de red no puede impedir que la app arranque.
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AccesoFicheros accesoFicheros=new AccesoFicheros(getApplicationContext());
-                //Lee los ficheros, recupera los datos y los guarda en los datos estaticos
-                Datos.DatosComunes.setListasUsuario(accesoFicheros.getListas());
-                Datos.DatosComunes.setHistorial(accesoFicheros.getHistorial());
-                Datos.DatosComunes.setPrincipal(accesoFicheros.getPrincipal());
-                //Verifica si el usuario ya esta logeado
-                FirebaseAuth mAuth=FirebaseAuth.getInstance();
-                FirebaseUser firebaseUser=mAuth.getCurrentUser();
-                if(firebaseUser!=null){
-                    //Ya hay una cuenta iniciada y lo manda a la actividad principal
-                    Intent intent=new Intent(getApplicationContext(), Principal.class);
-                    startActivity(intent);
-                    finish();
-                }else{
-                    //No hay ninguna cuenta iniciada y lo lleva al inicio de la app
-                    Intent intent=new Intent(MainActivity.this, Inicio.class);
-                    startActivity(intent);
-                    finish();
+                try {
+                    AccesoFicheros accesoFicheros = new AccesoFicheros(getApplicationContext());
+                    Datos.DatosComunes.setListasUsuario(accesoFicheros.getListas());
+                    Datos.DatosComunes.setHistorial(accesoFicheros.getHistorial());
+                    Datos.DatosComunes.setPrincipal(accesoFicheros.getPrincipal());
+                } catch (Exception e) {
+                    //pase lo que pase se entra a la app; los getters de Datos se auto-inicializan vacios
+                    Log.e(TAG, "Fallo cargando los datos locales, se arranca sin ellos", e);
                 }
+                //Verifica si el usuario ya esta logeado
+                boolean haySesion = FirebaseAuth.getInstance().getCurrentUser() != null;
+                final Class<?> destino = haySesion ? Principal.class : Inicio.class;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
+                        startActivity(new Intent(MainActivity.this, destino));
+                        finish();
+                    }
+                });
             }
         }).start();
     }

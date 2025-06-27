@@ -82,9 +82,17 @@ public class ContenidoLista extends AppCompatActivity {
     }
 
     private void deleteLista(int index){
+        if (index < 0 || index >= listaLibrosSelected.getLibros().size()) {
+            return;
+        }
         Libro libroDelete = listaLibrosSelected.getLibros().get(index);
         listaLibrosSelected.getLibros().remove(index);
-        Datos.DatosComunes.searchByNameListas(listaLibrosSelected.getNombre()).getLibros().remove(libroDelete);
+        //el Lista que llega por el Intent es una COPIA (Serializable), asi que hay que
+        //borrar tambien en el original que vive en Datos; puede no existir si es una lista fija
+        Lista original = Datos.DatosComunes.searchByNameListas(listaLibrosSelected.getNombre());
+        if (original != null) {
+            original.getLibros().remove(libroDelete);
+        }
         vaciarRecyclerView_misLibros();
         rellenarRecylerView_misLibros();
 

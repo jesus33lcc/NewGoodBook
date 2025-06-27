@@ -71,7 +71,24 @@ public class HomeFragment extends Fragment {
         mViewModel.getLinkImagen().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                Picasso.get().load(s).into(portada);
+                //sin portada (o sin libro) se limpia: Picasso revienta con cadena vacia
+                if (s == null || s.trim().isEmpty()) {
+                    portada.setImageDrawable(null);
+                } else {
+                    Picasso.get().load(s).into(portada);
+                }
+            }
+        });
+
+        //cuando no hay libro que mostrar, la pantalla pasa a modo "Reintentar"
+        mViewModel.getHayLibro().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean hay) {
+                boolean disponible = Boolean.TRUE.equals(hay);
+                botonSig.setText(disponible ? "Siguiente" : "Reintentar");
+                btnFav.setEnabled(disponible);
+                btnCheck.setEnabled(disponible);
+                btnAddList.setEnabled(disponible);
             }
         });
 
@@ -102,8 +119,11 @@ public class HomeFragment extends Fragment {
         btnFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mViewModel.getLibroMostrado() == null) {
+                    return;
+                }
                 AccesoFicheros accesoFicheros=new AccesoFicheros(getContext());
-                if(mViewModel.getEstadoTBtnFav().getValue()){
+                if(Boolean.TRUE.equals(mViewModel.getEstadoTBtnFav().getValue())){
                     Datos.DatosComunes.getListasUsuario().getLibrosLike().remove(mViewModel.getLibroMostrado());
                     mViewModel.setEstadoTBtnFav(false);
                 }else {
@@ -116,8 +136,11 @@ public class HomeFragment extends Fragment {
         btnCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mViewModel.getLibroMostrado() == null) {
+                    return;
+                }
                 AccesoFicheros accesoFicheros=new AccesoFicheros(getContext());
-                if(mViewModel.getEstadoTBtnCheck().getValue()){
+                if(Boolean.TRUE.equals(mViewModel.getEstadoTBtnCheck().getValue())){
                     Datos.DatosComunes.getListasUsuario().getLibrosCheck().remove(mViewModel.getLibroMostrado());
                     mViewModel.setEstadoTBtnCheck(false);
                 }else {
@@ -131,15 +154,28 @@ public class HomeFragment extends Fragment {
         btnAddList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mViewModel.getLibroMostrado() == null) {
+                    return;
+                }
                 showAlertDialogSingleChoice_addToList();
             }
         });
+
+        //si al abrir no hay recomendacion guardada, se pide a la api en segundo plano
+        if (mViewModel.getLibroMostrado() == null) {
+            mViewModel.cargarRecomendaciones(requireContext());
+        }
 
         return root;
     }
     //Muestra el dialog que te permite seleccionar la lista para añadir el libro
     private void showAlertDialogSingleChoice_addToList(){
         String[] nomListas = Datos.DatosComunes.getNomListasPersonal();
+        if (nomListas.length == 0) {
+            Toast.makeText(getActivity(), "Todavia no tienes ninguna lista. Crea una en Listas.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
         alertDialog_Builder.setTitle("Añadir a lista");
         alertDialog_Builder.setIcon(R.drawable.ic_listas);
@@ -163,12 +199,15 @@ public class HomeFragment extends Fragment {
     //metodo que añade el libro a la lista seleccionada
     private void addLibro_To_Lista(int index){
         Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
+        if (listaSelected == null || mViewModel.getLibroMostrado() == null) {
+            return;
+        }
         listaSelected.getLibros().add(mViewModel.getLibroMostrado());
 
         AccesoFicheros accesoFicheros = new AccesoFicheros(getContext());
         accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
 
-        Toast.makeText(getActivity(), "Añadido a '" + listaSelected.getNombre(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Añadido a '" + listaSelected.getNombre() + "'", Toast.LENGTH_SHORT).show();
     }
 
     @Override

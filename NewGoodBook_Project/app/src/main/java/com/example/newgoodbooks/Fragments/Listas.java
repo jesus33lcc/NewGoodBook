@@ -190,6 +190,9 @@ public class Listas extends Fragment {
     }
     private void deleteLista(int index){
         Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
+        if (listaSelected == null) {
+            return;
+        }
         Datos.DatosComunes.getListasUsuario().getListas().remove(listaSelected);
 
         vaciarRecyclerView_misListas();

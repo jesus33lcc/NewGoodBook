@@ -139,11 +139,14 @@ public class LibroData extends AppCompatActivity {
     //metodo que añade el libro a la lista seleccionada
     private void addLibro_To_Lista(int index){
         Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
+        if (listaSelected == null || bookSelected == null) {
+            return;
+        }
         listaSelected.getLibros().add(bookSelected);
 
         AccesoFicheros accesoFicheros = new AccesoFicheros(getBaseContext());
         accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
 
-        Toast.makeText(getBaseContext(), "Añadido a '" + listaSelected.getNombre(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "Añadido a '" + listaSelected.getNombre() + "'", Toast.LENGTH_SHORT).show();
     }
 }
