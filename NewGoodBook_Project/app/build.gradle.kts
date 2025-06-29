@@ -22,7 +22,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-        
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -54,13 +54,15 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
     implementation("com.google.firebase:firebase-auth:22.3.1")
+    // La app ya no habla con Google Books: pasa por las Cloud Functions, que son
+    // quienes guardan la clave. Por eso ya no hace falta google-api-services-books.
+    implementation("com.google.firebase:firebase-functions:20.4.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("androidx.fragment:fragment-ktx:1.6.2")
-    implementation("com.google.apis:google-api-services-books:v1-rev20230203-2.0.0")
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
     implementation("com.squareup.picasso:picasso:2.71828")
 }

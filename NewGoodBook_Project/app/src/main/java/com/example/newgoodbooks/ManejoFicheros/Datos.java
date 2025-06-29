@@ -7,7 +7,6 @@ import com.example.newgoodbooks.Modelos.ListasUsuario;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class Datos {
     //Estado en memoria compartido por toda la app. Lo rellena MainActivity al arrancar,
@@ -24,21 +23,7 @@ public class Datos {
         //Listas
         private static ListasUsuario listasUsuario;
 
-        //Palabras Comunes
-        private static String[] palabras = new String[]{
-                "El", "La", "Los", "Las", "Un", "Una", "Unos", "Unas", "Y", "O",
-                "De", "En", "A", "Para", "Con", "Por", "Sin", "Hacia", "Sobre", "Entre",
-                "Tras", "Durante", "Ante", "Desde", "Hasta"};
-        //autores de prueba
-        private static String[] autores = new String[]{
-                "Stephen King", "Agatha Christie", "Danielle Steel", "James Patterson",
-                "Nora Roberts", "J.K. Rowling", "Enid Blyton", "Terry Pratchett",
-                "Isaac Asimov", "Barbara Cartland"
-        };
-        //generos de prueba
-        private static String[] generos = new String[]{
-                "Thriller", "Fiction", "Science", "Romance", "Terror", "Drama", "Suspense", "Juvenil"
-        };
+        //(las semillas de recomendacion ya no viven aqui: las elige la Cloud Function)
 
         //recibe lo leido del fichero Principal, que puede venir vacio si aun no hay nada guardado
         public static void setPrincipal(ArrayList<Object> libroYLista) {
@@ -91,32 +76,6 @@ public class Datos {
                 listasUsuario = new ListasUsuario();
             }
             return listasUsuario;
-        }
-
-        //Devuelve una palabra aleatoria para hacer una busqueda
-        public static String getPalabraRandom() {
-            Random numR = new Random();
-            return palabras[numR.nextInt(palabras.length)];
-        }
-
-        //Devuelve un autor de los libros favoritos, o uno de prueba si aun no hay favoritos
-        public static String getAutorRandom() {
-            Random numR = new Random();
-            List<String> propios = getListasUsuario().getAutores();
-            if (!propios.isEmpty()) {
-                return propios.get(numR.nextInt(propios.size()));
-            }
-            return autores[numR.nextInt(autores.length)];
-        }
-
-        //Devuelve un genero de los libros favoritos, o uno de prueba si aun no hay favoritos
-        public static String getGeneroRandom() {
-            Random numR = new Random();
-            List<String> propios = getListasUsuario().getGeneros();
-            if (!propios.isEmpty()) {
-                return propios.get(numR.nextInt(propios.size()));
-            }
-            return generos[numR.nextInt(generos.length)];
         }
 
         public static Lista getListaFav() {

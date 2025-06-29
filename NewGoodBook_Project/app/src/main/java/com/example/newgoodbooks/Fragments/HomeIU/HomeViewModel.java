@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.newgoodbooks.Cliente.ClienteBooks;
+import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
 import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
@@ -20,8 +20,6 @@ public class HomeViewModel extends ViewModel {
     //cuantos libros intentamos tener en cola y a partir de cuantos volvemos a rellenar
     private static final int OBJETIVO_COLA = 20;
     private static final int MINIMO_COLA = 4;
-    //cortafuegos: si la api falla seguidas veces dejamos de insistir en vez de girar sin fin
-    private static final int MAX_FALLOS_SEGUIDOS = 5;
 
     //volatile: se lee y escribe desde el hilo principal y desde el executor
     private volatile Libro libroMostrado;
@@ -190,23 +188,26 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    //rellena la cola hasta OBJETIVO_COLA, rindiendose tras varios fallos seguidos de la api
+    //rellena la cola con UNA sola llamada al servidor, que devuelve el lote entero.
+    //(el diseno anterior gastaba una peticion a la API por cada libro)
     private void rellenarCola() {
-        int fallosSeguidos = 0;
-        while (fallosSeguidos < MAX_FALLOS_SEGUIDOS) {
-            synchronized (listaLibrosMostrar) {
-                if (listaLibrosMostrar.size() >= OBJETIVO_COLA) {
-                    return;
+        int faltan;
+        synchronized (listaLibrosMostrar) {
+            faltan = OBJETIVO_COLA - listaLibrosMostrar.size();
+        }
+        if (faltan <= 0) {
+            return;
+        }
+        List<Libro> nuevos = ClienteFunciones.librosAleatorios(faltan);
+        if (nuevos.isEmpty()) {
+            return;
+        }
+        synchronized (listaLibrosMostrar) {
+            for (Libro libro : nuevos) {
+                //Libro compara por id, asi evitamos repetir el que ya se ve o los de la cola
+                if (!libro.equals(libroMostrado) && !listaLibrosMostrar.contains(libro)) {
+                    listaLibrosMostrar.add(libro);
                 }
-            }
-            Libro libro = ClienteBooks.getLibroAleatorio();
-            if (libro == null) {
-                fallosSeguidos++;
-                continue;
-            }
-            fallosSeguidos = 0;
-            synchronized (listaLibrosMostrar) {
-                listaLibrosMostrar.add(libro);
             }
         }
     }

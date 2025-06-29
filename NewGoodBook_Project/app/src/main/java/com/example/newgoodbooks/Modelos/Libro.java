@@ -1,12 +1,9 @@
 package com.example.newgoodbooks.Modelos;
 
-import com.google.api.services.books.v1.model.Volume;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Libro implements Serializable {
@@ -32,15 +29,47 @@ public class Libro implements Serializable {
 
     public Libro() {
     }
-    public Libro(Volume volume){
-        id=volume.getId();
-        titulo=volume.getVolumeInfo().getTitle();
-        autor=new ArrayList<>(volume.getVolumeInfo().getAuthors());
-        numPag=volume.getVolumeInfo().getPageCount();
-        fechaPublicacion=volume.getVolumeInfo().getPublishedDate();
-        generos=new ArrayList<>(volume.getVolumeInfo().getCategories());
-        descripcion=volume.getVolumeInfo().getDescription();
-        linkImg=volume.getVolumeInfo().getImageLinks().getThumbnail().replace("http","https");
+
+    //Construye un Libro con lo que devuelve la Cloud Function.
+    //Devuelve null si al mapa le falta algo imprescindible, para que nunca
+    //llegue a la pantalla un libro a medias.
+    public static Libro desdeMapa(Map<?, ?> mapa) {
+        if (mapa == null) {
+            return null;
+        }
+        Libro libro = new Libro();
+        libro.id = texto(mapa.get("id"));
+        libro.titulo = texto(mapa.get("titulo"));
+        libro.autor = listaTextos(mapa.get("autor"));
+        libro.fechaPublicacion = texto(mapa.get("fechaPublicacion"));
+        libro.generos = listaTextos(mapa.get("generos"));
+        libro.descripcion = texto(mapa.get("descripcion"));
+        libro.linkImg = texto(mapa.get("linkImg"));
+
+        Object paginas = mapa.get("numPag");
+        libro.numPag = (paginas instanceof Number) ? ((Number) paginas).intValue() : 0;
+
+        if (libro.id == null || libro.titulo == null || libro.linkImg == null
+                || libro.autor.isEmpty() || libro.generos.isEmpty()) {
+            return null;
+        }
+        return libro;
+    }
+
+    private static String texto(Object valor) {
+        return valor == null ? null : String.valueOf(valor);
+    }
+
+    private static List<String> listaTextos(Object valor) {
+        List<String> salida = new ArrayList<>();
+        if (valor instanceof List) {
+            for (Object elemento : (List<?>) valor) {
+                if (elemento != null) {
+                    salida.add(String.valueOf(elemento));
+                }
+            }
+        }
+        return salida;
     }
     public String toString() {
         StringBuilder builder=new StringBuilder();

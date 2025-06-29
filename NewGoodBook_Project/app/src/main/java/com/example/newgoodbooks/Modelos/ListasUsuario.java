@@ -1,6 +1,5 @@
 package com.example.newgoodbooks.Modelos;
 
-import com.example.newgoodbooks.Cliente.ClienteBooks;
 
 import java.io.Serializable;
 import java.util.ArrayList;

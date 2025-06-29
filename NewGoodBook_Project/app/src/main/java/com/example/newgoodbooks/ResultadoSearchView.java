@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import com.example.newgoodbooks.Cliente.ClienteBooks;
+import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.Modelos.Libro;
 
@@ -49,7 +49,7 @@ public class ResultadoSearchView extends AppCompatActivity {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                listaLibrosResultados=new ArrayList<>(ClienteBooks.buscarTitulo(titulo_a_buscar));
+                listaLibrosResultados=new ArrayList<>(ClienteFunciones.buscarTitulo(titulo_a_buscar));
                 fillRecycleList();
             }
         });
