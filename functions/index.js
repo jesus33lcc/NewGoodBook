@@ -9,7 +9,7 @@ setGlobalOptions({
   region: "europe-west1",
   maxInstances: 5,
   minInstances: 0,
-  timeoutSeconds: 30,
+  timeoutSeconds: 60,
   memory: "256MiB",
 });
 
@@ -22,6 +22,11 @@ const BASE_URL = "https://www.googleapis.com/books/v1/volumes";
 const MAX_INTENTOS = 6;
 const ESPERA_BASE_MS = 400;
 const ESPERA_MAX_MS = 2000;
+// PRESUPUESTO DE TIEMPO. Sin esto, varias semillas encadenando 6 reintentos cada una
+// se comian el timeout de la funcion y moria sin devolver nada: por eso la pantalla
+// Home salia vacia en el primer arranque (instancia fria + Books dando 503).
+// Se corta al llegar aqui y se devuelve lo que se tenga.
+const PRESUPUESTO_MS = 40000;
 
 // Cache en memoria de la instancia. Ahorra cuota de la API de Books en las
 // peticiones repetidas y no cuesta nada (no usa Firestore ni Storage).
@@ -60,8 +65,9 @@ function cacheSet(clave, valor) {
 
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// La API de Books devuelve 503 con frecuencia: reintentamos con espera creciente.
-async function pedirABooks(params, apiKey) {
+// La API de Books devuelve 503 con frecuencia: reintentamos con espera creciente,
+// pero sin pasarnos del plazo (limite) que nos deja el presupuesto de la invocacion.
+async function pedirABooks(params, apiKey, limite, maxIntentos = MAX_INTENTOS) {
   const url = new URL(BASE_URL);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   url.searchParams.set("key", apiKey);
@@ -71,7 +77,11 @@ async function pedirABooks(params, apiKey) {
   if (enCache) return enCache;
 
   let espera = ESPERA_BASE_MS;
-  for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+  for (let intento = 1; intento <= maxIntentos; intento++) {
+    if (Date.now() >= limite) {
+      logger.warn(`Sin tiempo tras ${intento - 1} intentos; se abandona la peticion`);
+      break;
+    }
     try {
       const res = await fetch(url, {signal: AbortSignal.timeout(8000)});
       if (res.ok) {
@@ -84,13 +94,16 @@ async function pedirABooks(params, apiKey) {
         logger.error("Books respondio " + res.status, {params});
         return cacheGetCaducado(clave);
       }
-      logger.warn(`Books ${res.status}, intento ${intento}/${MAX_INTENTOS}`);
+      logger.warn(`Books ${res.status}, intento ${intento}/${maxIntentos}`);
     } catch (e) {
-      logger.warn(`Fallo de red, intento ${intento}/${MAX_INTENTOS}`, e);
+      logger.warn(`Fallo de red, intento ${intento}/${maxIntentos}`, e);
     }
-    if (intento < MAX_INTENTOS) {
-      // espera creciente con algo de aleatoriedad, topada para no agotar el timeout
-      await dormir(Math.round(espera * (0.7 + Math.random() * 0.6)));
+    if (intento < maxIntentos) {
+      // espera creciente con algo de aleatoriedad, recortada si queda poco plazo
+      const propuesta = Math.round(espera * (0.7 + Math.random() * 0.6));
+      const restante = limite - Date.now();
+      if (restante <= 0) break;
+      await dormir(Math.min(propuesta, restante));
       espera = Math.min(espera * 2, ESPERA_MAX_MS);
     }
   }
@@ -140,7 +153,10 @@ const SEMILLAS = [
   "inauthor:Isaac+Asimov", "inauthor:Terry+Pratchett",
   "inauthor:J.K.+Rowling", "inauthor:Gabriel+Garcia+Marquez",
 ];
-const MAX_CONSULTAS = 4;
+// Pocos reintentos por semilla y mas semillas: si una consulta da 503, probar otra
+// distinta rinde mas que insistir en la misma, y ademas cachea mas variedad.
+const MAX_CONSULTAS = 8;
+const INTENTOS_POR_SEMILLA = 2;
 
 function barajar(lista) {
   for (let i = lista.length - 1; i > 0; i--) {
@@ -165,12 +181,13 @@ exports.buscarLibros = onCall(
       if (!consulta) {
         throw new HttpsError("invalid-argument", "Falta el texto a buscar.");
       }
+      const limite = Date.now() + PRESUPUESTO_MS;
       const datos = await pedirABooks({
         q: consulta.slice(0, 200),
         orderBy: "relevance",
         maxResults: "40",
         printType: "books",
-      }, GOOGLE_BOOKS_API_KEY.value());
+      }, GOOGLE_BOOKS_API_KEY.value(), limite);
 
       if (!datos) return {libros: [], error: "no-disponible"};
       const libros = (datos.items || []).map(aLibro).filter(Boolean);
@@ -191,19 +208,24 @@ exports.librosAleatorios = onCall(
       const encontrados = [];
       const vistos = new Set();
       let consultas = 0;
+      const limite = Date.now() + PRESUPUESTO_MS;
 
-      // Varias consultas por llamada hasta reunir los libros pedidos.
-      // Sigue siendo mucho mas barato que el diseno viejo (una peticion por libro)
-      // y ademas cada semilla queda cacheada.
+      // Varias consultas por llamada hasta reunir los libros pedidos, siempre
+      // dentro del presupuesto: antes se encadenaban sin control y la invocacion
+      // moria por timeout devolviendo nada.
       for (const semilla of semillas) {
         if (encontrados.length >= cuantos || consultas >= MAX_CONSULTAS) break;
+        if (Date.now() >= limite) {
+          logger.warn(`Sin tiempo: se devuelven ${encontrados.length} libros`);
+          break;
+        }
         consultas++;
         const datos = await pedirABooks({
           q: semilla,
           orderBy: "relevance",
           maxResults: "40",
           printType: "books",
-        }, GOOGLE_BOOKS_API_KEY.value());
+        }, GOOGLE_BOOKS_API_KEY.value(), limite, INTENTOS_POR_SEMILLA);
         if (!datos) continue;
         for (const libro of (datos.items || []).map(aLibro)) {
           if (libro && !vistos.has(libro.id)) {
