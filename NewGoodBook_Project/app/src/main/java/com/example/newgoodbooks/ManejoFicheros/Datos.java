@@ -44,6 +44,14 @@ public class Datos {
             listaRecomendar = lista != null ? new LinkedList<>(lista) : new LinkedList<Libro>();
         }
 
+        //deja el estado en memoria como recien instalada la app (se usa al cerrar sesion)
+        public static void limpiar() {
+            libroRecomendar = null;
+            listaRecomendar = new LinkedList<>();
+            historialLibros = new LinkedList<>();
+            listasUsuario = new ListasUsuario();
+        }
+
         public static void setHistorial(List<Libro> historial) {
             historialLibros = historial;
         }

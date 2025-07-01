@@ -109,6 +109,17 @@ public class AccesoFicheros {
         }
     }
 
+    //borra todo lo guardado. se usa al cerrar sesion, para que el siguiente usuario
+    //de este dispositivo no se encuentre las listas ni el historial del anterior.
+    public void borrarTodo() {
+        for (String nombre : new String[]{FICHERO_PRINCIPAL, FICHERO_HISTORIAL, FICHERO_LISTAS}) {
+            File fichero = new File(context.getFilesDir(), nombre);
+            if (fichero.exists() && !fichero.delete()) {
+                Log.w(TAG, "No se pudo borrar '" + nombre + "'");
+            }
+        }
+    }
+
     //true solo si el fichero existe Y tiene datos (uno vacio cuenta como "no hay nada")
     private boolean tieneContenido(String nombreFichero) {
         File file = new File(context.getFilesDir(), nombreFichero);
