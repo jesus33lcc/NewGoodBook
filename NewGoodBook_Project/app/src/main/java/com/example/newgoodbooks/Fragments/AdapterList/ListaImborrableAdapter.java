@@ -37,12 +37,14 @@ public class ListaImborrableAdapter extends RecyclerView.Adapter<ListaImborrable
         String nomLista = itemLista.getNombre();
         holder.nombreLista.setText(nomLista);
 
+        //siempre hay que asignar un icono: sin el "else" la fila se quedaba en blanco
+        //en cuanto el nombre no coincidiera exactamente
         if(nomLista.equalsIgnoreCase("Libros Favoritos")){
             holder.iconoLista.setImageResource(R.drawable.ic_favorite_on);
-        }
-
-        if(nomLista.equalsIgnoreCase("Libros Leidos")){
+        } else if(nomLista.equalsIgnoreCase("Libros Leidos")){
             holder.iconoLista.setImageResource(R.drawable.ic_librarycheck);
+        } else {
+            holder.iconoLista.setImageResource(R.drawable.ic_listas);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

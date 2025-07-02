@@ -117,6 +117,11 @@ public class LibroData extends AppCompatActivity {
     }
     private void showAlertDialogSingleChoice_addToList() {
         String[] nomListas = Datos.DatosComunes.getNomListasPersonal();
+        if (nomListas.length == 0) {
+            Toast.makeText(this, "Todavia no tienes ninguna lista. Crea una en Listas.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LibroData.this); // Cambiado getBaseContext() a LibroData.this
         alertDialogBuilder.setTitle("Añadir a lista");
         alertDialogBuilder.setIcon(R.drawable.ic_listas);

@@ -136,12 +136,25 @@ public class Listas extends Fragment {
         alertDialog_Builder.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String nombre_newList = inputText.getText().toString();
-                if(!Arrays.asList(Datos.DatosComunes.getNomListasPersonal()).contains(nombre_newList)){
-                    crearNuevaLista(nombre_newList);
-                }else{
-                    Toast.makeText(getActivity(), "Nombre de Lista existente", Toast.LENGTH_SHORT).show();
+                String nombre_newList = inputText.getText().toString().trim();
+                if(nombre_newList.isEmpty()){
+                    Toast.makeText(getActivity(), "Ponle un nombre a la lista", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                //los nombres de las listas fijas estan reservados: si se repiten,
+                //se confunden con ellas al buscar por nombre y al elegir icono
+                if(nombre_newList.equalsIgnoreCase("Libros Favoritos")
+                        || nombre_newList.equalsIgnoreCase("Libros Leidos")){
+                    Toast.makeText(getActivity(), "Ese nombre esta reservado", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                for(String existente : Datos.DatosComunes.getNomListasPersonal()){
+                    if(existente.equalsIgnoreCase(nombre_newList)){
+                        Toast.makeText(getActivity(), "Nombre de Lista existente", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                crearNuevaLista(nombre_newList);
             }
         });
         alertDialog_Builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
