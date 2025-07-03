@@ -1,0 +1,22 @@
+rules_version = '2';
+
+// Cada usuario solo puede leer y escribir SU propio subarbol.
+// Todo lo que no coincida con estas reglas queda denegado por defecto,
+// asi que no hay forma de listar ni tocar los datos de otra cuenta.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /usuarios/{uid} {
+      allow read, write: if esElDuenio(uid);
+
+      // listas, favoritos, leidos, historial... todo lo que cuelgue del usuario
+      match /{documento=**} {
+        allow read, write: if esElDuenio(uid);
+      }
+    }
+
+    function esElDuenio(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
