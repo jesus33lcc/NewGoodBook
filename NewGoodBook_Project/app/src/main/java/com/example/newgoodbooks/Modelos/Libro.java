@@ -2,6 +2,7 @@ package com.example.newgoodbooks.Modelos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +55,21 @@ public class Libro implements Serializable {
             return null;
         }
         return libro;
+    }
+
+    //Representacion para guardar en Firestore. Mismas claves que usa la Cloud Function,
+    //asi que desdeMapa() sirve para leer de las dos fuentes.
+    public Map<String, Object> aMapa() {
+        Map<String, Object> mapa = new HashMap<>();
+        mapa.put("id", id);
+        mapa.put("titulo", titulo);
+        mapa.put("autor", autor != null ? autor : new ArrayList<String>());
+        mapa.put("numPag", numPag);
+        mapa.put("fechaPublicacion", fechaPublicacion);
+        mapa.put("generos", generos != null ? generos : new ArrayList<String>());
+        mapa.put("descripcion", descripcion);
+        mapa.put("linkImg", linkImg);
+        return mapa;
     }
 
     private static String texto(Object valor) {

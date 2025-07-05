@@ -57,6 +57,9 @@ dependencies {
     // La app ya no habla con Google Books: pasa por las Cloud Functions, que son
     // quienes guardan la clave. Por eso ya no hace falta google-api-services-books.
     implementation("com.google.firebase:firebase-functions:20.4.0")
+    // Datos del usuario (listas, favoritos, leidos, historial). Sincroniza entre
+    // dispositivos y trae cache offline, asi que sustituye a la serializacion local.
+    implementation("com.google.firebase:firebase-firestore:24.10.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
