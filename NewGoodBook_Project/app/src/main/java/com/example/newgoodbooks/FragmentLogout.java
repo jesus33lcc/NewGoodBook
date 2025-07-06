@@ -12,10 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 //Pestania de cerrar sesion. Antes cerraba la sesion directamente en onCreate,
 //asi que bastaba con rozar la pestania para salir, y ademas dejaba las listas y el
@@ -63,11 +63,11 @@ public class FragmentLogout extends Fragment {
         if (!isAdded()) {
             return;
         }
-        //se limpia ANTES de salir: si no, el siguiente usuario que entrase en este
-        //dispositivo se encontraria las listas y el historial del anterior
-        new AccesoFicheros(requireContext().getApplicationContext()).borrarTodo();
-        Datos.DatosComunes.limpiar();
+        //los datos viven en Firestore bajo el uid, asi que ya no se mezclan entre cuentas.
+        //Aun asi hay que soltar las escuchas y vaciar la cache local del dispositivo.
+        RepositorioUsuario.get().desconectar();
         FirebaseAuth.getInstance().signOut();
+        FirebaseFirestore.getInstance().clearPersistence();
 
         Intent intent = new Intent(requireContext(), Inicio.class);
         //vacia la pila: sin esto se puede volver atras a la app ya sin sesion

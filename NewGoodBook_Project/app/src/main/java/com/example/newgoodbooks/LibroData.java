@@ -13,8 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.squareup.picasso.Picasso;
@@ -70,40 +69,16 @@ public class LibroData extends AppCompatActivity {
             descripcionTXT.setText(bookSelected.getDescripcion());
 
 
-            if (Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(bookSelected)){
-                btnFav.setChecked(true);
-            }else {
-                btnFav.setChecked(false);
-            }
-            if (Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(bookSelected)){
-                btnCheck.setChecked(true);
-            }else {
-                btnCheck.setChecked(false);
-            }
-            btnFav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AccesoFicheros accesoFicheros=new AccesoFicheros(getBaseContext());
-                    if(!btnFav.isChecked()){
-                        Datos.DatosComunes.getListasUsuario().getLibrosLike().remove(bookSelected);
-                    }else{
-                        Datos.DatosComunes.getListasUsuario().getLibrosLike().add(bookSelected);
-                    }
-                    accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-                }
-            });
-            btnCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AccesoFicheros accesoFicheros=new AccesoFicheros(getBaseContext());
-                    if(!btnCheck.isChecked()){
-                        Datos.DatosComunes.getListasUsuario().getLibrosCheck().remove(bookSelected);
-                    }else{
-                        Datos.DatosComunes.getListasUsuario().getLibrosCheck().add(bookSelected);
-                    }
-                    accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-                }
-            });
+            //el estado de los dos toggles lo manda Firestore: si lo marcas aqui,
+            //la pantalla Home y el otro dispositivo se enteran solos
+            RepositorioUsuario repo = RepositorioUsuario.get();
+            repo.getFavoritos().observe(this,
+                    libros -> btnFav.setChecked(libros != null && libros.contains(bookSelected)));
+            repo.getLeidos().observe(this,
+                    libros -> btnCheck.setChecked(libros != null && libros.contains(bookSelected)));
+
+            btnFav.setOnClickListener(v -> repo.alternarFavorito(bookSelected));
+            btnCheck.setOnClickListener(v -> repo.alternarLeido(bookSelected));
             btnAddList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -116,7 +91,7 @@ public class LibroData extends AppCompatActivity {
         }
     }
     private void showAlertDialogSingleChoice_addToList() {
-        String[] nomListas = Datos.DatosComunes.getNomListasPersonal();
+        String[] nomListas = RepositorioUsuario.get().getNombresListasPersonales();
         if (nomListas.length == 0) {
             Toast.makeText(this, "Todavia no tienes ninguna lista. Crea una en Listas.",
                     Toast.LENGTH_SHORT).show();
@@ -143,14 +118,12 @@ public class LibroData extends AppCompatActivity {
     }
     //metodo que añade el libro a la lista seleccionada
     private void addLibro_To_Lista(int index){
-        Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
+        RepositorioUsuario repo = RepositorioUsuario.get();
+        Lista listaSelected = repo.getListaPersonalPorIndice(index);
         if (listaSelected == null || bookSelected == null) {
             return;
         }
-        listaSelected.getLibros().add(bookSelected);
-
-        AccesoFicheros accesoFicheros = new AccesoFicheros(getBaseContext());
-        accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
+        repo.anadirLibroALista(listaSelected.getId(), bookSelected);
 
         Toast.makeText(getBaseContext(), "Añadido a '" + listaSelected.getNombre() + "'", Toast.LENGTH_SHORT).show();
     }

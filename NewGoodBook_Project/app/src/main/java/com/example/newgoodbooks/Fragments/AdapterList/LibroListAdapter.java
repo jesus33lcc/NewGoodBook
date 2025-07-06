@@ -13,6 +13,7 @@ import com.example.newgoodbooks.LibroData;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.squareup.picasso.Picasso;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.LibroViewHolder> {
@@ -43,6 +44,12 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
                 context.startActivity(viewLibroData);
             }
         });
+    }
+
+    //sustituye los datos y refresca, en vez de recrear el adaptador entero
+    public void actualizar(List<Libro> nuevos) {
+        this.listLibroDatos = nuevos != null ? nuevos : new ArrayList<Libro>();
+        notifyDataSetChanged();
     }
 
     @Override

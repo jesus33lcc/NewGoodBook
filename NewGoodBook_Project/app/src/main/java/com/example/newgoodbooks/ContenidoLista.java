@@ -1,6 +1,7 @@
 package com.example.newgoodbooks;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
@@ -9,11 +10,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
-import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
 
@@ -21,12 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContenidoLista extends AppCompatActivity {
-    Toolbar toolbarListaSelected;
-    RecyclerView recyclerViewContenido;
-    Lista listaLibrosSelected;
-    LibroListAdapter libroListAdapter;
-    List<Libro> listadoLibros;
-    public ContenidoLista(){ }
+    //Se recibe el ID de la lista, no el objeto. Antes llegaba una copia Serializable
+    //y cualquier borrado habia que hacerlo dos veces para que se persistiera.
+    public static final String EXTRA_LISTA_ID = "lista_id";
+
+    private Toolbar toolbarListaSelected;
+    private RecyclerView recyclerViewContenido;
+    private LibroListAdapter libroListAdapter;
+    private String listaId;
+    private List<Libro> librosActuales = new ArrayList<>();
+    private final RepositorioUsuario repo = RepositorioUsuario.get();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,80 +39,74 @@ public class ContenidoLista extends AppCompatActivity {
 
         toolbarListaSelected = findViewById(R.id.toolbarContentList);
         recyclerViewContenido = findViewById(R.id.listRecyclerContentLista);
-        listaLibrosSelected = (Lista) getIntent().getSerializableExtra("item_lista");
+        recyclerViewContenido.setLayoutManager(new LinearLayoutManager(this));
 
-        String nomLista = listaLibrosSelected.getNombre();
-        listadoLibros = listaLibrosSelected.getLibros();
-
-        toolbarListaSelected.setTitle(nomLista);
-        initialize_ListFillBook(listadoLibros);
-
-        if(!esListaImborrable(listaLibrosSelected)){
-            MySwipeHelper swipeHelper = new MySwipeHelper(getBaseContext(), recyclerViewContenido, 200) {
-                @Override
-                public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
-                    buffer.add(new MyButton(getBaseContext(),
-                            "Delete",
-                            30,
-                            R.drawable.ic_delete4ever,
-                            Color.parseColor("#FF3C30"),
-                            new MyButtonClickListener() {
-                                @Override
-                                public void onClick(int pos) {
-                                    deleteLista(pos);
-                                }
-                            }));
-                }
-            };
-        }
-    }
-    public void initialize_ListFillBook(List<Libro> listaLibrosFill){
-        libroListAdapter = new LibroListAdapter(this,listaLibrosFill);
-        recyclerViewContenido.setAdapter(libroListAdapter);
-    }
-    private boolean esListaImborrable(Lista lis) {
-        String nombreLista = lis.getNombre();
-
-        if ("Libros Favoritos".equals(nombreLista) || "Libros Leidos".equals(nombreLista)) {
-            List<Libro> fav = Datos.DatosComunes.getListasUsuario().getLibrosLike();
-            List<Libro> leido = Datos.DatosComunes.getListasUsuario().getLibrosCheck();
-
-            return sonListasIguales(lis.getLibros(), fav) || sonListasIguales(lis.getLibros(), leido);
-        }
-
-        return false;
-    }
-    public boolean sonListasIguales(List<Libro> lista1, List<Libro> lista2) {
-        return lista1.equals(lista2);
-    }
-
-    private void deleteLista(int index){
-        if (index < 0 || index >= listaLibrosSelected.getLibros().size()) {
+        listaId = getIntent().getStringExtra(EXTRA_LISTA_ID);
+        if (listaId == null) {
+            Toast.makeText(this, "No se ha podido abrir la lista", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
-        Libro libroDelete = listaLibrosSelected.getLibros().get(index);
-        listaLibrosSelected.getLibros().remove(index);
-        //el Lista que llega por el Intent es una COPIA (Serializable), asi que hay que
-        //borrar tambien en el original que vive en Datos; puede no existir si es una lista fija
-        Lista original = Datos.DatosComunes.searchByNameListas(listaLibrosSelected.getNombre());
-        if (original != null) {
-            original.getLibros().remove(libroDelete);
+
+        libroListAdapter = new LibroListAdapter(this, librosActuales);
+        recyclerViewContenido.setAdapter(libroListAdapter);
+
+        observarLista();
+
+        //las listas fijas (favoritos y leidos) tambien admiten quitar libros:
+        //ahi el swipe simplemente desmarca
+        new MySwipeHelper(this, recyclerViewContenido, 200) {
+            @Override
+            public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
+                buffer.add(new MyButton(ContenidoLista.this,
+                        "Delete",
+                        30,
+                        R.drawable.ic_delete4ever,
+                        Color.parseColor("#FF3C30"),
+                        new MyButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                quitarLibro(pos);
+                            }
+                        }));
+            }
+        };
+    }
+
+    //La lista se pinta desde Firestore: al quitar un libro no hay que refrescar a mano,
+    //llega solo por el listener (y tambien si lo quitas desde el otro dispositivo).
+    private void observarLista() {
+        if (Lista.ID_FAVORITOS.equals(listaId)) {
+            repo.getFavoritos().observe(this, this::pintar);
+        } else if (Lista.ID_LEIDOS.equals(listaId)) {
+            repo.getLeidos().observe(this, this::pintar);
+        } else {
+            repo.getListas().observe(this, listas -> {
+                Lista lista = repo.getListaPorId(listaId);
+                if (lista == null) {
+                    //la lista se ha borrado (posiblemente desde el otro dispositivo)
+                    finish();
+                    return;
+                }
+                toolbarListaSelected.setTitle(lista.getNombre());
+                pintar(lista.getLibros());
+            });
+            return;
         }
-        vaciarRecyclerView_misLibros();
-        rellenarRecylerView_misLibros();
-
-        AccesoFicheros accesoFicheros = new AccesoFicheros(getBaseContext());
-
-        accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-
-        Toast.makeText(getBaseContext(), "Libro eliminado", Toast.LENGTH_SHORT).show();
+        Lista fija = repo.getListaPorId(listaId);
+        toolbarListaSelected.setTitle(fija != null ? fija.getNombre() : "Lista");
     }
-    private void vaciarRecyclerView_misLibros() {
-        List<Libro> listaLibrosVacia = new ArrayList<>();
-        initialize_ListFillBook(listaLibrosVacia);
+
+    private void pintar(List<Libro> libros) {
+        librosActuales = libros != null ? libros : new ArrayList<>();
+        libroListAdapter.actualizar(librosActuales);
     }
-    private void rellenarRecylerView_misLibros(){
-        List<Libro> rellenoNuevo = listaLibrosSelected.getLibros();
-        initialize_ListFillBook(rellenoNuevo);
+
+    private void quitarLibro(int index) {
+        if (index < 0 || index >= librosActuales.size()) {
+            return;
+        }
+        repo.quitarLibroDeLista(listaId, librosActuales.get(index));
+        Toast.makeText(this, "Libro eliminado", Toast.LENGTH_SHORT).show();
     }
 }

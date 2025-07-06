@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,22 +22,19 @@ import android.widget.ImageView;
 
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.LibroData;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.ResultadoSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 
 public class Explorar extends Fragment {
     private View view;
     private RecyclerView librosRecyclerView;
     LibroListAdapter libroListAdapter;
-    List<Libro> listadoLibrosList;
     Toolbar toolbarSearch;
     private SearchView searchViewExplorar;
 
@@ -60,9 +55,11 @@ public class Explorar extends Fragment {
         librosRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Insertar Libros en lista.
-        List<Libro> listaLibrosVacia = new ArrayList<>();
-        initialize_ListFillBook(listaLibrosVacia);
-        buscar();
+        initialize_ListFillBook(new ArrayList<Libro>());
+        //el historial llega solo desde Firestore; antes se leia de un estatico
+        //envuelto en un hilo y un Handler que no hacian falta para nada
+        RepositorioUsuario.get().getHistorial().observe(getViewLifecycleOwner(),
+                libros -> libroListAdapter.actualizar(libros));
 
         // Sobre el Toolbar
         toolbarSearch = view.findViewById(R.id.myToolbarExplorer);
@@ -104,23 +101,4 @@ public class Explorar extends Fragment {
         librosRecyclerView.setAdapter(libroListAdapter);
     }
 
-    private void buscar(){
-        Executor executor=Executors.newSingleThreadExecutor();
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                listadoLibrosList =new ArrayList<>(Datos.DatosComunes.getHistorialLibros());
-                fillRecycleList();
-            }
-        });
-    }
-    private void fillRecycleList(){
-        Handler handler=new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                initialize_ListFillBook(listadoLibrosList);
-            }
-        });
-    }
 }

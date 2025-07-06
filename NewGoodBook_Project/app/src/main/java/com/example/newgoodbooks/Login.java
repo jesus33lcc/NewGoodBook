@@ -16,6 +16,7 @@ import com.example.newgoodbooks.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -59,6 +60,8 @@ public class Login extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    //engancha las escuchas de Firestore al usuario recien logueado
+                                    RepositorioUsuario.get().conectar();
                                     Toast.makeText(Login.this,"Inicio de Sesión Exitoso", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Login.this, Principal.class));
                                     finish();

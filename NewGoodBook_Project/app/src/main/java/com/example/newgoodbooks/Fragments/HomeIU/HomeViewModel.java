@@ -1,14 +1,12 @@
 package com.example.newgoodbooks.Fragments.HomeIU;
 
-import android.content.Context;
-
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.newgoodbooks.Cliente.ClienteFunciones;
-import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Libro;
 
 import java.util.LinkedList;
@@ -16,14 +14,18 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//Este ViewModel se pide con scope de Activity (ver HomeFragment), asi que la cola de
+//recomendaciones sobrevive al cambio de pestania y no hay que ir al servidor cada vez.
 public class HomeViewModel extends ViewModel {
     //cuantos libros intentamos tener en cola y a partir de cuantos volvemos a rellenar
     private static final int OBJETIVO_COLA = 20;
     private static final int MINIMO_COLA = 4;
 
+    private final RepositorioUsuario repo = RepositorioUsuario.get();
+
     //volatile: se lee y escribe desde el hilo principal y desde el executor
     private volatile Libro libroMostrado;
-    private final LinkedList<Libro> listaLibrosMostrar;
+    private final LinkedList<Libro> listaLibrosMostrar = new LinkedList<>();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private volatile boolean cargando;
 
@@ -34,21 +36,20 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<String> generos = new MutableLiveData<>();
     private final MutableLiveData<String> descripcion = new MutableLiveData<>();
     private final MutableLiveData<String> linkImagen = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> estadoTBtnFav = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> estadoTBtnCheck = new MutableLiveData<>();
-    //false mientras no haya libro que mostrar: la pantalla usa esto para pasar a modo "Reintentar"
-    private final MutableLiveData<Boolean> hayLibro = new MutableLiveData<>();
+    //false mientras no haya libro que mostrar: la pantalla pasa a modo "Reintentar"
+    private final MutableLiveData<Boolean> hayLibro = new MutableLiveData<>(false);
+
+    //Los dos toggles se derivan de Firestore: si marcas un libro en el movil,
+    //la tablet se entera sola. No hay que refrescarlos a mano en ningun sitio.
+    private final MediatorLiveData<Boolean> estadoTBtnFav = new MediatorLiveData<>();
+    private final MediatorLiveData<Boolean> estadoTBtnCheck = new MediatorLiveData<>();
 
     public HomeViewModel() {
-        listaLibrosMostrar = new LinkedList<>(Datos.DatosComunes.getListaRecomendar());
-        libroMostrado = Datos.DatosComunes.getLibroRecomendar();
-        //valor inicial sincrono: si no, al volver a la pestana el boton parpadea a "Reintentar"
-        hayLibro.setValue(libroMostrado != null);
-        if (libroMostrado != null) {
-            cambiarVistaLibro();
-        } else {
-            mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
-        }
+        estadoTBtnFav.addSource(repo.getFavoritos(), libros -> estadoTBtnFav.setValue(
+                libroMostrado != null && libros != null && libros.contains(libroMostrado)));
+        estadoTBtnCheck.addSource(repo.getLeidos(), libros -> estadoTBtnCheck.setValue(
+                libroMostrado != null && libros != null && libros.contains(libroMostrado)));
+        mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
     }
 
     public LiveData<String> getTitulo() {
@@ -82,7 +83,7 @@ public class HomeViewModel extends ViewModel {
         return hayLibro;
     }
 
-    //metodo que actualiza los datos del fragment por el libro seleccionado
+    //vuelca en pantalla el libro que toca
     public void cambiarVistaLibro() {
         Libro libro = libroMostrado;
         if (libro == null) {
@@ -95,12 +96,12 @@ public class HomeViewModel extends ViewModel {
         generos.postValue(primero(libro.getGeneros()));
         descripcion.postValue(libro.getDescripcion());
         linkImagen.postValue(libro.getLinkImg());
-        estadoTBtnFav.postValue(Datos.DatosComunes.getListasUsuario().getLibrosLike().contains(libro));
-        estadoTBtnCheck.postValue(Datos.DatosComunes.getListasUsuario().getLibrosCheck().contains(libro));
+        estadoTBtnFav.postValue(repo.esFavorito(libro));
+        estadoTBtnCheck.postValue(repo.esLeido(libro));
         hayLibro.postValue(true);
     }
 
-    //deja la pantalla en un estado informativo cuando no hay ningun libro que ensenar
+    //estado informativo cuando no hay ningun libro que ensenar
     private void mostrarMensaje(String tit, String texto) {
         titulo.postValue(tit);
         descripcion.postValue(texto);
@@ -118,13 +119,12 @@ public class HomeViewModel extends ViewModel {
         return (lista == null || lista.isEmpty()) ? "" : lista.get(0);
     }
 
-    //pide libros a la api en segundo plano. si falla lo dice por pantalla, nunca tumba la app.
-    public void cargarRecomendaciones(Context contexto) {
+    //pide libros al servidor en segundo plano; si falla lo dice por pantalla
+    public void cargarRecomendaciones() {
         if (cargando) {
             return;
         }
         cargando = true;
-        final Context appContext = contexto.getApplicationContext();
         if (libroMostrado == null) {
             mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
         }
@@ -141,7 +141,6 @@ public class HomeViewModel extends ViewModel {
                             "No se han podido cargar libros. Comprueba tu conexion y pulsa Reintentar.");
                 } else {
                     cambiarVistaLibro();
-                    guardar(appContext);
                 }
             } finally {
                 cargando = false;
@@ -149,8 +148,8 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    //metodo que cambia el libro por el siguiente de la cola y la vuelve a rellenar por detras
-    public void cambioLibro(Context contexto) {
+    //pasa al siguiente libro de la cola y la rellena por detras
+    public void cambioLibro() {
         final Libro anterior = libroMostrado;
         Libro siguiente;
         synchronized (listaLibrosMostrar) {
@@ -162,21 +161,15 @@ public class HomeViewModel extends ViewModel {
                 libroMostrado = siguiente;
                 cambiarVistaLibro();
             }
-            cargarRecomendaciones(contexto);
+            cargarRecomendaciones();
             return;
         }
         libroMostrado = siguiente;
         cambiarVistaLibro();
+        //el libro que se deja atras pasa al historial (pestania Explorar)
+        repo.registrarVisita(anterior);
 
-        final Context appContext = contexto.getApplicationContext();
         executor.execute(() -> {
-            List<Libro> historial = Datos.DatosComunes.getHistorialLibros();
-            historial.add(0, anterior);
-            while (historial.size() > 10) {
-                historial.remove(historial.size() - 1);
-            }
-            new AccesoFicheros(appContext).setHistorial(historial);
-
             int enCola;
             synchronized (listaLibrosMostrar) {
                 enCola = listaLibrosMostrar.size();
@@ -184,12 +177,10 @@ public class HomeViewModel extends ViewModel {
             if (enCola < MINIMO_COLA) {
                 rellenarCola();
             }
-            guardar(appContext);
         });
     }
 
-    //rellena la cola con UNA sola llamada al servidor, que devuelve el lote entero.
-    //(el diseno anterior gastaba una peticion a la API por cada libro)
+    //rellena la cola con UNA sola llamada al servidor, que devuelve el lote entero
     private void rellenarCola() {
         int faltan;
         synchronized (listaLibrosMostrar) {
@@ -212,23 +203,16 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
-    //persiste el estado en disco y tambien en memoria, para que al volver de otra pestana
-    //la pantalla siga por el libro donde estaba
-    private void guardar(Context appContext) {
-        List<Libro> copia;
-        synchronized (listaLibrosMostrar) {
-            copia = new LinkedList<>(listaLibrosMostrar);
+    public void alternarFavorito() {
+        if (libroMostrado != null) {
+            repo.alternarFavorito(libroMostrado);
         }
-        Datos.DatosComunes.setPrincipal(libroMostrado, copia);
-        new AccesoFicheros(appContext).setPrincipal(libroMostrado, copia);
     }
 
-    public void setEstadoTBtnFav(boolean bool) {
-        estadoTBtnFav.setValue(bool);
-    }
-
-    public void setEstadoTBtnCheck(boolean bool) {
-        estadoTBtnCheck.setValue(bool);
+    public void alternarLeido() {
+        if (libroMostrado != null) {
+            repo.alternarLeido(libroMostrado);
+        }
     }
 
     public Libro getLibroMostrado() {

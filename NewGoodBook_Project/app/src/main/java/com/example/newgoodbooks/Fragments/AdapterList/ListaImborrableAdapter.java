@@ -14,6 +14,7 @@ import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListaImborrableAdapter extends RecyclerView.Adapter<ListaImborrableAdapter.ListaViewHolder> {
@@ -32,7 +33,7 @@ public class ListaImborrableAdapter extends RecyclerView.Adapter<ListaImborrable
 
     @Override
     public void onBindViewHolder(@NonNull ListaImborrableAdapter.ListaViewHolder holder, int position) {
-        Lista itemLista = (Lista) listListaDatos.get(position);
+        Lista itemLista = listListaDatos.get(position);
 
         String nomLista = itemLista.getNombre();
         holder.nombreLista.setText(nomLista);
@@ -51,10 +52,15 @@ public class ListaImborrableAdapter extends RecyclerView.Adapter<ListaImborrable
             @Override
             public void onClick(View v) {
                 Intent viewListaData = new Intent(v.getContext(), ContenidoLista.class);
-                viewListaData.putExtra("item_lista", itemLista);
+                viewListaData.putExtra(ContenidoLista.EXTRA_LISTA_ID, itemLista.getId());
                 context.startActivity(viewListaData);
             }
         });
+    }
+
+    public void actualizar(List<Lista> nuevas) {
+        this.listListaDatos = nuevas != null ? nuevas : new ArrayList<Lista>();
+        notifyDataSetChanged();
     }
 
     @Override

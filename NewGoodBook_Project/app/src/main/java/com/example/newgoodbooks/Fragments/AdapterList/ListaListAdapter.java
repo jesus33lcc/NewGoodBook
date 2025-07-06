@@ -2,7 +2,6 @@ package com.example.newgoodbooks.Fragments.AdapterList;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.newgoodbooks.ContenidoLista;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
-import com.squareup.picasso.Picasso;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListaListAdapter extends RecyclerView.Adapter<ListaListAdapter.ListaViewHolder> {
@@ -32,7 +31,7 @@ public class ListaListAdapter extends RecyclerView.Adapter<ListaListAdapter.List
 
     @Override
     public void onBindViewHolder(@NonNull ListaListAdapter.ListaViewHolder holder, int position) {
-        Lista itemLista = (Lista) listListaDatos.get(position);
+        Lista itemLista = listListaDatos.get(position);
 
         String nomLista = itemLista.getNombre();
         holder.nombreLista.setText(nomLista);
@@ -42,10 +41,18 @@ public class ListaListAdapter extends RecyclerView.Adapter<ListaListAdapter.List
             @Override
             public void onClick(View v) {
                 Intent viewListaData = new Intent(v.getContext(), ContenidoLista.class);
-                viewListaData.putExtra("item_lista", itemLista);
+                //se pasa el id, no el objeto: antes viajaba una COPIA Serializable y habia
+                //que borrar por duplicado para que el cambio se persistiera
+                viewListaData.putExtra(ContenidoLista.EXTRA_LISTA_ID, itemLista.getId());
                 context.startActivity(viewListaData);
             }
         });
+    }
+
+    //sustituye los datos y refresca (antes se recreaba el adaptador entero)
+    public void actualizar(List<Lista> nuevas) {
+        this.listListaDatos = nuevas != null ? nuevas : new ArrayList<Lista>();
+        notifyDataSetChanged();
     }
 
     @Override

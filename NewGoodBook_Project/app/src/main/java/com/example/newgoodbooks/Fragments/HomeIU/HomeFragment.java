@@ -1,13 +1,10 @@
 package com.example.newgoodbooks.Fragments.HomeIU;
 
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,8 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
@@ -48,26 +44,27 @@ public class HomeFragment extends Fragment {
 
     public HomeFragment(){
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //Asignacion de variables locales
-        mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        binding=FragmentHomeBinding.inflate(inflater, container, false);
-        View root =binding.getRoot();
-        titulo=binding.textTitulo;
-        autor=binding.textAutor;
-        numPag=binding.textNumPag;
-        fecha=binding.textFechaPub;
-        genero=binding.textGeneros;
-        descripcion=binding.textDescripcion;
-        botonSig=binding.btnSiguiente;
-        portada=binding.imageVPortada;
-        btnFav=binding.tBtnFavorite;
-        btnCheck=binding.tBtnCheck;
-        btnAddList=binding.tBtnAddList;
+        //scope de Activity: asi la cola de recomendaciones sobrevive al cambio de pestania
+        //y volver a Home no dispara otra llamada al servidor
+        mViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+        titulo = binding.textTitulo;
+        autor = binding.textAutor;
+        numPag = binding.textNumPag;
+        fecha = binding.textFechaPub;
+        genero = binding.textGeneros;
+        descripcion = binding.textDescripcion;
+        botonSig = binding.btnSiguiente;
+        portada = binding.imageVPortada;
+        btnFav = binding.tBtnFavorite;
+        btnCheck = binding.tBtnCheck;
+        btnAddList = binding.tBtnAddList;
 
-        //vincula el dato del viewmodel con su componente
         mViewModel.getLinkImagen().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -92,85 +89,47 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mViewModel.getTitulo().observe(getViewLifecycleOwner(),titulo::setText);
-        mViewModel.getAutor().observe(getViewLifecycleOwner(),autor::setText);
-        mViewModel.getNumPag().observe(getViewLifecycleOwner(),numPag::setText);
-        mViewModel.getFechaPublicacion().observe(getViewLifecycleOwner(),fecha::setText);
-        mViewModel.getGeneros().observe(getViewLifecycleOwner(),genero::setText);
-        mViewModel.getDescripcion().observe(getViewLifecycleOwner(),descripcion::setText);
+        mViewModel.getTitulo().observe(getViewLifecycleOwner(), titulo::setText);
+        mViewModel.getAutor().observe(getViewLifecycleOwner(), autor::setText);
+        mViewModel.getNumPag().observe(getViewLifecycleOwner(), numPag::setText);
+        mViewModel.getFechaPublicacion().observe(getViewLifecycleOwner(), fecha::setText);
+        mViewModel.getGeneros().observe(getViewLifecycleOwner(), genero::setText);
+        mViewModel.getDescripcion().observe(getViewLifecycleOwner(), descripcion::setText);
         mViewModel.getEstadoTBtnFav().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                btnFav.setChecked(aBoolean);
+            public void onChanged(Boolean marcado) {
+                btnFav.setChecked(Boolean.TRUE.equals(marcado));
             }
         });
         mViewModel.getEstadoTBtnCheck().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                btnCheck.setChecked(aBoolean);
-            }
-        });
-        botonSig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.cambioLibro(getContext());
-            }
-        });
-        btnFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mViewModel.getLibroMostrado() == null) {
-                    return;
-                }
-                AccesoFicheros accesoFicheros=new AccesoFicheros(getContext());
-                if(Boolean.TRUE.equals(mViewModel.getEstadoTBtnFav().getValue())){
-                    Datos.DatosComunes.getListasUsuario().getLibrosLike().remove(mViewModel.getLibroMostrado());
-                    mViewModel.setEstadoTBtnFav(false);
-                }else {
-                    Datos.DatosComunes.getListasUsuario().getLibrosLike().add(mViewModel.getLibroMostrado());
-                    mViewModel.setEstadoTBtnFav(true);
-                }
-                accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-            }
-        });
-        btnCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mViewModel.getLibroMostrado() == null) {
-                    return;
-                }
-                AccesoFicheros accesoFicheros=new AccesoFicheros(getContext());
-                if(Boolean.TRUE.equals(mViewModel.getEstadoTBtnCheck().getValue())){
-                    Datos.DatosComunes.getListasUsuario().getLibrosCheck().remove(mViewModel.getLibroMostrado());
-                    mViewModel.setEstadoTBtnCheck(false);
-                }else {
-                    Datos.DatosComunes.getListasUsuario().getLibrosCheck().add(mViewModel.getLibroMostrado());
-                    mViewModel.setEstadoTBtnCheck(true);
-                }
-                accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
+            public void onChanged(Boolean marcado) {
+                btnCheck.setChecked(Boolean.TRUE.equals(marcado));
             }
         });
 
-        btnAddList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mViewModel.getLibroMostrado() == null) {
-                    return;
-                }
+        botonSig.setOnClickListener(v -> mViewModel.cambioLibro());
+        //los toggles solo avisan al repositorio: el estado vuelve por Firestore
+        btnFav.setOnClickListener(v -> mViewModel.alternarFavorito());
+        btnCheck.setOnClickListener(v -> mViewModel.alternarLeido());
+        btnAddList.setOnClickListener(v -> {
+            if (mViewModel.getLibroMostrado() != null) {
                 showAlertDialogSingleChoice_addToList();
             }
         });
 
-        //si al abrir no hay recomendacion guardada, se pide a la api en segundo plano
+        //si al abrir no hay recomendacion, se pide al servidor en segundo plano
         if (mViewModel.getLibroMostrado() == null) {
-            mViewModel.cargarRecomendaciones(requireContext());
+            mViewModel.cargarRecomendaciones();
         }
 
         return root;
     }
+
     //Muestra el dialog que te permite seleccionar la lista para añadir el libro
     private void showAlertDialogSingleChoice_addToList(){
-        String[] nomListas = Datos.DatosComunes.getNomListasPersonal();
+        RepositorioUsuario repo = RepositorioUsuario.get();
+        String[] nomListas = repo.getNombresListasPersonales();
         if (nomListas.length == 0) {
             Toast.makeText(getActivity(), "Todavia no tienes ninguna lista. Crea una en Listas.",
                     Toast.LENGTH_SHORT).show();
@@ -186,28 +145,19 @@ public class HomeFragment extends Fragment {
                 dialog.dismiss();
             }
         });
-        alertDialog_Builder.setNeutralButton("Cancelar", new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i){
-
-            }
-        });
-        AlertDialog addDialog = alertDialog_Builder.create();
-        addDialog.show();
-        //alertDialog_Builder.show();
+        alertDialog_Builder.setNeutralButton("Cancelar", null);
+        alertDialog_Builder.create().show();
     }
-    //metodo que añade el libro a la lista seleccionada
+
     private void addLibro_To_Lista(int index){
-        Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
+        RepositorioUsuario repo = RepositorioUsuario.get();
+        Lista listaSelected = repo.getListaPersonalPorIndice(index);
         if (listaSelected == null || mViewModel.getLibroMostrado() == null) {
             return;
         }
-        listaSelected.getLibros().add(mViewModel.getLibroMostrado());
-
-        AccesoFicheros accesoFicheros = new AccesoFicheros(getContext());
-        accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-
-        Toast.makeText(getActivity(), "Añadido a '" + listaSelected.getNombre() + "'", Toast.LENGTH_SHORT).show();
+        repo.anadirLibroALista(listaSelected.getId(), mViewModel.getLibroMostrado());
+        Toast.makeText(getActivity(), "Añadido a '" + listaSelected.getNombre() + "'",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -215,5 +165,4 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 }

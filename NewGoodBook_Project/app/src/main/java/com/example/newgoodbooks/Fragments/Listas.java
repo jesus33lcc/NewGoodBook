@@ -1,12 +1,12 @@
 package com.example.newgoodbooks.Fragments;
 
 import android.app.AlertDialog;
-//import androidx.appcompat.app.AlertDialog;
-
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,45 +18,40 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.ListaListAdapter;
 import com.example.newgoodbooks.Fragments.AdapterList.ListaImborrableAdapter;
 import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
-import com.example.newgoodbooks.ManejoFicheros.AccesoFicheros;
-import com.example.newgoodbooks.ManejoFicheros.Datos;
-import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 public class Listas extends Fragment {
-    private View view;
     private RecyclerView listasRecyclerView;
     private RecyclerView misListasRecyclerView;
     private ImageButton btn_newAddLista;
-    ListaListAdapter listaListAdapter;
-    ListaImborrableAdapter listaImborrableAdapter;
-    List<Lista> milistadoListasList;
-    List<Lista> listadoListasList;
+    private ListaListAdapter listaListAdapter;
+    private ListaImborrableAdapter listaImborrableAdapter;
+    //copia de lo ultimo que ha llegado de Firestore, para resolver la posicion del swipe
+    private List<Lista> misListas = new ArrayList<>();
+    private final RepositorioUsuario repo = RepositorioUsuario.get();
 
     public Listas() {
     } // Se requiere de un constructor vacio.
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_listas, container, false);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_listas, container, false);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        // Sobre el RecyclerView
         listasRecyclerView = view.findViewById(R.id.misListasCheckFav);
         misListasRecyclerView = view.findViewById(R.id.misListaPersonalizadas);
         btn_newAddLista = view.findViewById(R.id.btn_newLista);
@@ -64,22 +59,27 @@ public class Listas extends Fragment {
         listasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         misListasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Insertar Libros en lista.
-        vaciarRecyclerView_misListas();
+        listaImborrableAdapter = new ListaImborrableAdapter(getActivity(), new ArrayList<>());
+        listasRecyclerView.setAdapter(listaImborrableAdapter);
+        listaListAdapter = new ListaListAdapter(getActivity(), misListas);
+        misListasRecyclerView.setAdapter(listaListAdapter);
 
-        // Insertar listas en el RecyclerList
-        rellenarRecylerView_listasImborrables();
-        rellenarRecylerView_misListas();
-
-
-        btn_newAddLista.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showInputTextDialog_newList();
-            }
+        //Las listas llegan solas desde Firestore: si creas una en el movil, aparece
+        //en la tablet sin refrescar nada. Antes habia que reconstruir el adaptador a mano.
+        repo.getListas().observe(getViewLifecycleOwner(), listas -> {
+            misListas = listas != null ? listas : new ArrayList<>();
+            listaListAdapter.actualizar(misListas);
         });
+        //las dos listas fijas se derivan de favoritos y leidos
+        repo.getFavoritos().observe(getViewLifecycleOwner(),
+                libros -> listaImborrableAdapter.actualizar(repo.getListasImborrables()));
+        repo.getLeidos().observe(getViewLifecycleOwner(),
+                libros -> listaImborrableAdapter.actualizar(repo.getListasImborrables()));
 
-        MySwipeHelper swipeHelper = new MySwipeHelper(getContext(), misListasRecyclerView, 200) {
+        btn_newAddLista.setOnClickListener(v -> showInputTextDialog_newList());
+
+        //swipe a la izquierda para borrar, solo en las listas personalizadas
+        new MySwipeHelper(getContext(), misListasRecyclerView, 200) {
             @Override
             public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
                 buffer.add(new MyButton(getContext(),
@@ -95,35 +95,6 @@ public class Listas extends Fragment {
                         }));
             }
         };
-        return view;
-    }
-
-    private void vaciarRecyclerView_listasImborrables(){
-        List<Lista> listaLibrosVacia = new ArrayList<>();
-        initialize_ListFillInmborrable(listaLibrosVacia);
-    }
-    private void vaciarRecyclerView_misListas() {
-        List<Lista> listaLibrosVacia = new ArrayList<>();
-        initialize_ListFillList(listaLibrosVacia);
-    }
-    private void rellenarRecylerView_listasImborrables(){
-        listadoListasList = Datos.DatosComunes.getListasImborrables();
-        initialize_ListFillInmborrable(listadoListasList);
-    }
-
-    private void rellenarRecylerView_misListas(){
-        milistadoListasList = Datos.DatosComunes.getListasUsuario().getListas();
-        initialize_ListFillList(milistadoListasList);
-    }
-
-    public void initialize_ListFillInmborrable(List<Lista> listaListasFill) {
-        listaImborrableAdapter = new ListaImborrableAdapter(getActivity(),listaListasFill);
-        listasRecyclerView.setAdapter(listaImborrableAdapter);
-    }
-
-    public void initialize_ListFillList(List<Lista> listaListasFill) {
-        listaListAdapter = new ListaListAdapter(getActivity(),listaListasFill);
-        misListasRecyclerView.setAdapter(listaListAdapter);
     }
 
     public void showInputTextDialog_newList(){
@@ -141,79 +112,42 @@ public class Listas extends Fragment {
                     Toast.makeText(getActivity(), "Ponle un nombre a la lista", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //los nombres de las listas fijas estan reservados: si se repiten,
-                //se confunden con ellas al buscar por nombre y al elegir icono
+                //los nombres de las listas fijas estan reservados
                 if(nombre_newList.equalsIgnoreCase("Libros Favoritos")
                         || nombre_newList.equalsIgnoreCase("Libros Leidos")){
                     Toast.makeText(getActivity(), "Ese nombre esta reservado", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                for(String existente : Datos.DatosComunes.getNomListasPersonal()){
+                for(String existente : repo.getNombresListasPersonales()){
                     if(existente.equalsIgnoreCase(nombre_newList)){
                         Toast.makeText(getActivity(), "Nombre de Lista existente", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
-                crearNuevaLista(nombre_newList);
+                repo.crearLista(nombre_newList);
+                Toast.makeText(getActivity(), "Lista '" + nombre_newList + "' creada", Toast.LENGTH_SHORT).show();
             }
         });
-        alertDialog_Builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        alertDialog_Builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
         alertDialog_Builder.show();
     }
 
-    private void crearNuevaLista(String nomLista){
-        List<Libro> listadoLibros = new ArrayList<>();
-        Lista nuevaLista = new Lista(nomLista,listadoLibros);
-        Datos.DatosComunes.getListasUsuario().getListas().add(nuevaLista);
-
-        AccesoFicheros accesoFicheros = new AccesoFicheros(getContext());
-        accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-
-        vaciarRecyclerView_misListas();
-        rellenarRecylerView_misListas();
-
-        vaciarRecyclerView_listasImborrables();
-        rellenarRecylerView_listasImborrables();
-
-        Toast.makeText(getActivity(), "Lista '" + nomLista + "' creada", Toast.LENGTH_SHORT).show();
-    }
     private void showTextDialog_ConfirmDelete(int index){
-        AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
-        alertDialog_Builder.setTitle("¿Estas seguro que deseas elimniar esta lista?");
-        alertDialog_Builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteLista(index);
-                dialog.cancel();
-            }
-        });
-        alertDialog_Builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        alertDialog_Builder.show();
-    }
-    private void deleteLista(int index){
-        Lista listaSelected = Datos.DatosComunes.searchByIndexListas(index);
-        if (listaSelected == null) {
+        if (index < 0 || index >= misListas.size()) {
             return;
         }
-        Datos.DatosComunes.getListasUsuario().getListas().remove(listaSelected);
-
-        vaciarRecyclerView_misListas();
-        rellenarRecylerView_misListas();
-
-        AccesoFicheros accesoFicheros = new AccesoFicheros(getContext());
-        accesoFicheros.setListas(Datos.DatosComunes.getListasUsuario());
-
-        Toast.makeText(getActivity(), "Lista eliminada", Toast.LENGTH_SHORT).show();
+        Lista aBorrar = misListas.get(index);
+        AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
+        alertDialog_Builder.setTitle("¿Seguro que quieres eliminar '" + aBorrar.getNombre() + "'?");
+        alertDialog_Builder.setPositiveButton("Confirmar", (dialog, which) -> {
+            repo.borrarLista(aBorrar);
+            Toast.makeText(getActivity(), "Lista eliminada", Toast.LENGTH_SHORT).show();
+        });
+        alertDialog_Builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            dialog.cancel();
+            //devuelve la fila a su sitio tras cancelar el swipe
+            listaListAdapter.notifyItemChanged(index);
+        });
+        alertDialog_Builder.show();
     }
 }
