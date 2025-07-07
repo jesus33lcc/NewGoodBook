@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.newgoodbooks.LibroData;
 import com.example.newgoodbooks.Modelos.Libro;
@@ -33,7 +34,7 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
     public void onBindViewHolder(@NonNull LibroViewHolder holder, int position) {
         Libro itemLibro = listLibroDatos.get(position);
         holder.tituloLibro.setText(itemLibro.getTitulo());
-        holder.autorLibro.setText(itemLibro.getAutor().toString());
+        holder.autorLibro.setText(primerAutor(itemLibro));
         Picasso.get().load(itemLibro.getLinkImg()).into(holder.portadaLibro);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -46,10 +47,41 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
         });
     }
 
-    //sustituye los datos y refresca, en vez de recrear el adaptador entero
+    private static String primerAutor(Libro libro) {
+        List<String> autores = libro.getAutor();
+        return (autores == null || autores.isEmpty()) ? "" : autores.get(0);
+    }
+
+    //Actualiza calculando que filas cambian de verdad, en vez de repintar la lista
+    //entera: se conservan el scroll y las animaciones.
     public void actualizar(List<Libro> nuevos) {
-        this.listLibroDatos = nuevos != null ? nuevos : new ArrayList<Libro>();
-        notifyDataSetChanged();
+        final List<Libro> anteriores = this.listLibroDatos;
+        final List<Libro> siguientes = nuevos != null ? nuevos : new ArrayList<Libro>();
+
+        DiffUtil.DiffResult diferencia = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() { return anteriores.size(); }
+
+            @Override
+            public int getNewListSize() { return siguientes.size(); }
+
+            @Override
+            public boolean areItemsTheSame(int posAntigua, int posNueva) {
+                //Libro compara por id
+                return anteriores.get(posAntigua).equals(siguientes.get(posNueva));
+            }
+
+            @Override
+            public boolean areContentsTheSame(int posAntigua, int posNueva) {
+                Libro a = anteriores.get(posAntigua);
+                Libro b = siguientes.get(posNueva);
+                return String.valueOf(a.getTitulo()).equals(String.valueOf(b.getTitulo()))
+                        && String.valueOf(a.getLinkImg()).equals(String.valueOf(b.getLinkImg()))
+                        && primerAutor(a).equals(primerAutor(b));
+            }
+        });
+        this.listLibroDatos = siguientes;
+        diferencia.dispatchUpdatesTo(this);
     }
 
     @Override

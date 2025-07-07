@@ -19,8 +19,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
-import com.example.newgoodbooks.Fragments.AdapterList.ListaListAdapter;
-import com.example.newgoodbooks.Fragments.AdapterList.ListaImborrableAdapter;
+import com.example.newgoodbooks.Fragments.AdapterList.ListaAdapter;
 import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Lista;
@@ -34,8 +33,8 @@ public class Listas extends Fragment {
     private RecyclerView listasRecyclerView;
     private RecyclerView misListasRecyclerView;
     private ImageButton btn_newAddLista;
-    private ListaListAdapter listaListAdapter;
-    private ListaImborrableAdapter listaImborrableAdapter;
+    private ListaAdapter adaptadorFijas;
+    private ListaAdapter adaptadorPersonales;
     //copia de lo ultimo que ha llegado de Firestore, para resolver la posicion del swipe
     private List<Lista> misListas = new ArrayList<>();
     private final RepositorioUsuario repo = RepositorioUsuario.get();
@@ -59,22 +58,22 @@ public class Listas extends Fragment {
         listasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         misListasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        listaImborrableAdapter = new ListaImborrableAdapter(getActivity(), new ArrayList<>());
-        listasRecyclerView.setAdapter(listaImborrableAdapter);
-        listaListAdapter = new ListaListAdapter(getActivity(), misListas);
-        misListasRecyclerView.setAdapter(listaListAdapter);
+        adaptadorFijas = new ListaAdapter(getActivity(), new ArrayList<>());
+        listasRecyclerView.setAdapter(adaptadorFijas);
+        adaptadorPersonales = new ListaAdapter(getActivity(), misListas);
+        misListasRecyclerView.setAdapter(adaptadorPersonales);
 
         //Las listas llegan solas desde Firestore: si creas una en el movil, aparece
         //en la tablet sin refrescar nada. Antes habia que reconstruir el adaptador a mano.
         repo.getListas().observe(getViewLifecycleOwner(), listas -> {
             misListas = listas != null ? listas : new ArrayList<>();
-            listaListAdapter.actualizar(misListas);
+            adaptadorPersonales.actualizar(misListas);
         });
         //las dos listas fijas se derivan de favoritos y leidos
         repo.getFavoritos().observe(getViewLifecycleOwner(),
-                libros -> listaImborrableAdapter.actualizar(repo.getListasImborrables()));
+                libros -> adaptadorFijas.actualizar(repo.getListasImborrables()));
         repo.getLeidos().observe(getViewLifecycleOwner(),
-                libros -> listaImborrableAdapter.actualizar(repo.getListasImborrables()));
+                libros -> adaptadorFijas.actualizar(repo.getListasImborrables()));
 
         btn_newAddLista.setOnClickListener(v -> showInputTextDialog_newList());
 
@@ -146,7 +145,7 @@ public class Listas extends Fragment {
         alertDialog_Builder.setNegativeButton("Cancelar", (dialog, which) -> {
             dialog.cancel();
             //devuelve la fila a su sitio tras cancelar el swipe
-            listaListAdapter.notifyItemChanged(index);
+            adaptadorPersonales.notifyItemChanged(index);
         });
         alertDialog_Builder.show();
     }
