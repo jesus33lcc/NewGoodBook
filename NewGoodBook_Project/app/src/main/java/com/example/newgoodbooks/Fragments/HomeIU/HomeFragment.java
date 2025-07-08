@@ -3,8 +3,6 @@ package com.example.newgoodbooks.Fragments.HomeIU;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,12 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.newgoodbooks.Datos.RepositorioUsuario;
-import com.example.newgoodbooks.Modelos.Lista;
-import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.UI.AccionesLibro;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
 
@@ -112,11 +107,8 @@ public class HomeFragment extends Fragment {
         //los toggles solo avisan al repositorio: el estado vuelve por Firestore
         btnFav.setOnClickListener(v -> mViewModel.alternarFavorito());
         btnCheck.setOnClickListener(v -> mViewModel.alternarLeido());
-        btnAddList.setOnClickListener(v -> {
-            if (mViewModel.getLibroMostrado() != null) {
-                showAlertDialogSingleChoice_addToList();
-            }
-        });
+        btnAddList.setOnClickListener(v ->
+                AccionesLibro.mostrarDialogoAnadirALista(getContext(), mViewModel.getLibroMostrado()));
 
         //si al abrir no hay recomendacion, se pide al servidor en segundo plano
         if (mViewModel.getLibroMostrado() == null) {
@@ -124,40 +116,6 @@ public class HomeFragment extends Fragment {
         }
 
         return root;
-    }
-
-    //Muestra el dialog que te permite seleccionar la lista para añadir el libro
-    private void showAlertDialogSingleChoice_addToList(){
-        RepositorioUsuario repo = RepositorioUsuario.get();
-        String[] nomListas = repo.getNombresListasPersonales();
-        if (nomListas.length == 0) {
-            Toast.makeText(getActivity(), "Todavia no tienes ninguna lista. Crea una en Listas.",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
-        alertDialog_Builder.setTitle("Añadir a lista");
-        alertDialog_Builder.setIcon(R.drawable.ic_listas);
-        alertDialog_Builder.setSingleChoiceItems(nomListas, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                addLibro_To_Lista(index);
-                dialog.dismiss();
-            }
-        });
-        alertDialog_Builder.setNeutralButton("Cancelar", null);
-        alertDialog_Builder.create().show();
-    }
-
-    private void addLibro_To_Lista(int index){
-        RepositorioUsuario repo = RepositorioUsuario.get();
-        Lista listaSelected = repo.getListaPersonalPorIndice(index);
-        if (listaSelected == null || mViewModel.getLibroMostrado() == null) {
-            return;
-        }
-        repo.anadirLibroALista(listaSelected.getId(), mViewModel.getLibroMostrado());
-        Toast.makeText(getActivity(), "Añadido a '" + listaSelected.getNombre() + "'",
-                Toast.LENGTH_SHORT).show();
     }
 
     @Override
