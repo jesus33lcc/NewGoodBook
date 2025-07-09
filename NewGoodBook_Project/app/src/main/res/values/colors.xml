@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Paleta original. Se conserva porque muchos layouts la referencian por nombre,
+         y porque la identidad (azul marino + dorados) es la que queremos mantener. -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
@@ -15,4 +17,31 @@
     <color name="dark_distinct_brown">#A68D5D</color>
     <color name="grey">#C5C5C5</color>
     <color name="nav_true" android:state_checked="true">#e89d10</color>
+
+    <!-- Roles de color de Material 3 (tema CLARO), derivados de la paleta de arriba.
+         Lo nuevo debe usar estos nombres y no los colores crudos: asi el modo oscuro
+         se resuelve solo con values-night/colors.xml, sin duplicar layouts ni estilos. -->
+    <color name="md_primary">#153464</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#D8E2FF</color>
+    <color name="md_on_primary_container">#001945</color>
+
+    <color name="md_secondary">#7A5A20</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#FFDEA8</color>
+    <color name="md_on_secondary_container">#281800</color>
+
+    <color name="md_tertiary">#E89D10</color>
+    <color name="md_on_tertiary">#3A2500</color>
+
+    <color name="md_background">#FDFBFF</color>
+    <color name="md_on_background">#1B1B1F</color>
+    <color name="md_surface">#FDFBFF</color>
+    <color name="md_on_surface">#1B1B1F</color>
+    <color name="md_surface_variant">#E1E2EC</color>
+    <color name="md_on_surface_variant">#44464F</color>
+    <color name="md_outline">#757780</color>
+
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
 </resources>

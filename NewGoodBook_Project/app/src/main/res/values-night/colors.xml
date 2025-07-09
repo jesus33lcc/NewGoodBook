@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Roles de Material 3 en modo OSCURO. Solo se redefinen los md_*: el tema es el
+         mismo fichero para claro y oscuro, y Android elige estos valores segun el ajuste
+         del sistema. Antes values-night/themes.xml estaba vacio y el modo oscuro no
+         llegaba a aplicarse de verdad.
+
+         Nota: en oscuro los papeles se invierten. El azul marino de la marca no vale de
+         "primary" porque sobre fondo negro no contrasta; se usa una version clara del
+         azul, y el dorado gana peso. -->
+    <color name="md_primary">#AFC6FF</color>
+    <color name="md_on_primary">#002B69</color>
+    <color name="md_primary_container">#003E93</color>
+    <color name="md_on_primary_container">#D8E2FF</color>
+
+    <color name="md_secondary">#F0BE6C</color>
+    <color name="md_on_secondary">#452B00</color>
+    <color name="md_secondary_container">#634000</color>
+    <color name="md_on_secondary_container">#FFDEA8</color>
+
+    <color name="md_tertiary">#E89D10</color>
+    <color name="md_on_tertiary">#3A2500</color>
+
+    <color name="md_background">#131316</color>
+    <color name="md_on_background">#E4E2E6</color>
+    <color name="md_surface">#131316</color>
+    <color name="md_on_surface">#E4E2E6</color>
+    <color name="md_surface_variant">#44464F</color>
+    <color name="md_on_surface_variant">#C5C6D0</color>
+    <color name="md_outline">#8F909A</color>
+
+    <color name="md_error">#FFB4AB</color>
+    <color name="md_on_error">#690005</color>
+</resources>

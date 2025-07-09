@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- En tema claro la barra de estado es clara -> iconos oscuros -->
+    <bool name="barra_estado_clara">true</bool>
+</resources>
