@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "64345692289",
     "project_id": "newgoodbook",
-    "storage_bucket": "newgoodbook.appspot.com"
+    "storage_bucket": "newgoodbook.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,20 @@
           "package_name": "com.example.newgoodbooks"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "64345692289-m99ks8pavbm6d3qunlu283pv48tk4t88.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.newgoodbooks",
+            "certificate_hash": "f3724da251d86af7fe418ee710259376d26eed17"
+          }
+        },
+        {
+          "client_id": "64345692289-9hpa9oradrd1slqstdivpi5j08lams59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCABMHiXwDk8sNTdoQHS_xiSZza_82APDk"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64345692289-9hpa9oradrd1slqstdivpi5j08lams59.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

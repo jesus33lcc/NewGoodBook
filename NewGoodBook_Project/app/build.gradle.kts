@@ -60,6 +60,10 @@ dependencies {
     // Datos del usuario (listas, favoritos, leidos, historial). Sincroniza entre
     // dispositivos y trae cache offline, asi que sustituye a la serializacion local.
     implementation("com.google.firebase:firebase-firestore:24.10.1")
+    // Google Sign-In. La API GoogleSignIn esta marcada como obsoleta en favor de
+    // Credential Manager, pero es la que encaja con firebase-auth 22.x; migrar seria
+    // otro trabajo aparte.
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
