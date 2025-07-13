@@ -15,7 +15,7 @@
         android:background="#153464"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="Resultados de busqueda"
+        app:title="@string/title_resultados"
         app:titleTextColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView

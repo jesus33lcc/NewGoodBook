@@ -10,7 +10,6 @@
         android:layout_width="68dp"
         android:layout_height="73dp"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="4dp"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -20,7 +19,7 @@
         android:layout_marginStart="82dp"
         android:paddingLeft="1dp"
         android:layout_marginTop="28dp"
-        android:text="Nombre lista"
+        android:text="@string/hint_nombre_lista"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"

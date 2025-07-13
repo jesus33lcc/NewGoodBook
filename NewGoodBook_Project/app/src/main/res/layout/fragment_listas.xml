@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF"
+    android:background="?attr/colorSurface"
     tools:context=".Fragments.Listas">
 
     <LinearLayout
@@ -16,31 +16,32 @@
             android:id="@+id/myToolbarMisListas"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#153464"
+            android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Listas"
-            app:titleTextColor="@color/white" />
+            app:title="@string/title_listas"
+            app:titleTextColor="?attr/colorOnPrimary" />
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/misListasCheckFav"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_width="match_parent"
-            android:layout_height="202dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layoutAnimation="@anim/explore_animation"
-            tools:ignore="MissingConstraints"
             tools:listitem="@layout/item_lista_list" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarListasPesonalizadas"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#e89d10"
+            android:background="?attr/colorTertiary"
             android:elevation="5dp"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Mis Listas Personalizadas"
-            app:titleTextColor="#000000">
+            app:title="@string/title_mis_listas"
+            app:titleTextColor="?attr/colorOnTertiary">
 
             <ImageButton
                 android:id="@+id/btn_newLista"
@@ -56,11 +57,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/misListaPersonalizadas"
             android:layout_width="match_parent"
-            android:layout_height="385dp"
+            android:layout_height="0dp"
+            android:layout_weight="2"
             android:clipToPadding="false"
             android:layoutAnimation="@anim/explore_animation"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:ignore="MissingConstraints"
             tools:listitem="@layout/item_lista_list" />
 
 
