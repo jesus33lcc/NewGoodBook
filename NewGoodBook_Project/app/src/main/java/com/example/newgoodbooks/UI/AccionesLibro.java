@@ -27,13 +27,13 @@ public final class AccionesLibro {
         final String[] nombres = repo.getNombresListasPersonales();
 
         if (nombres.length == 0) {
-            Toast.makeText(contexto, "Todavia no tienes ninguna lista. Crea una en Listas.",
+            Toast.makeText(contexto, contexto.getString(R.string.sin_listas),
                     Toast.LENGTH_SHORT).show();
             return;
         }
 
         new AlertDialog.Builder(contexto)
-                .setTitle("Añadir a lista")
+                .setTitle(contexto.getString(R.string.anadir_a_lista))
                 .setIcon(R.drawable.ic_listas)
                 .setSingleChoiceItems(nombres, -1, new DialogInterface.OnClickListener() {
                     @Override
@@ -42,7 +42,7 @@ public final class AccionesLibro {
                         anadirALista(contexto, repo, indice, libro);
                     }
                 })
-                .setNeutralButton("Cancelar", null)
+                .setNeutralButton(contexto.getString(R.string.cancelar), null)
                 .show();
     }
 
@@ -53,12 +53,12 @@ public final class AccionesLibro {
             return;
         }
         if (destino.getLibros().contains(libro)) {
-            Toast.makeText(contexto, "Ese libro ya esta en '" + destino.getNombre() + "'",
+            Toast.makeText(contexto, contexto.getString(R.string.libro_ya_en_lista, destino.getNombre()),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         repo.anadirLibroALista(destino.getId(), libro);
-        Toast.makeText(contexto, "Añadido a '" + destino.getNombre() + "'",
+        Toast.makeText(contexto, contexto.getString(R.string.libro_anadido, destino.getNombre()),
                 Toast.LENGTH_SHORT).show();
     }
 }

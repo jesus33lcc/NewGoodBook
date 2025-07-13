@@ -78,7 +78,7 @@ public class LibroData extends AppCompatActivity {
             btnAddList.setOnClickListener(v ->
                     AccionesLibro.mostrarDialogoAnadirALista(LibroData.this, bookSelected));
         } else {
-            Toast.makeText(this, "Error: bookSelected is NULL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.libro_no_disponible, Toast.LENGTH_SHORT).show();
             finish();
         }
     }

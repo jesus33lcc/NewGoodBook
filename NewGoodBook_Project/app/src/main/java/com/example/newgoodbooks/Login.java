@@ -58,19 +58,19 @@ public class Login extends AppCompatActivity {
             String password = String.valueOf(editTextPassword.getText());
 
             if (TextUtils.isEmpty(email)) {
-                Toast.makeText(Login.this, "Introduce un email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Login.this, getString(R.string.pide_email), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(Login.this, "Introduce una contraseña", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Login.this, getString(R.string.pide_password), Toast.LENGTH_SHORT).show();
                 return;
             }
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(tarea -> {
                         if (tarea.isSuccessful()) {
-                            entrar("Inicio de Sesión Exitoso");
+                            entrar(getString(R.string.login_ok));
                         } else {
-                            Toast.makeText(Login.this, "Inicio de Sesión Fallido", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, getString(R.string.login_ko), Toast.LENGTH_SHORT).show();
                         }
                     });
         });
@@ -107,7 +107,7 @@ public class Login extends AppCompatActivity {
                         //el codigo 12501 es que el usuario cerro el selector de cuenta
                         if (e.getStatusCode() != 12501) {
                             Log.w(TAG, "Fallo el inicio con Google", e);
-                            Toast.makeText(this, "No se ha podido entrar con Google", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.login_google_ko), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -124,10 +124,10 @@ public class Login extends AppCompatActivity {
         mAuth.signInWithCredential(credencial)
                 .addOnCompleteListener(this, tarea -> {
                     if (tarea.isSuccessful()) {
-                        entrar("Sesión iniciada con Google");
+                        entrar(getString(R.string.login_google_ok));
                     } else {
                         Log.w(TAG, "signInWithCredential fallo", tarea.getException());
-                        Toast.makeText(this, "No se ha podido entrar con Google", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.login_google_ko), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

@@ -11,6 +11,11 @@ public class Lista implements Serializable {
     //documentos reales y usan los ids sinteticos de abajo.
     public static final String ID_FAVORITOS = "__favoritos";
     public static final String ID_LEIDOS = "__leidos";
+    //Nombres de las listas fijas. Viven aqui y no en strings.xml porque tambien se
+    //usan desde clases sin Context (el repositorio), y porque hacen de identificador
+    //ademas de etiqueta. Antes estaban repetidos como literal en tres ficheros.
+    public static final String NOMBRE_FAVORITOS = "Libros Favoritos";
+    public static final String NOMBRE_LEIDOS = "Libros Leidos";
 
     private String id;
     private String nombre;

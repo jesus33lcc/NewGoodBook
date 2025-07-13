@@ -2,25 +2,77 @@
     <string name="app_name">NewGoodBook</string>
     <string name="eslogan">Descubre mundos cada dia con NewGoodBook: un nuevo libro, una nueva aventura</string>
     <string name="descripcion_inicio">Esta aplicación esta creada por estudiantes</string>
-    <string name="title_activity_libro">Libro</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="fuente1">analogist.ttf</string>
-    <string name="fuente2">ngb2_regular.ttf</string>
-    <string name="fuente3">overthink.ttf</string>
-    <string name="fuente4">pruebangb_regular.ttf</string>
-    <string name="fuente5">vogue.ttf</string>
-    <string name="fuenteC">chamberri_text_light.ttf</string>
+    <!-- Navegacion -->
+    <string name="title_activity_libro">Libro</string>
     <string name="title_activity_principal">Principal</string>
     <string name="title_principal">Principal</string>
     <string name="title_explorar">Explorar</string>
     <string name="title_listas">Listas</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_cerrar_sesion">Cerrar sesión</string>
+    <string name="title_mis_listas">Mis listas personalizadas</string>
+    <string name="title_resultados">Resultados de búsqueda</string>
 
+    <!-- Autenticacion -->
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="iniciar_sesion_google">Iniciar sesión con Google</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="sin_cuenta">¿No tienes cuenta todavía?</string>
+    <string name="ya_tienes_cuenta">¿Ya tienes una cuenta?</string>
+    <string name="password_olvidada">¿Te has olvidado de la contraseña?</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_nombre">Nombre</string>
+    <string name="hint_nombre_usuario">Nombre de usuario</string>
+    <string name="pide_email">Introduce un email</string>
+    <string name="pide_password">Introduce una contraseña</string>
+    <string name="login_ok">Inicio de sesión correcto</string>
+    <string name="login_ko">No se ha podido iniciar sesión</string>
+    <string name="login_google_ok">Sesión iniciada con Google</string>
+    <string name="login_google_ko">No se ha podido entrar con Google</string>
+    <string name="registro_ok">Registro correcto</string>
+    <string name="registro_ko">No se ha podido completar el registro</string>
+    <string name="cerrar_sesion_mensaje">Vas a salir de tu cuenta. Tus listas seguirán guardadas.</string>
 
+    <!-- Ficha del libro / Home -->
+    <string name="etiqueta_autor">Autor:</string>
+    <string name="etiqueta_paginas">Nº páginas:</string>
+    <string name="etiqueta_fecha">Fecha publicación:</string>
+    <string name="etiqueta_generos">Géneros:</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="cargando">Cargando…</string>
+    <string name="cargando_detalle">Buscando recomendaciones para ti.</string>
+    <string name="sin_conexion">Sin conexión</string>
+    <string name="sin_conexion_detalle">No se han podido cargar libros. Comprueba tu conexión y pulsa Reintentar.</string>
+    <string name="libro_no_disponible">No se ha podido abrir el libro</string>
+
+    <!-- Listas -->
+    <string name="nueva_lista">Nueva lista</string>
+    <string name="hint_nombre_lista">Nombre de la lista</string>
+    <string name="anadir_a_lista">Añadir a lista</string>
+    <string name="lista_sin_nombre">Ponle un nombre a la lista</string>
+    <string name="lista_nombre_reservado">Ese nombre está reservado</string>
+    <string name="lista_nombre_existente">Ya tienes una lista con ese nombre</string>
+    <string name="lista_creada">Lista \'%1$s\' creada</string>
+    <string name="lista_eliminada">Lista eliminada</string>
+    <string name="lista_no_disponible">No se ha podido abrir la lista</string>
+    <string name="lista_confirmar_borrado">¿Seguro que quieres eliminar \'%1$s\'?</string>
+    <string name="sin_listas">Todavía no tienes ninguna lista. Crea una en Listas.</string>
+    <string name="libro_anadido">Añadido a \'%1$s\'</string>
+    <string name="libro_ya_en_lista">Ese libro ya está en \'%1$s\'</string>
+    <string name="libro_eliminado">Libro eliminado</string>
+
+    <!-- Explorar -->
+    <string name="buscar_hint">Buscar título…</string>
+
+    <!-- Comunes -->
+    <string name="crear">Crear</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="eliminar">Eliminar</string>
+
+    <!-- Accesibilidad -->
+    <string name="desc_portada">Portada del libro</string>
+    <string name="desc_icono_lista">Icono de la lista</string>
 </resources>

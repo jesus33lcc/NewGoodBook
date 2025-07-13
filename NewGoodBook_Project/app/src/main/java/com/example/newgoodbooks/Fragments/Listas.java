@@ -98,36 +98,36 @@ public class Listas extends Fragment {
 
     public void showInputTextDialog_newList(){
         AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
-        alertDialog_Builder.setTitle("Nueva Lista");
+        alertDialog_Builder.setTitle(getString(R.string.nueva_lista));
 
         EditText inputText = new EditText(getContext());
         alertDialog_Builder.setView(inputText);
 
-        alertDialog_Builder.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
+        alertDialog_Builder.setPositiveButton(getString(R.string.crear), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nombre_newList = inputText.getText().toString().trim();
                 if(nombre_newList.isEmpty()){
-                    Toast.makeText(getActivity(), "Ponle un nombre a la lista", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.lista_sin_nombre), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 //los nombres de las listas fijas estan reservados
-                if(nombre_newList.equalsIgnoreCase("Libros Favoritos")
-                        || nombre_newList.equalsIgnoreCase("Libros Leidos")){
-                    Toast.makeText(getActivity(), "Ese nombre esta reservado", Toast.LENGTH_SHORT).show();
+                if(nombre_newList.equalsIgnoreCase(Lista.NOMBRE_FAVORITOS)
+                        || nombre_newList.equalsIgnoreCase(Lista.NOMBRE_LEIDOS)){
+                    Toast.makeText(getActivity(), getString(R.string.lista_nombre_reservado), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 for(String existente : repo.getNombresListasPersonales()){
                     if(existente.equalsIgnoreCase(nombre_newList)){
-                        Toast.makeText(getActivity(), "Nombre de Lista existente", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.lista_nombre_existente), Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
                 repo.crearLista(nombre_newList);
-                Toast.makeText(getActivity(), "Lista '" + nombre_newList + "' creada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.lista_creada, nombre_newList), Toast.LENGTH_SHORT).show();
             }
         });
-        alertDialog_Builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+        alertDialog_Builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel());
         alertDialog_Builder.show();
     }
 
@@ -137,12 +137,12 @@ public class Listas extends Fragment {
         }
         Lista aBorrar = misListas.get(index);
         AlertDialog.Builder alertDialog_Builder = new AlertDialog.Builder(getContext());
-        alertDialog_Builder.setTitle("¿Seguro que quieres eliminar '" + aBorrar.getNombre() + "'?");
-        alertDialog_Builder.setPositiveButton("Confirmar", (dialog, which) -> {
+        alertDialog_Builder.setTitle(getString(R.string.lista_confirmar_borrado, aBorrar.getNombre()));
+        alertDialog_Builder.setPositiveButton(getString(R.string.confirmar), (dialog, which) -> {
             repo.borrarLista(aBorrar);
-            Toast.makeText(getActivity(), "Lista eliminada", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.lista_eliminada), Toast.LENGTH_SHORT).show();
         });
-        alertDialog_Builder.setNegativeButton("Cancelar", (dialog, which) -> {
+        alertDialog_Builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> {
             dialog.cancel();
             //devuelve la fila a su sitio tras cancelar el swipe
             adaptadorPersonales.notifyItemChanged(index);

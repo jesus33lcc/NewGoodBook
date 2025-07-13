@@ -1,13 +1,17 @@
 package com.example.newgoodbooks.Fragments.HomeIU;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Libro;
+import com.example.newgoodbooks.R;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +20,7 @@ import java.util.concurrent.Executors;
 
 //Este ViewModel se pide con scope de Activity (ver HomeFragment), asi que la cola de
 //recomendaciones sobrevive al cambio de pestania y no hay que ir al servidor cada vez.
-public class HomeViewModel extends ViewModel {
+public class HomeViewModel extends AndroidViewModel {
     //cuantos libros intentamos tener en cola y a partir de cuantos volvemos a rellenar
     private static final int OBJETIVO_COLA = 20;
     private static final int MINIMO_COLA = 4;
@@ -44,12 +48,14 @@ public class HomeViewModel extends ViewModel {
     private final MediatorLiveData<Boolean> estadoTBtnFav = new MediatorLiveData<>();
     private final MediatorLiveData<Boolean> estadoTBtnCheck = new MediatorLiveData<>();
 
-    public HomeViewModel() {
+    //AndroidViewModel para poder resolver los textos de estado desde strings.xml
+    public HomeViewModel(@NonNull Application application) {
+        super(application);
         estadoTBtnFav.addSource(repo.getFavoritos(), libros -> estadoTBtnFav.setValue(
                 libroMostrado != null && libros != null && libros.contains(libroMostrado)));
         estadoTBtnCheck.addSource(repo.getLeidos(), libros -> estadoTBtnCheck.setValue(
                 libroMostrado != null && libros != null && libros.contains(libroMostrado)));
-        mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
+        mostrarMensaje(texto(R.string.cargando), texto(R.string.cargando_detalle));
     }
 
     public LiveData<String> getTitulo() {
@@ -115,6 +121,10 @@ public class HomeViewModel extends ViewModel {
         hayLibro.postValue(false);
     }
 
+    private String texto(int idRecurso) {
+        return getApplication().getString(idRecurso);
+    }
+
     private static String primero(List<String> lista) {
         return (lista == null || lista.isEmpty()) ? "" : lista.get(0);
     }
@@ -126,7 +136,7 @@ public class HomeViewModel extends ViewModel {
         }
         cargando = true;
         if (libroMostrado == null) {
-            mostrarMensaje("Cargando...", "Buscando recomendaciones para ti.");
+            mostrarMensaje(texto(R.string.cargando), texto(R.string.cargando_detalle));
         }
         executor.execute(() -> {
             try {
@@ -137,8 +147,7 @@ public class HomeViewModel extends ViewModel {
                     }
                 }
                 if (libroMostrado == null) {
-                    mostrarMensaje("Sin conexion",
-                            "No se han podido cargar libros. Comprueba tu conexion y pulsa Reintentar.");
+                    mostrarMensaje(texto(R.string.sin_conexion), texto(R.string.sin_conexion_detalle));
                 } else {
                     cambiarVistaLibro();
                 }

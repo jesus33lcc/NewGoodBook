@@ -52,23 +52,23 @@ public class Registro extends AppCompatActivity {
                 password=String.valueOf(editTextPassword.getText());
 
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(Registro.this, "Introduce un email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Registro.this, getString(R.string.pide_email), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(Registro.this, "Introduce una contraseña", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Registro.this, getString(R.string.pide_password), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(Registro.this, "Registro con Exito", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Registro.this, getString(R.string.registro_ok), Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Registro.this, Login.class));
                                     finish();
 
                                 } else {
-                                    Toast.makeText(Registro.this, "Registro fallido", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Registro.this, getString(R.string.registro_ko), Toast.LENGTH_SHORT).show();
 
                                 }
                             }

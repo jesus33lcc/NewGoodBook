@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.UI.AccionesLibro;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
@@ -77,7 +78,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(Boolean hay) {
                 boolean disponible = Boolean.TRUE.equals(hay);
-                botonSig.setText(disponible ? "Siguiente" : "Reintentar");
+                botonSig.setText(disponible ? R.string.siguiente : R.string.reintentar);
                 btnFav.setEnabled(disponible);
                 btnCheck.setEnabled(disponible);
                 btnAddList.setEnabled(disponible);

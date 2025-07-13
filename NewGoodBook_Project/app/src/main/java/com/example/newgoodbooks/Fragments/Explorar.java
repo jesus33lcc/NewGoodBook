@@ -67,7 +67,7 @@ public class Explorar extends Fragment {
         // Sobre el SearchView
         MenuItem searchItem = toolbarSearch.getMenu().findItem(R.id.action_searchExplore);
         searchViewExplorar = (SearchView) searchItem.getActionView();
-        searchViewExplorar.setQueryHint("Buscar titulo...");
+        searchViewExplorar.setQueryHint(getString(R.string.buscar_hint));
 
         // Configuracion color del SearchView
         int colorBlanco = ContextCompat.getColor(requireContext(), android.R.color.white);

@@ -43,7 +43,7 @@ public class ContenidoLista extends AppCompatActivity {
 
         listaId = getIntent().getStringExtra(EXTRA_LISTA_ID);
         if (listaId == null) {
-            Toast.makeText(this, "No se ha podido abrir la lista", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.lista_no_disponible), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -94,7 +94,7 @@ public class ContenidoLista extends AppCompatActivity {
             return;
         }
         Lista fija = repo.getListaPorId(listaId);
-        toolbarListaSelected.setTitle(fija != null ? fija.getNombre() : "Lista");
+        toolbarListaSelected.setTitle(fija != null ? fija.getNombre() : getString(R.string.title_listas));
     }
 
     private void pintar(List<Libro> libros) {
@@ -107,6 +107,6 @@ public class ContenidoLista extends AppCompatActivity {
             return;
         }
         repo.quitarLibroDeLista(listaId, librosActuales.get(index));
-        Toast.makeText(this, "Libro eliminado", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.libro_eliminado), Toast.LENGTH_SHORT).show();
     }
 }

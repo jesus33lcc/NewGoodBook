@@ -40,10 +40,10 @@ public class FragmentLogout extends Fragment {
 
     private void pedirConfirmacion() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Cerrar sesion")
-                .setMessage("Vas a salir de tu cuenta. Tus listas seguiran guardadas.")
-                .setPositiveButton("Cerrar sesion", (dialog, boton) -> cerrarSesion())
-                .setNegativeButton("Cancelar", (dialog, boton) -> volverAHome())
+                .setTitle(getString(R.string.title_cerrar_sesion))
+                .setMessage(getString(R.string.cerrar_sesion_mensaje))
+                .setPositiveButton(getString(R.string.title_cerrar_sesion), (dialog, boton) -> cerrarSesion())
+                .setNegativeButton(getString(R.string.cancelar), (dialog, boton) -> volverAHome())
                 .setOnCancelListener(dialog -> volverAHome())
                 .show();
     }

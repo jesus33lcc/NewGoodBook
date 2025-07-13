@@ -169,17 +169,17 @@ public class RepositorioUsuario {
     //Las dos listas fijas, construidas al vuelo a partir de favoritos y leidos
     public List<Lista> getListasImborrables() {
         List<Lista> fijas = new ArrayList<>();
-        fijas.add(new Lista(Lista.ID_FAVORITOS, "Libros Favoritos", valorOVacio(favoritos)));
-        fijas.add(new Lista(Lista.ID_LEIDOS, "Libros Leidos", valorOVacio(leidos)));
+        fijas.add(new Lista(Lista.ID_FAVORITOS, Lista.NOMBRE_FAVORITOS, valorOVacio(favoritos)));
+        fijas.add(new Lista(Lista.ID_LEIDOS, Lista.NOMBRE_LEIDOS, valorOVacio(leidos)));
         return fijas;
     }
 
     public Lista getListaPorId(String id) {
         if (Lista.ID_FAVORITOS.equals(id)) {
-            return new Lista(Lista.ID_FAVORITOS, "Libros Favoritos", valorOVacio(favoritos));
+            return new Lista(Lista.ID_FAVORITOS, Lista.NOMBRE_FAVORITOS, valorOVacio(favoritos));
         }
         if (Lista.ID_LEIDOS.equals(id)) {
-            return new Lista(Lista.ID_LEIDOS, "Libros Leidos", valorOVacio(leidos));
+            return new Lista(Lista.ID_LEIDOS, Lista.NOMBRE_LEIDOS, valorOVacio(leidos));
         }
         for (Lista lista : valorListasOVacio()) {
             if (lista.getId().equals(id)) {
