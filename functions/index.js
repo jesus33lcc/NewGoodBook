@@ -2,6 +2,12 @@ const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const {setGlobalOptions} = require("firebase-functions/v2/options");
 const {defineSecret} = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
+const {initializeApp} = require("firebase-admin/app");
+const {getFirestore} = require("firebase-admin/firestore");
+const crypto = require("crypto");
+
+initializeApp();
+const db = getFirestore();
 
 // TOPE DE GASTO: como maximo 5 instancias a la vez y ninguna encendida en reposo.
 // Es el unico freno real al coste; el presupuesto de la consola solo manda avisos.
@@ -28,8 +34,14 @@ const ESPERA_MAX_MS = 2000;
 // Se corta al llegar aqui y se devuelve lo que se tenga.
 const PRESUPUESTO_MS = 40000;
 
-// Cache en memoria de la instancia. Ahorra cuota de la API de Books en las
-// peticiones repetidas y no cuesta nada (no usa Firestore ni Storage).
+// DOS NIVELES DE CACHE:
+//  1) memoria de la instancia -> instantaneo, pero se pierde al reciclarse
+//  2) Firestore -> compartido entre instancias y persistente
+// El nivel 2 es el que de verdad quita la dependencia de que Books responda: con un
+// 50% de 503 medido, lo ya consultado una vez deja de depender de la suerte.
+// La coleccion no aparece en firestore.rules, asi que ningun cliente puede leerla;
+// la funcion entra con el SDK admin, que se salta las reglas.
+const COL_CACHE = "cache_libros";
 const cache = new Map();
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hora: por debajo de esto se sirve tal cual
 const CACHE_STALE_MS = 24 * 60 * 60 * 1000; // hasta 24h vale como red de seguridad
@@ -67,14 +79,49 @@ const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // La API de Books devuelve 503 con frecuencia: reintentamos con espera creciente,
 // pero sin pasarnos del plazo (limite) que nos deja el presupuesto de la invocacion.
+function idDeCache(clave) {
+  return crypto.createHash("sha1").update(clave).digest("hex");
+}
+
+//Nivel 2: lee de Firestore. Devuelve {datos, fresco} o null.
+async function leerDeFirestore(clave) {
+  try {
+    const doc = await db.collection(COL_CACHE).doc(idDeCache(clave)).get();
+    if (!doc.exists) return null;
+    const d = doc.data();
+    const edad = Date.now() - (d.creado || 0);
+    if (edad > CACHE_STALE_MS) return null;
+    return {datos: d.datos, fresco: edad <= CACHE_TTL_MS};
+  } catch (e) {
+    logger.warn("No se pudo leer la cache de Firestore", e);
+    return null;
+  }
+}
+
+async function guardarEnFirestore(clave, datos) {
+  try {
+    await db.collection(COL_CACHE).doc(idDeCache(clave)).set({
+      datos, creado: Date.now(), consulta: clave.slice(0, 300),
+    });
+  } catch (e) {
+    logger.warn("No se pudo guardar en la cache de Firestore", e);
+  }
+}
+
 async function pedirABooks(params, apiKey, limite, maxIntentos = MAX_INTENTOS) {
   const url = new URL(BASE_URL);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   url.searchParams.set("key", apiKey);
 
   const clave = url.toString().replace(apiKey, "");
-  const enCache = cacheGet(clave);
-  if (enCache) return enCache;
+  const enMemoria = cacheGet(clave);
+  if (enMemoria) return enMemoria;
+
+  const persistida = await leerDeFirestore(clave);
+  if (persistida && persistida.fresco) {
+    cacheSet(clave, persistida.datos);
+    return persistida.datos;
+  }
 
   let espera = ESPERA_BASE_MS;
   for (let intento = 1; intento <= maxIntentos; intento++) {
@@ -87,6 +134,7 @@ async function pedirABooks(params, apiKey, limite, maxIntentos = MAX_INTENTOS) {
       if (res.ok) {
         const datos = await res.json();
         cacheSet(clave, datos);
+        guardarEnFirestore(clave, datos); //sin await: no bloquea la respuesta
         return datos;
       }
       // 4xx que no sea 429 no se arregla reintentando (clave mala, query invalida...)
@@ -107,8 +155,8 @@ async function pedirABooks(params, apiKey, limite, maxIntentos = MAX_INTENTOS) {
       espera = Math.min(espera * 2, ESPERA_MAX_MS);
     }
   }
-  // Books no responde: si tenemos una respuesta vieja, mejor eso que nada
-  const viejo = cacheGetCaducado(clave);
+  // Books no responde: mejor una respuesta vieja que una pantalla vacia
+  const viejo = cacheGetCaducado(clave) || (persistida && persistida.datos);
   if (viejo) {
     logger.info("Books no responde; se sirve resultado cacheado antiguo");
     return viejo;
@@ -166,9 +214,38 @@ function barajar(lista) {
   return lista;
 }
 
+// LIMITE POR USUARIO. La funcion ya exige sesion, asi que el abuso realista es un
+// usuario logueado machacandola. El contador vive en memoria de la instancia: con
+// maxInstances=5 un atacante podria sacar hasta 5 veces el limite, pero combinado con
+// el tope de instancias el gasto sigue acotado, que es lo que importa.
+// (App Check seria lo suyo, pero exige registrar Play Integrity en consola primero.)
+const MAX_LLAMADAS = 30;
+const VENTANA_MS = 60 * 1000;
+const contadores = new Map();
+
 function exigirUsuario(request) {
   if (!request.auth) {
     throw new HttpsError("unauthenticated", "Hay que iniciar sesion.");
+  }
+  const uid = request.auth.uid;
+  const ahora = Date.now();
+  const previo = contadores.get(uid);
+
+  if (!previo || ahora - previo.desde > VENTANA_MS) {
+    contadores.set(uid, {desde: ahora, veces: 1});
+    if (contadores.size > 500) {
+      //poda para que el Map no crezca sin fin
+      for (const [k, v] of contadores) {
+        if (ahora - v.desde > VENTANA_MS) contadores.delete(k);
+      }
+    }
+    return;
+  }
+  previo.veces++;
+  if (previo.veces > MAX_LLAMADAS) {
+    logger.warn(`Usuario ${uid} supera ${MAX_LLAMADAS} llamadas/min`);
+    throw new HttpsError("resource-exhausted",
+        "Demasiadas peticiones seguidas. Espera un momento.");
   }
 }
 
