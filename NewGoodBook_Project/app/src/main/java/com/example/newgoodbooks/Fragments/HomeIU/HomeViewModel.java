@@ -198,7 +198,14 @@ public class HomeViewModel extends AndroidViewModel {
         if (faltan <= 0) {
             return;
         }
-        List<Libro> nuevos = ClienteFunciones.librosAleatorios(faltan);
+        //la mitad de las veces se pide algo parecido a lo que ya le gusta, y la otra
+        //mitad se deja al azar del servidor, para que las recomendaciones no se cierren
+        //siempre sobre los mismos autores
+        String semilla = null;
+        if (new java.util.Random().nextBoolean()) {
+            semilla = repo.semillaDeRecomendacion();
+        }
+        List<Libro> nuevos = ClienteFunciones.librosAleatorios(faltan, semilla);
         if (nuevos.isEmpty()) {
             return;
         }

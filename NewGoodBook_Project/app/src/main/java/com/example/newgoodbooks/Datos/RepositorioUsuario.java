@@ -154,6 +154,33 @@ public class RepositorioUsuario {
         return listas;
     }
 
+    //Devuelve un autor o genero de los libros marcados como favoritos, para pedirle
+    //al servidor recomendaciones parecidas. null si el usuario aun no tiene favoritos.
+    @Nullable
+    public String semillaDeRecomendacion() {
+        List<Libro> gustan = favoritos.getValue();
+        if (gustan == null || gustan.isEmpty()) {
+            return null;
+        }
+        List<String> candidatos = new ArrayList<>();
+        for (Libro libro : gustan) {
+            if (libro.getAutor() != null) {
+                for (String a : libro.getAutor()) {
+                    candidatos.add("inauthor:" + a);
+                }
+            }
+            if (libro.getGeneros() != null) {
+                for (String g : libro.getGeneros()) {
+                    candidatos.add("subject:" + g);
+                }
+            }
+        }
+        if (candidatos.isEmpty()) {
+            return null;
+        }
+        return candidatos.get(new java.util.Random().nextInt(candidatos.size()));
+    }
+
     public boolean esFavorito(Libro libro) {
         return contiene(favoritos.getValue(), libro);
     }

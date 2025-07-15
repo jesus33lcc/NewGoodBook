@@ -43,10 +43,18 @@ public class ClienteFunciones {
     }
 
     //pide un lote de recomendaciones. lista vacia si falla.
-    public static List<Libro> librosAleatorios(int cuantos) {
+    //si se pasa un termino, el servidor busca por ahi en vez de por una semilla al azar.
+    public static List<Libro> librosAleatorios(int cuantos, String termino) {
         Map<String, Object> datos = new HashMap<>();
         datos.put("cuantos", cuantos);
+        if (termino != null && !termino.trim().isEmpty()) {
+            datos.put("termino", termino);
+        }
         return llamarYExtraer("librosAleatorios", datos);
+    }
+
+    public static List<Libro> librosAleatorios(int cuantos) {
+        return librosAleatorios(cuantos, null);
     }
 
     //un solo libro aleatorio, o null
