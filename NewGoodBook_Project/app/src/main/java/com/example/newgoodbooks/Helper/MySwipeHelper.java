@@ -84,7 +84,9 @@ public abstract class MySwipeHelper extends ItemTouchHelper.SimpleCallback {
     private synchronized void recoverSwipedItem() {
         while (!removerQueue.isEmpty()) {
             int pos = removerQueue.poll();
-            if (pos > 1)
+            //era "pos > 1", asi que las dos primeras filas nunca se repintaban y se
+            //quedaban desplazadas despues de cancelar un swipe
+            if (pos > -1 && recyclerView.getAdapter() != null)
                 recyclerView.getAdapter().notifyItemChanged(pos);
         }
     }
@@ -166,7 +168,11 @@ public abstract class MySwipeHelper extends ItemTouchHelper.SimpleCallback {
             } else {
                 Drawable d = ContextCompat.getDrawable(context, imageResId);
                 Bitmap bitmap = drawableToBitmap(d);
-                c.drawBitmap(bitmap, (rectF.left + rectF.right) / 2, (rectF.top + rectF.bottom) / 2, p);
+                //drawBitmap coloca la ESQUINA superior izquierda, no el centro: sin
+                //restar la mitad del icono, salia desplazado hacia abajo y a la derecha
+                c.drawBitmap(bitmap,
+                        (rectF.left + rectF.right) / 2 - bitmap.getWidth() / 2f,
+                        (rectF.top + rectF.bottom) / 2 - bitmap.getHeight() / 2f, p);
             }
             clickRegion = rectF;
             this.pos = pos;
@@ -205,7 +211,8 @@ public abstract class MySwipeHelper extends ItemTouchHelper.SimpleCallback {
             buttonList = buttonBuffer.get(swipePosition);
         else
             buttonList.clear();
-        buttonBuffer.clear();
+        //antes aqui habia un buttonBuffer.clear() que borraba la cache de botones
+        //justo despues de leerla, obligando a reconstruirlos en cada swipe
         swipeThreshold = 0.5f * buttonList.size();
         recoverSwipedItem();
     }
