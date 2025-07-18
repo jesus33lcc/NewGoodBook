@@ -75,11 +75,34 @@ public class Login extends AppCompatActivity {
                     });
         });
 
+        //el enlace de contrasena olvidada estaba en el layout sin listener, igual que
+        //le pasaba al boton de Google: existia pero no hacia nada
+        txt_passwordlost.setOnClickListener(v -> pedirRestablecerPassword());
+
         //metodo click, si no tiene una cuenta lo lleva al Registro
         txt_noCuenta.setOnClickListener(v -> {
             startActivity(new Intent(Login.this, Registro.class));
             finish();
         });
+    }
+
+    //Envia el correo de restablecimiento de Firebase a la direccion escrita
+    private void pedirRestablecerPassword() {
+        String email = String.valueOf(editTextEmail.getText()).trim();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, R.string.pide_email_para_recuperar, Toast.LENGTH_SHORT).show();
+            editTextEmail.requestFocus();
+            return;
+        }
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(tarea -> {
+                    //siempre el mismo mensaje: decir si el correo existe o no permitiria
+                    //averiguar que cuentas estan registradas
+                    if (!tarea.isSuccessful()) {
+                        Log.w(TAG, "Fallo al enviar el correo de recuperacion", tarea.getException());
+                    }
+                    Toast.makeText(this, R.string.recuperar_enviado, Toast.LENGTH_LONG).show();
+                });
     }
 
     //Google Sign-In. El boton llevaba en el layout desde 2024 sin hacer nada porque

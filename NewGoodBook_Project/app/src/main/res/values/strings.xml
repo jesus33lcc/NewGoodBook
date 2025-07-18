@@ -32,6 +32,8 @@
     <string name="login_google_ko">No se ha podido entrar con Google</string>
     <string name="registro_ok">Registro correcto</string>
     <string name="registro_ko">No se ha podido completar el registro</string>
+    <string name="pide_email_para_recuperar">Escribe tu email y vuelve a pulsar</string>
+    <string name="recuperar_enviado">Si esa dirección tiene cuenta, te hemos enviado un correo para cambiar la contraseña</string>
     <string name="cerrar_sesion_mensaje">Vas a salir de tu cuenta. Tus listas seguirán guardadas.</string>
 
     <!-- Ficha del libro / Home -->
