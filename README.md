@@ -96,6 +96,19 @@ cd NewGoodBook_Project
 Cubren la conversión de los modelos entre Firestore y la app, que es donde un fallo
 silencioso dejaría datos ilegibles.
 
+## Créditos
+
+NewGoodBook nació como proyecto de clase del ciclo de Desarrollo de Aplicaciones
+Multiplataforma, hecho en equipo:
+
+- [@jesus33lcc](https://github.com/jesus33lcc)
+- [@SilviaCC1701](https://github.com/SilviaCC1701)
+- [@brisasp](https://github.com/brisasp)
+- [@angelardm](https://github.com/angelardm)
+
+La versión actual —backend propio, datos en la nube y rediseño— la mantiene
+[@jesus33lcc](https://github.com/jesus33lcc).
+
 ## Licencia
 
 Ver [LICENSE](LICENSE).
