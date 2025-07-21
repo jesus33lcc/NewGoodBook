@@ -208,22 +208,24 @@
 
         </FrameLayout>
 
-        <FrameLayout
+        <!-- Descripcion con scroll: antes tenia altura fija y se cortaba -->
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:paddingHorizontal="24dp"
+            android:scrollbars="vertical">
 
             <TextView
                 android:id="@+id/textDescripcion"
-                android:layout_width="297dp"
-                android:layout_height="251dp"
-                android:layout_gravity="center|top"
-                android:layout_marginTop="15dp"
-                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
                 android:fontFamily="@font/chamberi_text_regular"
                 android:text=""
                 android:textAlignment="center" />
-        </FrameLayout>
+        </ScrollView>
 
     </LinearLayout>
 </FrameLayout>

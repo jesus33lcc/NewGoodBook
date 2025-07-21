@@ -204,32 +204,39 @@
 
         </FrameLayout>
 
-        <FrameLayout
+        <!-- La descripcion ahora scrollea dentro de su propio hueco: antes tenia una
+             altura fija y el texto se cortaba a mitad de frase sin forma de seguir. -->
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:paddingHorizontal="24dp"
+            android:scrollbars="vertical">
 
             <TextView
                 android:id="@+id/textDescripcion"
-                android:layout_width="297dp"
-                android:layout_height="251dp"
-                android:layout_gravity="center|top"
-                android:layout_marginTop="15dp"
-                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
                 android:fontFamily="@font/chamberi_text_regular"
                 android:text=""
                 android:textAlignment="center" />
+        </ScrollView>
 
-            <Button
-                android:id="@+id/btnSiguiente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginBottom="40dp"
-                android:backgroundTint="@color/dark_blue"
-                android:fontFamily="@font/chamberi_text_semibold"
-                android:text="@string/siguiente" />
-        </FrameLayout>
+        <!-- El boton es ahora una fila propia del LinearLayout. Antes estaba dentro
+             del mismo contenedor que el texto, anclado abajo, y acababa debajo de la
+             barra de navegacion. -->
+        <Button
+            android:id="@+id/btnSiguiente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/dark_blue"
+            android:fontFamily="@font/chamberi_text_semibold"
+            android:text="@string/siguiente" />
 
     </LinearLayout>
 </FrameLayout>
