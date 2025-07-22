@@ -33,6 +33,9 @@ const ESPERA_MAX_MS = 2000;
 // Home salia vacia en el primer arranque (instancia fria + Books dando 503).
 // Se corta al llegar aqui y se devuelve lo que se tenga.
 const PRESUPUESTO_MS = 40000;
+// Idioma de los libros. Sin esto la API devolvia cualquier cosa: en las pruebas
+// salio un libro en neerlandes en una app en espaniol.
+const IDIOMA_POR_DEFECTO = "es";
 
 // DOS NIVELES DE CACHE:
 //  1) memoria de la instancia -> instantaneo, pero se pierde al reciclarse
@@ -194,9 +197,9 @@ const SEMILLAS = [
   "subject:fiction", "subject:fantasy", "subject:science+fiction",
   "subject:mystery", "subject:thriller", "subject:romance",
   "subject:history", "subject:biography", "subject:poetry",
-  "subject:philosophy", "subject:adventure", "subject:horror",
-  "subject:juvenile+fiction", "subject:drama", "subject:classics",
+  "subject:juvenile+fiction", "subject:drama",
   "novela", "cuentos", "aventuras", "misterio", "historia",
+  "narrativa", "ensayo", "literatura", "clasicos", "relatos",
   "inauthor:Stephen+King", "inauthor:Agatha+Christie",
   "inauthor:Isaac+Asimov", "inauthor:Terry+Pratchett",
   "inauthor:J.K.+Rowling", "inauthor:Gabriel+Garcia+Marquez",
@@ -259,11 +262,14 @@ exports.buscarLibros = onCall(
         throw new HttpsError("invalid-argument", "Falta el texto a buscar.");
       }
       const limite = Date.now() + PRESUPUESTO_MS;
+      const idioma = String((request.data && request.data.idioma) || IDIOMA_POR_DEFECTO)
+          .slice(0, 5);
       const datos = await pedirABooks({
         q: consulta.slice(0, 200),
         orderBy: "relevance",
         maxResults: "40",
         printType: "books",
+        langRestrict: idioma,
       }, GOOGLE_BOOKS_API_KEY.value(), limite);
 
       if (!datos) return {libros: [], error: "no-disponible"};
@@ -279,6 +285,9 @@ exports.librosAleatorios = onCall(
       const cuantos = Math.min(Math.max(Number(
           (request.data && request.data.cuantos) || 10), 1), 20);
       const termino = String((request.data && request.data.termino) || "").trim();
+      //el idioma lo manda la app segun el del dispositivo; si no, espaniol
+      const idioma = String((request.data && request.data.idioma) || IDIOMA_POR_DEFECTO)
+          .slice(0, 5);
 
       const semillas = termino ? [termino] : barajar(SEMILLAS.slice());
 
@@ -302,6 +311,7 @@ exports.librosAleatorios = onCall(
           orderBy: "relevance",
           maxResults: "40",
           printType: "books",
+          langRestrict: idioma,
         }, GOOGLE_BOOKS_API_KEY.value(), limite, INTENTOS_POR_SEMILLA);
         if (!datos) continue;
         for (const libro of (datos.items || []).map(aLibro)) {
