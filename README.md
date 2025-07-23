@@ -106,8 +106,9 @@ Multiplataforma, hecho en equipo:
 - [@brisasp](https://github.com/brisasp)
 - [@angelardm](https://github.com/angelardm)
 
-La versión actual —backend propio, datos en la nube y rediseño— la mantiene
-[@jesus33lcc](https://github.com/jesus33lcc).
+En la versión actual, [@jesus33lcc](https://github.com/jesus33lcc) se ocupa del backend
+y el comportamiento de la app, y [@SilviaCC1701](https://github.com/SilviaCC1701) del
+diseño y el rediseño de las pantallas.
 
 ## Licencia
 
