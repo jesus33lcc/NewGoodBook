@@ -99,12 +99,10 @@ silencioso dejaría datos ilegibles.
 ## Créditos
 
 NewGoodBook nació como proyecto de clase del ciclo de Desarrollo de Aplicaciones
-Multiplataforma, hecho en equipo:
+Multiplataforma:
 
 - [@jesus33lcc](https://github.com/jesus33lcc)
 - [@SilviaCC1701](https://github.com/SilviaCC1701)
-- [@brisasp](https://github.com/brisasp)
-- [@angelardm](https://github.com/angelardm)
 
 En la versión actual, [@jesus33lcc](https://github.com/jesus33lcc) se ocupa del backend
 y el comportamiento de la app, y [@SilviaCC1701](https://github.com/SilviaCC1701) del
