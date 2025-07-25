@@ -42,6 +42,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<String> linkImagen = new MutableLiveData<>();
     //false mientras no haya libro que mostrar: la pantalla pasa a modo "Reintentar"
     private final MutableLiveData<Boolean> hayLibro = new MutableLiveData<>(false);
+    //Mientras esta a true la pantalla no debe ofrecer "Reintentar": todavia esta buscando
+    private final MutableLiveData<Boolean> estaCargando = new MutableLiveData<>(false);
 
     //Los dos toggles se derivan de Firestore: si marcas un libro en el movil,
     //la tablet se entera sola. No hay que refrescarlos a mano en ningun sitio.
@@ -87,6 +89,10 @@ public class HomeViewModel extends AndroidViewModel {
     }
     public LiveData<Boolean> getHayLibro() {
         return hayLibro;
+    }
+
+    public LiveData<Boolean> getEstaCargando() {
+        return estaCargando;
     }
 
     //vuelca en pantalla el libro que toca
@@ -148,6 +154,7 @@ public class HomeViewModel extends AndroidViewModel {
             return;
         }
         cargando = true;
+        estaCargando.postValue(true);
         if (libroMostrado == null) {
             mostrarMensaje(texto(R.string.cargando), texto(R.string.cargando_detalle));
         }
@@ -166,6 +173,7 @@ public class HomeViewModel extends AndroidViewModel {
                 }
             } finally {
                 cargando = false;
+                estaCargando.postValue(false);
             }
         });
     }

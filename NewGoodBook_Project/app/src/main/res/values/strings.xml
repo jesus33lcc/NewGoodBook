@@ -48,6 +48,7 @@
     <string name="etiqueta_sinopsis">Sinopsis</string>
     <string name="formato_paginas">%1$s págs.</string>
     <string name="reintentar">Reintentar</string>
+    <string name="buscando">Buscando…</string>
     <string name="cargando">Cargando…</string>
     <string name="cargando_detalle">Buscando recomendaciones para ti.</string>
     <string name="sin_conexion">Sin conexión</string>

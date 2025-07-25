@@ -76,17 +76,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        //cuando no hay libro que mostrar, la pantalla pasa a modo "Reintentar"
-        mViewModel.getHayLibro().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean hay) {
-                boolean disponible = Boolean.TRUE.equals(hay);
-                botonSig.setText(disponible ? R.string.siguiente : R.string.reintentar);
-                btnFav.setEnabled(disponible);
-                btnCheck.setEnabled(disponible);
-                btnAddList.setEnabled(disponible);
-            }
-        });
+        //El estado del boton depende de DOS cosas: si hay libro y si esta buscando.
+        //Antes solo miraba lo primero, asi que mientras cargaba ya ofrecia "Reintentar".
+        mViewModel.getHayLibro().observe(getViewLifecycleOwner(), hay -> refrescarEstado());
+        mViewModel.getEstaCargando().observe(getViewLifecycleOwner(), c -> refrescarEstado());
 
         mViewModel.getTitulo().observe(getViewLifecycleOwner(), titulo::setText);
         mViewModel.getAutor().observe(getViewLifecycleOwner(), autor::setText);
@@ -126,6 +119,29 @@ public class HomeFragment extends Fragment {
         }
 
         return root;
+    }
+
+    private void refrescarEstado() {
+        boolean hayLibro = Boolean.TRUE.equals(mViewModel.getHayLibro().getValue());
+        boolean cargando = Boolean.TRUE.equals(mViewModel.getEstaCargando().getValue());
+
+        if (cargando) {
+            botonSig.setText(R.string.buscando);
+        } else {
+            botonSig.setText(hayLibro ? R.string.siguiente : R.string.reintentar);
+        }
+        //mientras busca, el boton no invita a reintentar algo que ya esta en marcha
+        botonSig.setEnabled(!cargando);
+
+        btnFav.setEnabled(hayLibro);
+        btnCheck.setEnabled(hayLibro);
+        btnAddList.setEnabled(hayLibro);
+        //las pildoras vacias daban sensacion de app rota mientras no habia datos
+        int visibilidad = hayLibro ? View.VISIBLE : View.INVISIBLE;
+        numPag.setVisibility(visibilidad);
+        fecha.setVisibility(visibilidad);
+        genero.setVisibility(visibilidad);
+        autor.setVisibility(visibilidad);
     }
 
     //Marca una accion como activa: icono lleno y acento dorado. Antes eran ToggleButton,
