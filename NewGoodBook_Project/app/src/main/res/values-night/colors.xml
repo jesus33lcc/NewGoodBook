@@ -29,6 +29,10 @@
     <color name="md_on_surface_variant">#C5C6D0</color>
     <color name="md_outline">#8F909A</color>
 
+    <color name="hero_fondo">#070F1F</color>
+    <color name="hero_texto">#FFFFFF</color>
+    <color name="hero_meta">#B9C4DA</color>
+
     <color name="md_error">#FFB4AB</color>
     <color name="md_on_error">#690005</color>
 </resources>

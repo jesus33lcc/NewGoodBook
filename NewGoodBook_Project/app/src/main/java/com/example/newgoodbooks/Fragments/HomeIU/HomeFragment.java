@@ -14,11 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.newgoodbooks.R;
+import com.google.android.material.button.MaterialButton;
 import com.example.newgoodbooks.UI.AccionesLibro;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
@@ -32,11 +33,12 @@ public class HomeFragment extends Fragment {
     private TextView fecha;
     private TextView genero;
     private TextView descripcion;
-    private Button botonSig;
+    private MaterialButton botonSig;
     private ImageView portada;
-    private ToggleButton btnFav;
-    private ToggleButton btnCheck;
-    private ImageButton btnAddList;
+    private MaterialButton btnFav;
+    private MaterialButton btnCheck;
+    private MaterialButton btnAddList;
+    private TextView etiquetaSinopsis;
 
     public HomeFragment(){
     }
@@ -60,6 +62,7 @@ public class HomeFragment extends Fragment {
         btnFav = binding.tBtnFavorite;
         btnCheck = binding.tBtnCheck;
         btnAddList = binding.tBtnAddList;
+        etiquetaSinopsis = binding.etiquetaSinopsis;
 
         mViewModel.getLinkImagen().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -94,15 +97,21 @@ public class HomeFragment extends Fragment {
         mViewModel.getEstadoTBtnFav().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean marcado) {
-                btnFav.setChecked(Boolean.TRUE.equals(marcado));
+                pintarAccion(btnFav, Boolean.TRUE.equals(marcado),
+                        R.drawable.ic_favorite_on, R.drawable.ic_favorite_off);
             }
         });
         mViewModel.getEstadoTBtnCheck().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean marcado) {
-                btnCheck.setChecked(Boolean.TRUE.equals(marcado));
+                pintarAccion(btnCheck, Boolean.TRUE.equals(marcado),
+                        R.drawable.ic_checkbox_on, R.drawable.ic_checkbox_off);
             }
         });
+
+        //los tres botones de accion deben verse igual en reposo; "A lista" no tiene
+        //estado activo, pero heredaba el color primario del estilo por defecto
+        pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
 
         botonSig.setOnClickListener(v -> mViewModel.cambioLibro());
         //los toggles solo avisan al repositorio: el estado vuelve por Firestore
@@ -117,6 +126,20 @@ public class HomeFragment extends Fragment {
         }
 
         return root;
+    }
+
+    //Marca una accion como activa: icono lleno y acento dorado. Antes eran ToggleButton,
+    //que no permitian este tratamiento sin pelearse con su fondo por defecto.
+    private void pintarAccion(MaterialButton boton, boolean activo, int iconoOn, int iconoOff) {
+        int acento = ContextCompat.getColor(requireContext(), R.color.md_tertiary);
+        int apagado = com.google.android.material.color.MaterialColors.getColor(
+                boton, com.google.android.material.R.attr.colorOnSurfaceVariant);
+        boton.setIconResource(activo ? iconoOn : iconoOff);
+        boton.setIconTint(android.content.res.ColorStateList.valueOf(activo ? acento : apagado));
+        boton.setTextColor(activo ? acento : apagado);
+        boton.setStrokeColor(android.content.res.ColorStateList.valueOf(
+                activo ? acento : com.google.android.material.color.MaterialColors.getColor(
+                        boton, com.google.android.material.R.attr.colorOutline)));
     }
 
     @Override

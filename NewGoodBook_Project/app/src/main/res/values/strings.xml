@@ -41,7 +41,12 @@
     <string name="etiqueta_paginas">Nº páginas:</string>
     <string name="etiqueta_fecha">Fecha publicación:</string>
     <string name="etiqueta_generos">Géneros:</string>
-    <string name="siguiente">Siguiente</string>
+    <string name="siguiente">Siguiente libro</string>
+    <string name="accion_favorito">Favorito</string>
+    <string name="accion_leido">Leído</string>
+    <string name="accion_a_lista">A lista</string>
+    <string name="etiqueta_sinopsis">Sinopsis</string>
+    <string name="formato_paginas">%1$s págs.</string>
     <string name="reintentar">Reintentar</string>
     <string name="cargando">Cargando…</string>
     <string name="cargando_detalle">Buscando recomendaciones para ti.</string>

@@ -97,8 +97,8 @@ public class HomeViewModel extends AndroidViewModel {
         }
         titulo.postValue(libro.getTitulo());
         autor.postValue(primero(libro.getAutor()));
-        numPag.postValue(String.valueOf(libro.getNumPag()));
-        fechaPublicacion.postValue(libro.getFechaPublicacion());
+        numPag.postValue(texto(R.string.formato_paginas, String.valueOf(libro.getNumPag())));
+        fechaPublicacion.postValue(soloAnio(libro.getFechaPublicacion()));
         generos.postValue(primero(libro.getGeneros()));
         descripcion.postValue(libro.getDescripcion());
         linkImagen.postValue(libro.getLinkImg());
@@ -123,6 +123,19 @@ public class HomeViewModel extends AndroidViewModel {
 
     private String texto(int idRecurso) {
         return getApplication().getString(idRecurso);
+    }
+
+    private String texto(int idRecurso, Object... args) {
+        return getApplication().getString(idRecurso, args);
+    }
+
+    //Google devuelve la fecha como "2009-10-13" o como "2004". En la ficha solo
+    //interesa el anio: la fecha completa no aporta y descuadra la pildora.
+    private static String soloAnio(String fecha) {
+        if (fecha == null) {
+            return "";
+        }
+        return fecha.length() >= 4 ? fecha.substring(0, 4) : fecha;
     }
 
     private static String primero(List<String> lista) {
