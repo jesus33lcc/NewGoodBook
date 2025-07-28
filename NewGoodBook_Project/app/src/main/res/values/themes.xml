@@ -47,4 +47,19 @@
         <item name="itemTextColor">@color/nav_item_tint</item>
     </style>
 
+
+    <!-- Encabezado de seccion: sustituye a las barras de herramientas que se usaban
+         como separador (una de ellas dorada a todo el ancho) -->
+    <style name="EncabezadoSeccion">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">@dimen/margen_contenido</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
 </resources>

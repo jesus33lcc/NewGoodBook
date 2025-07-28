@@ -1,37 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Fila de libro. Antes era un RelativeLayout donde cada texto se colocaba con margenes
+  absolutos (marginStart 70dp, marginTop 40dp) calculados a ojo, y el titulo no se
+  adaptaba al ancho. Ahora la portada y el texto se reparten con pesos.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:padding="8dp">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/margen_contenido"
+    android:paddingVertical="10dp">
 
-    <ImageView
-        android:id="@+id/portadaBook_img"
-        android:layout_width="67dp"
-        android:layout_height="83dp"
-        tools:ignore="MissingConstraints" />
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="54dp"
+        android:layout_height="80dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="3dp">
 
-    <TextView
-        android:id="@+id/tituloBook_txt"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/portadaBook_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_portada"
+            android:scaleType="centerCrop" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="8dp"
-        android:maxLines="1"
-        android:text=""
-        android:textSize="20sp"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/autorBook_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="40dp"
-        android:maxLines="1"
-        android:text=""
-        android:textSize="15sp"
-        tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/tituloBook_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/chamberi_text_semibold"
+            android:maxLines="2"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            tools:text="Death in the Clouds" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/autorBook_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            tools:text="Agatha Christie" />
+    </LinearLayout>
+</LinearLayout>

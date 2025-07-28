@@ -1,6 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- Margen lateral del contenido. Escala con el ancho para que el texto no cruce la
+         pantalla de lado a lado en tablet. Antes existian values-w600dp y values-w1240dp
+         pero solo contenian "fab_margin" y NINGUN layout usaba un @dimen: el responsive
+         era decorativo. -->
+    <dimen name="margen_contenido">20dp</dimen>
+    <!-- Ancho de los botones principales. En movil ocupan casi todo; en pantallas
+         anchas se quedan en un tamanio comodo en vez de convertirse en barras. -->
+    <dimen name="ancho_max_boton">320dp</dimen>
 </resources>

@@ -44,6 +44,9 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
         final Lista lista = listas.get(position);
         holder.nombreLista.setText(lista.getNombre());
         holder.iconoLista.setImageResource(iconoDe(lista));
+        int cuantos = lista.getLibros().size();
+        holder.contador.setText(context.getResources()
+                .getQuantityString(R.plurals.n_libros, cuantos, cuantos));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +96,8 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
             public boolean areContentsTheSame(int posAntigua, int posNueva) {
                 Lista a = anteriores.get(posAntigua);
                 Lista b = siguientes.get(posNueva);
+                //el recuento se pinta en la fila, asi que un cambio de tamanio
+                //tiene que provocar repintado
                 return a.getNombre().equals(b.getNombre())
                         && a.getLibros().size() == b.getLibros().size();
             }
@@ -109,11 +114,13 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
     public static class ListaViewHolder extends RecyclerView.ViewHolder {
         private final ImageView iconoLista;
         private final TextView nombreLista;
+        private final TextView contador;
 
         public ListaViewHolder(@NonNull View itemView) {
             super(itemView);
             iconoLista = itemView.findViewById(R.id.iconoTypeLista_img);
             nombreLista = itemView.findViewById(R.id.nombreLista_txt);
+            contador = itemView.findViewById(R.id.contadorLista_txt);
         }
     }
 }

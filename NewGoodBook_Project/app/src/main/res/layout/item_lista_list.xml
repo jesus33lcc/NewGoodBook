@@ -1,28 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Fila de lista. El icono va en un circulo tenue en vez de suelto, y se anade el
+  recuento de libros, que era una de las cosas aprobadas en la propuesta.
+  El texto usa colores del tema: antes estaba fijado a negro y desaparecia en oscuro.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:padding="8dp">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/margen_contenido"
+    android:paddingVertical="14dp">
 
-    <ImageView
-        android:id="@+id/iconoTypeLista_img"
-        android:layout_width="68dp"
-        android:layout_height="73dp"
-        android:layout_marginTop="5dp"
-        tools:ignore="MissingConstraints" />
+    <FrameLayout
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/fondo_icono_lista">
 
-    <TextView
-        android:id="@+id/nombreLista_txt"
-        android:layout_width="307dp"
+        <ImageView
+            android:id="@+id/iconoTypeLista_img"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/desc_icono_lista" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="82dp"
-        android:paddingLeft="1dp"
-        android:layout_marginTop="28dp"
-        android:text="@string/hint_nombre_lista"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/nombreLista_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/chamberi_text_semibold"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            tools:text="Para el verano" />
+
+        <TextView
+            android:id="@+id/contadorLista_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="13sp"
+            tools:text="7 libros" />
+    </LinearLayout>
+</LinearLayout>

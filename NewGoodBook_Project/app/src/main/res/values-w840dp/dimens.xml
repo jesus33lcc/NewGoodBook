@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Rango expandido (tablet en horizontal): margenes amplios y botones acotados,
+         para que no queden barras de 2500px de ancho -->
+    <dimen name="margen_contenido">160dp</dimen>
+    <dimen name="ancho_max_boton">340dp</dimen>
+</resources>

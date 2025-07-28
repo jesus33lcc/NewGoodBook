@@ -1,70 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<!--
+  Listas, segun la propuesta aprobada: dos secciones con encabezado en lugar de dos barras
+  de herramientas (una de ellas dorada a todo el ancho haciendo de separador), recuento de
+  libros en cada fila, y un estado vacio con salida clara cuando aun no hay listas propias.
+  El boton de crear pasa de ser un icono escondido en la barra a un boton con texto.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
+    android:orientation="vertical"
     tools:context=".Fragments.Listas">
 
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/myToolbarMisListas"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="@string/title_listas"
+        app:titleTextColor="?attr/colorOnPrimary" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/myToolbarMisListas"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:title="@string/title_listas"
-            app:titleTextColor="?attr/colorOnPrimary" />
+    <TextView
+        style="@style/EncabezadoSeccion"
+        android:text="@string/seccion_siempre_contigo" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/misListasCheckFav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="2"
+        tools:listitem="@layout/item_lista_list" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/misListasCheckFav"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layoutAnimation="@anim/explore_animation"
-            tools:listitem="@layout/item_lista_list" />
+    <TextView
+        style="@style/EncabezadoSeccion"
+        android:text="@string/seccion_tuyas" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarListasPesonalizadas"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorTertiary"
-            android:elevation="5dp"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:title="@string/title_mis_listas"
-            app:titleTextColor="?attr/colorOnTertiary">
-
-            <ImageButton
-                android:id="@+id/btn_newLista"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="end"
-                android:layout_marginRight="15dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_add" />
-
-        </androidx.appcompat.widget.Toolbar>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/misListaPersonalizadas"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:layoutAnimation="@anim/explore_animation"
+            android:paddingBottom="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_lista_list" />
 
+        <!-- Estado vacio: antes solo se veia una zona en blanco sin ninguna explicacion -->
+        <LinearLayout
+            android:id="@+id/vacioListas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="40dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:alpha="0.45"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_listas"
+                app:tint="?attr/colorOnSurfaceVariant" />
 
-</FrameLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:text="@string/vacio_listas_titulo"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/vacio_listas_detalle"
+                android:textAlignment="center"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_newLista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margen_contenido"
+        android:layout_marginBottom="16dp"
+        android:minWidth="@dimen/ancho_max_boton"
+        android:fontFamily="@font/chamberi_text_semibold"
+        android:paddingVertical="12dp"
+        android:text="@string/nueva_lista"
+        android:textSize="15sp"
+        app:cornerRadius="24dp"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart" />
+
+</LinearLayout>

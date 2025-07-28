@@ -57,6 +57,10 @@
 
     <!-- Listas -->
     <string name="nueva_lista">Nueva lista</string>
+    <string name="seccion_siempre_contigo">Siempre contigo</string>
+    <string name="seccion_tuyas">Tuyas</string>
+    <string name="vacio_listas_titulo">Aún no tienes listas</string>
+    <string name="vacio_listas_detalle">Crea una para agrupar los libros como te dé la gana: por autor, por mes o por lo que sea.</string>
     <string name="hint_nombre_lista">Nombre de la lista</string>
     <string name="anadir_a_lista">Añadir a lista</string>
     <string name="lista_sin_nombre">Ponle un nombre a la lista</string>
@@ -83,4 +87,9 @@
     <!-- Accesibilidad -->
     <string name="desc_portada">Portada del libro</string>
     <string name="desc_icono_lista">Icono de la lista</string>
+
+    <plurals name="n_libros">
+        <item quantity="one">%d libro</item>
+        <item quantity="other">%d libros</item>
+    </plurals>
 </resources>

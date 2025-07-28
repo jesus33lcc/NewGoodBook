@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
@@ -32,7 +32,8 @@ import java.util.List;
 public class Listas extends Fragment {
     private RecyclerView listasRecyclerView;
     private RecyclerView misListasRecyclerView;
-    private ImageButton btn_newAddLista;
+    private com.google.android.material.button.MaterialButton btn_newAddLista;
+    private View vacioListas;
     private ListaAdapter adaptadorFijas;
     private ListaAdapter adaptadorPersonales;
     //copia de lo ultimo que ha llegado de Firestore, para resolver la posicion del swipe
@@ -54,6 +55,7 @@ public class Listas extends Fragment {
         listasRecyclerView = view.findViewById(R.id.misListasCheckFav);
         misListasRecyclerView = view.findViewById(R.id.misListaPersonalizadas);
         btn_newAddLista = view.findViewById(R.id.btn_newLista);
+        vacioListas = view.findViewById(R.id.vacioListas);
 
         listasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         misListasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,6 +70,8 @@ public class Listas extends Fragment {
         repo.getListas().observe(getViewLifecycleOwner(), listas -> {
             misListas = listas != null ? listas : new ArrayList<>();
             adaptadorPersonales.actualizar(misListas);
+            //sin listas propias se explica que hacer, en vez de dejar un hueco en blanco
+            vacioListas.setVisibility(misListas.isEmpty() ? View.VISIBLE : View.GONE);
         });
         //las dos listas fijas se derivan de favoritos y leidos
         repo.getFavoritos().observe(getViewLifecycleOwner(),
