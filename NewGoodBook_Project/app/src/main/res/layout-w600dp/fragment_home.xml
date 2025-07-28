@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Home para pantallas MEDIAS (600-840dp): tablet en vertical.
+  Mantiene la disposicion apilada del movil, pero con margenes grandes para que el texto
+  no cruce los 800dp de lado a lado, y con la portada mas grande para que no quede como
+  un sello. Las dos columnas se reservan al rango expandido (layout-w840dp).
+
+  Rediseño segun la propuesta aprobada por Silvia:
+  · la portada manda, sobre fondo marino, tratada como un objeto
+  · el dorado pasa a ser acento (marca lo activo) en vez de una banda a todo el ancho
+  · serif solo para lo que es literatura (titulo y sinopsis); sans para datos y botones
+  · la sinopsis tiene su propio scroll, y el boton es una fila mas del layout
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    tools:context=".Fragments.HomeIU.HomeFragment">
+
+    <!-- ===== Portada y datos, sobre fondo oscuro ===== -->
+    <LinearLayout
+        android:id="@+id/bloquePortada"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/hero_fondo"
+        android:orientation="horizontal"
+        android:paddingHorizontal="72dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="26dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="164dp"
+            android:layout_height="246dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="10dp">
+
+            <ImageView
+                android:id="@+id/imageVPortada"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/desc_portada"
+                android:scaleType="centerCrop" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:maxLines="3"
+                android:textColor="@color/hero_texto"
+                android:textSize="24sp"
+                tools:text="Les Dones i Els Dies" />
+
+            <TextView
+                android:id="@+id/textAutor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/md_tertiary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Gabriel Ferrater" />
+
+            <!-- Los datos sueltos van como pildoras: antes eran filas de
+                 "etiqueta: valor" que competian en peso con el titulo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textNumPag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/fondo_meta"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="12sp"
+                    tools:text="106 págs." />
+
+                <TextView
+                    android:id="@+id/textFechaPub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/fondo_meta"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="12sp"
+                    tools:text="2004" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textGeneros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/fondo_meta"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/hero_meta"
+                android:textSize="12sp"
+                tools:text="Poesía" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ===== Acciones: montadas sobre el borde del bloque oscuro ===== -->
+    <LinearLayout
+        android:id="@+id/filaAcciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-14dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="68dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tBtnFavorite"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSurface"
+            android:text="@string/accion_favorito"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_favorite_off"
+            app:iconGravity="top"
+            app:iconPadding="2dp"
+            app:iconSize="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tBtnCheck"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSurface"
+            android:text="@string/accion_leido"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_checkbox_off"
+            app:iconGravity="top"
+            app:iconPadding="2dp"
+            app:iconSize="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tBtnAddList"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSurface"
+            android:text="@string/accion_a_lista"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_addlist"
+            app:iconGravity="top"
+            app:iconPadding="2dp"
+            app:iconSize="20dp" />
+    </LinearLayout>
+
+    <!-- ===== Sinopsis, con su propio scroll ===== -->
+    <TextView
+        android:id="@+id/etiquetaSinopsis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:letterSpacing="0.12"
+        android:paddingHorizontal="72dp"
+        android:text="@string/etiqueta_sinopsis"
+        android:textAllCaps="true"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:paddingHorizontal="72dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/textDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chamberi_text_regular"
+            android:lineSpacingMultiplier="1.25"
+            android:paddingTop="6dp"
+            android:paddingBottom="16dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="17sp"
+            tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSiguiente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="180dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/chamberi_text_semibold"
+        android:paddingVertical="12dp"
+        android:text="@string/siguiente"
+        android:textSize="15sp"
+        app:cornerRadius="24dp" />
+
+</LinearLayout>
