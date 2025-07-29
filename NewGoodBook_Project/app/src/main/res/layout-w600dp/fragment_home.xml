@@ -128,9 +128,9 @@
         android:id="@+id/filaAcciones"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-14dp"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        android:paddingHorizontal="68dp">
+        android:paddingHorizontal="@dimen/margen_contenido">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/tBtnFavorite"
