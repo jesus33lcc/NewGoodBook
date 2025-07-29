@@ -42,12 +42,14 @@
     <color name="md_on_surface_variant">#44464F</color>
     <color name="md_outline">#757780</color>
 
-    <!-- Fondo del bloque de portada. Se queda oscuro TAMBIEN en tema claro, a proposito:
-         las portadas destacan sobre fondo oscuro igual que en la estanteria de una libreria. -->
+    <!-- Fondo del bloque de portada y de la barra de navegación. -->
     <color name="hero_fondo">#0C1E3D</color>
     <color name="hero_texto">#FFFFFF</color>
     <color name="hero_meta">#C6D2E8</color>
 
     <color name="md_error">#BA1A1A</color>
     <color name="md_on_error">#FFFFFF</color>
+
+    <!-- Indicador del elemento activo de la barra de navegación. -->
+    <color name="nav_indicador">#2EFFFFFF</color>
 </resources>

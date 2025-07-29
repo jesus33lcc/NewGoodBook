@@ -40,11 +40,17 @@
 
     <style name="Theme.NewGoodBooks" parent="Base.Theme.NewGoodBooks" />
 
-    <!-- Barra inferior: el dorado marca el item activo, el resto sigue al tema -->
+    <!-- Barra de navegación inferior. -->
     <style name="AppBottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:background">@color/hero_fondo</item>
         <item name="itemIconTint">@color/nav_item_tint</item>
         <item name="itemTextColor">@color/nav_item_tint</item>
+        <item name="itemActiveIndicatorStyle">@style/IndicadorNav</item>
+    </style>
+
+    <!-- Indicador del elemento activo. -->
+    <style name="IndicadorNav" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/nav_indicador</item>
     </style>
 
 

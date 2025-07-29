@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Item activo en dorado (color de marca); el resto sigue al tema, asi que se ve
-     bien tanto en claro como en oscuro sin definir dos selectores. -->
+<!-- Elemento activo en dorado; el resto en azul claro. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@color/md_tertiary" android:state_checked="true" />
-    <item android:color="?attr/colorOnSurfaceVariant" />
+    <item android:color="@color/hero_meta" />
 </selector>

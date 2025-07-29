@@ -35,4 +35,7 @@
 
     <color name="md_error">#FFB4AB</color>
     <color name="md_on_error">#690005</color>
+
+    <!-- Indicador del elemento activo de la barra de navegación. -->
+    <color name="nav_indicador">#2EFFFFFF</color>
 </resources>
