@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/myToolbarExplorer"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -23,16 +23,25 @@
             app:titleTextColor="?attr/colorOnPrimary"
             app:menu="@menu/toolbar_search_explorar" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listRecyclerLibros"
-            android:layoutAnimation="@anim/explore_animation"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingVertical="8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_book_list" />
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listRecyclerLibros"
+                android:layoutAnimation="@anim/explore_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingVertical="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_book_list" />
+
+            <include
+                android:id="@+id/estadoVacio"
+                layout="@layout/estado_vacio" />
+        </FrameLayout>
 
     </LinearLayout>
 

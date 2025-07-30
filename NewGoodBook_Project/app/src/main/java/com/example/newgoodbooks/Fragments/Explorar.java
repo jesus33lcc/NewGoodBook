@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.LibroData;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
+import com.example.newgoodbooks.UI.EstadoVacio;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.ResultadoSearchView;
@@ -58,8 +59,13 @@ public class Explorar extends Fragment {
         initialize_ListFillBook(new ArrayList<Libro>());
         //el historial llega solo desde Firestore; antes se leia de un estatico
         //envuelto en un hilo y un Handler que no hacian falta para nada
-        RepositorioUsuario.get().getHistorial().observe(getViewLifecycleOwner(),
-                libros -> libroListAdapter.actualizar(libros));
+        final View vacio = view.findViewById(R.id.estadoVacio);
+        RepositorioUsuario.get().getHistorial().observe(getViewLifecycleOwner(), libros -> {
+            libroListAdapter.actualizar(libros);
+            EstadoVacio.mostrar(vacio, libros == null || libros.isEmpty(),
+                    R.drawable.ic_explorar, R.string.vacio_explorar_titulo,
+                    R.string.vacio_explorar_detalle);
+        });
 
         // Sobre el Toolbar
         toolbarSearch = view.findViewById(R.id.myToolbarExplorer);

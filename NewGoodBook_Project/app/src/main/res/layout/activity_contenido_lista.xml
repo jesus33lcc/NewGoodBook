@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Libros de una lista. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF"
+    android:background="?attr/colorSurface"
     android:orientation="vertical"
     tools:context=".ContenidoLista">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarContentList"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#153464"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:title="@string/title_resultados"
-        app:titleTextColor="@color/white" />
+        android:background="?attr/colorPrimary"
+        app:title="@string/title_listas"
+        app:titleTextColor="?attr/colorOnPrimary" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listRecyclerContentLista"
-        android:layoutAnimation="@anim/explore_animation"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingVertical="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_book_list" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listRecyclerContentLista"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingVertical="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_book_list" />
+
+        <include
+            android:id="@+id/estadoVacio"
+            layout="@layout/estado_vacio" />
+    </FrameLayout>
 </LinearLayout>

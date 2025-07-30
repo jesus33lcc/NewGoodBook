@@ -12,6 +12,7 @@
     <string name="title_cerrar_sesion">Cerrar sesión</string>
     <string name="title_mis_listas">Mis listas personalizadas</string>
     <string name="title_resultados">Resultados de búsqueda</string>
+    <string name="titulo_resultados_de">«%1$s»</string>
 
     <!-- Autenticacion -->
     <string name="iniciar_sesion">Iniciar sesión</string>
@@ -76,6 +77,12 @@
     <string name="libro_eliminado">Libro eliminado</string>
 
     <!-- Explorar -->
+    <string name="vacio_explorar_titulo">Aún no has visto ningún libro</string>
+    <string name="vacio_explorar_detalle">Los libros por los que vayas pasando en Principal aparecerán aquí.</string>
+    <string name="vacio_resultados_titulo">Sin resultados</string>
+    <string name="vacio_resultados_detalle">Prueba con otro título o con el nombre del autor.</string>
+    <string name="vacio_lista_titulo">Esta lista está vacía</string>
+    <string name="vacio_lista_detalle">Añade libros desde la ficha de cualquier libro.</string>
     <string name="buscar_hint">Buscar título…</string>
 
     <!-- Comunes -->

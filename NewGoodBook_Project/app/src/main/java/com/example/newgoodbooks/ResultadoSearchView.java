@@ -14,6 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import com.example.newgoodbooks.Cliente.ClienteFunciones;
+import com.example.newgoodbooks.UI.EstadoVacio;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.Modelos.Libro;
 
@@ -34,6 +35,10 @@ public class ResultadoSearchView extends AppCompatActivity {
         recyclerViewResultados.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         titulo_a_buscar = getIntent().getStringExtra("titulo_a_buscar");
+        com.google.android.material.appbar.MaterialToolbar barra = findViewById(R.id.toolbarResultados);
+        if (barra != null && titulo_a_buscar != null) {
+            barra.setTitle(getString(R.string.titulo_resultados_de, titulo_a_buscar));
+        }
         List<Libro> listaLibrosVacia = new ArrayList<>();
         initialize_ListFillBook(listaLibrosVacia);
         buscarTitulo();
@@ -61,6 +66,9 @@ public class ResultadoSearchView extends AppCompatActivity {
             @Override
             public void run() {
                 initialize_ListFillBook(listaLibrosResultados);
+                EstadoVacio.mostrar(findViewById(R.id.estadoVacio),
+                        listaLibrosResultados.isEmpty(), R.drawable.ic_explorar,
+                        R.string.vacio_resultados_titulo, R.string.vacio_resultados_detalle);
             }
         });
     }

@@ -16,6 +16,9 @@ import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
+import com.example.newgoodbooks.UI.EstadoVacio;
+
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +103,8 @@ public class ContenidoLista extends AppCompatActivity {
     private void pintar(List<Libro> libros) {
         librosActuales = libros != null ? libros : new ArrayList<>();
         libroListAdapter.actualizar(librosActuales);
+        EstadoVacio.mostrar(findViewById(R.id.estadoVacio), librosActuales.isEmpty(),
+                R.drawable.ic_listas, R.string.vacio_lista_titulo, R.string.vacio_lista_detalle);
     }
 
     private void quitarLibro(int index) {
