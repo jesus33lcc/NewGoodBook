@@ -1,231 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Ficha de un libro. Nace como copia del layout de Home sin el boton
-     'Siguiente': antes esta pantalla inflaba fragment_home y lo escondia.
-     Se reestiliza en la fase de diseno. -->
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<!-- Ficha de un libro. Mismo tratamiento que la pantalla principal. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    tools:context=".Fragments.HomeIU.HomeFragment">
+    android:orientation="vertical"
+    tools:context=".LibroData">
 
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarLibro"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/hero_fondo"
+        app:navigationIcon="@drawable/ic_volver"
+        app:navigationIconTint="@color/hero_texto"
+        app:title="@string/title_activity_libro"
+        app:titleTextColor="@color/hero_texto" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="268dp">
+    <!-- Portada y datos, sobre fondo marino. -->
+    <LinearLayout
+        android:id="@+id/bloquePortada"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/hero_fondo"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/margen_contenido"
+        android:paddingTop="4dp"
+        android:paddingBottom="26dp">
 
-            <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="112dp"
+            android:layout_height="168dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="10dp">
+
+            <ImageView
+                android:id="@+id/imageVPortada"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:contentDescription="@string/desc_portada"
+                android:scaleType="centerCrop" />
+        </com.google.android.material.card.MaterialCardView>
 
-                <FrameLayout
-                    android:layout_width="182dp"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/imageVPortada"
-                        android:layout_width="142dp"
-                        android:layout_height="198dp"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:layout_marginLeft="27dp"
-                        android:layout_marginRight="14dp"/>
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/textTitulo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top|center_horizontal"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="35dp"
-                            android:layout_marginBottom="15dp"
-                            android:layout_marginRight="15dp"
-                            android:autoSizeMaxTextSize="36sp"
-                            android:autoSizeMinTextSize="12sp"
-                            android:autoSizeTextType="uniform"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/chamberi_text_semibold"
-                            android:lineSpacingExtra="8sp"
-                            android:maxLines="3"
-                            android:singleLine="false"
-                            android:text=""
-                            android:textAlignment="center"
-                            android:textStyle="bold|italic"
-                            android:typeface="normal" />
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="bottom|center_horizontal">
-
-                            <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/chamberi_text_semibold"
-                                android:gravity="left"
-                                android:layout_marginTop="20dp"
-                                android:layout_marginLeft="10dp"
-                                android:text="@string/etiqueta_autor"
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textAutor"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/chamberi_text_regular"
-                                app:layout_constraintStart_toEndOf="@id/textView2"
-                                app:layout_constraintTop_toTopOf="@id/textView2"
-                                android:layout_marginLeft="10dp"
-                                android:text=""
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textView3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="left"
-                                android:layout_marginTop="15dp"
-                                app:layout_constraintTop_toBottomOf="@id/textView2"
-                                android:fontFamily="@font/chamberi_text_semibold"
-                                android:text="@string/etiqueta_paginas"
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textNumPag"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintStart_toEndOf="@id/textView3"
-                                app:layout_constraintTop_toTopOf="@id/textView3"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/chamberi_text_regular"
-                                android:text=""
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textView6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="left"
-                                android:layout_marginTop="15dp"
-                                app:layout_constraintTop_toBottomOf="@id/textView3"
-                                android:fontFamily="@font/chamberi_text_semibold"
-                                android:text="@string/etiqueta_fecha"
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textFechaPub"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintStart_toEndOf="@id/textView6"
-                                app:layout_constraintTop_toTopOf="@id/textView6"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/chamberi_text_regular"
-                                android:text=""
-                                tools:layout_editor_absoluteX="20dp"
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textView8"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="left"
-                                app:layout_constraintTop_toBottomOf="@id/textView6"
-                                android:layout_marginTop="15dp"
-                                android:fontFamily="@font/chamberi_text_semibold"
-                                android:text="@string/etiqueta_generos"
-                                tools:ignore="MissingConstraints" />
-
-                            <TextView
-                                android:id="@+id/textGeneros"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintStart_toEndOf="@id/textView8"
-                                app:layout_constraintTop_toTopOf="@id/textView8"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/chamberi_text_regular"
-                                android:text=""
-                                tools:ignore="MissingConstraints" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </LinearLayout>
-
-                </FrameLayout>
-
-            </LinearLayout>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
-            android:background="@color/distinct_brown">
-
-            <ToggleButton
-                android:id="@+id/tBtnFavorite"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginRight="60dp"
-                android:background="@drawable/toggle_favorite"
-                android:textOff=""
-                android:textOn="" />
-
-            <ToggleButton
-                android:id="@+id/tBtnCheck"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:background="@drawable/toggle_check"
-                android:textOff=""
-                android:textOn="" />
-
-            <ImageButton
-                android:id="@+id/tBtnAddList"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginLeft="60dp"
-                android:background="@drawable/ic_addlist"/>
-
-        </FrameLayout>
-
-        <!-- Descripcion con scroll: antes tenia altura fija y se cortaba -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:fillViewport="true"
-            android:paddingHorizontal="24dp"
-            android:scrollbars="vertical">
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textDescripcion"
+                android:id="@+id/textTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="16dp"
-                android:fontFamily="@font/chamberi_text_regular"
-                android:text=""
-                android:textAlignment="center" />
-        </ScrollView>
+                android:ellipsize="end"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:maxLines="3"
+                android:textColor="@color/hero_texto"
+                android:textSize="19sp"
+                tools:text="Les Dones i Els Dies" />
 
+            <TextView
+                android:id="@+id/textAutor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/md_tertiary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Gabriel Ferrater" />
+
+            <!-- Los datos sueltos van como pildoras: antes eran filas de
+                 "etiqueta: valor" que competian en peso con el titulo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textNumPag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/fondo_meta"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="12sp"
+                    tools:text="106 págs." />
+
+                <TextView
+                    android:id="@+id/textFechaPub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/fondo_meta"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="12sp"
+                    tools:text="2004" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textGeneros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/fondo_meta"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/hero_meta"
+                android:textSize="12sp"
+                tools:text="Poesía" />
+        </LinearLayout>
     </LinearLayout>
-</FrameLayout>
+
+    <!-- Acciones sobre el libro. -->
+    <LinearLayout
+        android:id="@+id/filaAcciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-14dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/margen_contenido">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tBtnFavorite"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSurface"
+            android:text="@string/accion_favorito"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_favorite_off"
+            app:iconGravity="top"
+            app:iconPadding="2dp"
+            app:iconSize="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tBtnCheck"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSurface"
+            android:text="@string/accion_leido"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_checkbox_off"
+            app:iconGravity="top"
+            app:iconPadding="2dp"
+            app:iconSize="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tBtnAddList"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSurface"
+            android:text="@string/accion_a_lista"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_addlist"
+            app:iconGravity="top"
+            app:iconPadding="2dp"
+            app:iconSize="20dp" />
+    </LinearLayout>
+
+    <!-- Sinopsis. -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:letterSpacing="0.12"
+        android:paddingHorizontal="@dimen/margen_contenido"
+        android:text="@string/etiqueta_sinopsis"
+        android:textAllCaps="true"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:paddingHorizontal="@dimen/margen_contenido"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/textDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chamberi_text_regular"
+            android:lineSpacingMultiplier="1.25"
+            android:paddingTop="6dp"
+            android:paddingBottom="20dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="15sp"
+            tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
+    </ScrollView>
+
+
+</LinearLayout>
