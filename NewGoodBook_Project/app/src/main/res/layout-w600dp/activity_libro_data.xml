@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Ficha de un libro. Mismo tratamiento que la pantalla principal.
+  Ficha de un libro para pantallas medias (600-840dp): tablet en vertical.
+  Misma disposicion, con la portada y los cuerpos de texto al tamano que ya
+  usa la pantalla principal en este rango. Sin variante propia la ficha
+  heredaba la portada del movil y quedaba como un sello.
   A diferencia de esta, no hay nada anclado abajo, de modo que la pagina entera
   se desplaza como una unidad y la sinopsis no queda encerrada en un recuadro
   con el resto de la pantalla en blanco.
@@ -43,12 +46,12 @@
                 android:background="@color/hero_fondo"
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/margen_contenido"
-                android:paddingTop="4dp"
+                android:paddingTop="12dp"
                 android:paddingBottom="26dp">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="112dp"
-                    android:layout_height="168dp"
+                    android:layout_width="164dp"
+                    android:layout_height="246dp"
                     app:cardCornerRadius="6dp"
                     app:cardElevation="10dp">
 
@@ -75,7 +78,7 @@
                         android:fontFamily="@font/chamberi_text_semibold"
                         android:maxLines="3"
                         android:textColor="@color/hero_texto"
-                        android:textSize="19sp"
+                        android:textSize="24sp"
                         tools:text="Les Dones i Els Dies" />
 
                     <TextView
@@ -86,7 +89,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:textColor="@color/md_tertiary"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="Gabriel Ferrater" />
 
@@ -215,7 +218,7 @@
                 android:paddingTop="6dp"
                 android:paddingBottom="24dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="15sp"
+                android:textSize="17sp"
                 tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
