@@ -8,4 +8,7 @@
     <!-- Ancho de los botones principales. En movil ocupan casi todo; en pantallas
          anchas se quedan en un tamanio comodo en vez de convertirse en barras. -->
     <dimen name="ancho_max_boton">320dp</dimen>
+    <!-- Ancho del formulario de acceso y tamano del logotipo. -->
+    <dimen name="margen_formulario">24dp</dimen>
+    <dimen name="tam_logo">112dp</dimen>
 </resources>

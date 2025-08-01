@@ -1,99 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ScrollView para que con el teclado abierto se pueda llegar a todos los campos -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+<!--
+  Pantalla de bienvenida. Mismo tratamiento que el resto de la aplicacion: bloque
+  marino arriba con el logotipo, y las acciones sobre la superficie clara.
+  Los anchos fijos de 300dp se sustituyen por un formulario cuyo margen escala
+  con la pantalla, de modo que en tablet no queda un boton diminuto centrado.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
-
-    <androidx.constraintlayout.widget.ConstraintLayout 
-    
-    
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface"
+    android:fillViewport="true"
     tools:context=".Inicio">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="55dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo_ngb" />
-
-    <TextView
-        android:id="@+id/txtview_nombre"
-        android:layout_width="240dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/chamberi_text_semibold"
-        android:text="@string/app_name"
-        android:textAlignment="center"
-        android:textSize="33sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-    <TextView
-        android:id="@+id/txtview_descripcion_inicio"
-        android:layout_width="303dp"
-        android:layout_height="84dp"
-        android:layout_marginTop="33dp"
-        android:fontFamily="@font/chamberi_text_regular"
-        android:text="@string/eslogan"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtview_nombre" />
-
-    <Button
-        android:id="@+id/btn_registrarse"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/dark_blue"
-        android:fontFamily="@font/chamberi_text_semibold"
-        android:text="@string/registrarse"
-        android:textSize="20sp"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtview_descripcion_inicio" />
-
-    <Button
-        android:id="@+id/btn_iniciosesion"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="33dp"
-        android:backgroundTint="@color/dark_blue"
-        android:fontFamily="@font/chamberi_text_semibold"
-        android:text="@string/iniciar_sesion"
-        android:textSize="20sp"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_registrarse" />
-
-    <TextView
-        android:id="@+id/textview_desc"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/chamberi_text_light"
-        android:text="@string/descripcion_inicio"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_iniciosesion"
-        app:layout_constraintVertical_bias="0.333" />
+        android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Bloque de marca. -->
+        <LinearLayout
+            android:id="@+id/bloqueMarca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/hero_fondo"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margen_contenido"
+            android:paddingTop="48dp"
+            android:paddingBottom="40dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="@dimen/tam_logo"
+                android:layout_height="@dimen/tam_logo"
+                android:contentDescription="@string/desc_logo"
+                app:srcCompat="@drawable/logo_ngb" />
+
+            <TextView
+                android:id="@+id/txtview_nombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:text="@string/app_name"
+                android:textAlignment="center"
+                android:textColor="@color/hero_texto"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/txtview_descripcion_inicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/chamberi_text_regular"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/eslogan"
+                android:textAlignment="center"
+                android:textColor="@color/hero_meta"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <!-- Acciones. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margen_formulario"
+            android:paddingVertical="32dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_registrarse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:paddingVertical="12dp"
+                android:text="@string/registrarse"
+                android:textSize="16sp"
+                app:cornerRadius="24dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_iniciosesion"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:paddingVertical="12dp"
+                android:text="@string/iniciar_sesion"
+                android:textSize="16sp"
+                app:cornerRadius="24dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textview_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chamberi_text_light"
+            android:paddingHorizontal="@dimen/margen_contenido"
+            android:paddingBottom="24dp"
+            android:text="@string/descripcion_inicio"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="13sp" />
+    </LinearLayout>
 
 </ScrollView>

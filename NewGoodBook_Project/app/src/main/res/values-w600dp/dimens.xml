@@ -3,4 +3,7 @@
     <!-- Rango medio (tablet en vertical) -->
     <dimen name="margen_contenido">72dp</dimen>
     <dimen name="ancho_max_boton">360dp</dimen>
+    <!-- Ancho del formulario de acceso y tamano del logotipo. -->
+    <dimen name="margen_formulario">140dp</dimen>
+    <dimen name="tam_logo">150dp</dimen>
 </resources>

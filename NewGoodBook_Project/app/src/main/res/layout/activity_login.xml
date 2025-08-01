@@ -1,118 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ScrollView para que con el teclado abierto se pueda llegar a todos los campos -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+<!--
+  Inicio de sesion. Los campos pasan a ser cajas de Material con etiqueta flotante,
+  en lugar de EditText con fondo blanco fijo, que en modo oscuro quedaba en blanco.
+  Los enlaces eran textos sueltos sin area de pulsacion; ahora son botones de texto.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
-
-    <androidx.constraintlayout.widget.ConstraintLayout 
-    
-    
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface"
+    android:fillViewport="true"
     tools:context=".Login">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="55dp"
-        android:src="@drawable/logo_ngb"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editxt_email"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/white"
-        android:ems="20"
-        android:fontFamily="@font/chamberi_text_regular"
-        android:hint="@string/hint_email"
-        android:inputType="textEmailAddress"
-        android:paddingStart="20dp"
-        android:textColor="@color/dark_blue"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-    <EditText
-        android:id="@+id/edittxt_password"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:fontFamily="@font/chamberi_text_regular"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword"
-        android:paddingStart="20dp"
-        android:textAlignment="viewStart"
-        android:textColor="@color/dark_blue"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editxt_email" />
-
-    <Button
-        android:id="@+id/btn_iniciosesion"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/dark_blue"
-        android:fontFamily="@font/chamberi_text_semibold"
-        android:text="@string/iniciar_sesion"
-        android:textSize="20sp"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittxt_password" />
-
-    <TextView
-        android:id="@+id/txt_sincuenta"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/chamberi_text_light"
-        android:text="@string/sin_cuenta"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_iniciocongoogle" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txt_passwordlost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/chamberi_text_light"
-        android:text="@string/password_olvidada"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_sincuenta" />
+        <!-- Bloque de marca. -->
+        <LinearLayout
+            android:id="@+id/bloqueMarca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/hero_fondo"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margen_contenido"
+            android:paddingTop="40dp"
+            android:paddingBottom="32dp">
 
-    <Button
-        android:id="@+id/btn_iniciocongoogle"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/dark_blue"
-        android:fontFamily="@font/chamberi_text_semibold"
-        android:text="@string/iniciar_sesion_google"
-        android:textSize="20sp"
-        app:cornerRadius="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_iniciosesion" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="@dimen/tam_logo"
+                android:layout_height="@dimen/tam_logo"
+                android:contentDescription="@string/desc_logo"
+                app:srcCompat="@drawable/logo_ngb" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:text="@string/iniciar_sesion"
+                android:textColor="@color/hero_texto"
+                android:textSize="26sp" />
+        </LinearLayout>
+
+        <!-- Formulario. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margen_formulario"
+            android:paddingTop="28dp"
+            android:paddingBottom="28dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_email">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editxt_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:hint="@string/hint_password"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edittxt_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/txt_passwordlost"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="2dp"
+                android:text="@string/password_olvidada"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_iniciosesion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:paddingVertical="12dp"
+                android:text="@string/iniciar_sesion"
+                android:textSize="16sp"
+                app:cornerRadius="24dp" />
+
+            <!-- Separador entre el acceso por correo y el de Google. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="?attr/colorOutline" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="14dp"
+                    android:text="@string/separador_o"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="13sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="?attr/colorOutline" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_iniciocongoogle"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:paddingVertical="12dp"
+                android:text="@string/iniciar_sesion_google"
+                android:textSize="15sp"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="textStart"
+                app:iconSize="20dp"
+                app:iconTint="@null" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/txt_sincuenta"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/sin_cuenta"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </ScrollView>

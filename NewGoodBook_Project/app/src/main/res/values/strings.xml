@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">NewGoodBook</string>
     <string name="eslogan">Descubre mundos cada dia con NewGoodBook: un nuevo libro, una nueva aventura</string>
-    <string name="descripcion_inicio">Esta aplicación esta creada por estudiantes</string>
+    <string name="descripcion_inicio">Esta aplicación está creada por estudiantes</string>
 
     <!-- Navegacion -->
     <string name="title_activity_libro">Libro</string>
@@ -18,8 +18,8 @@
     <string name="iniciar_sesion">Iniciar sesión</string>
     <string name="iniciar_sesion_google">Iniciar sesión con Google</string>
     <string name="registrarse">Registrarse</string>
-    <string name="sin_cuenta">¿No tienes cuenta todavía?</string>
-    <string name="ya_tienes_cuenta">¿Ya tienes una cuenta?</string>
+    <string name="sin_cuenta">¿No tienes cuenta? Regístrate</string>
+    <string name="ya_tienes_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="password_olvidada">¿Te has olvidado de la contraseña?</string>
     <string name="hint_email">Correo electrónico</string>
     <string name="hint_password">Contraseña</string>
@@ -99,4 +99,7 @@
         <item quantity="one">%d libro</item>
         <item quantity="other">%d libros</item>
     </plurals>
+    <string name="desc_logo">Logotipo de NewGoodBook</string>
+    <string name="separador_o">o</string>
+    <string name="crear_cuenta">Crear cuenta</string>
 </resources>

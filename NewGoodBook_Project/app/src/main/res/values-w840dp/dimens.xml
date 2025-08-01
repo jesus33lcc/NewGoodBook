@@ -4,4 +4,7 @@
          para que no queden barras de 2500px de ancho -->
     <dimen name="margen_contenido">160dp</dimen>
     <dimen name="ancho_max_boton">340dp</dimen>
+    <!-- Ancho del formulario de acceso y tamano del logotipo. -->
+    <dimen name="margen_formulario">420dp</dimen>
+    <dimen name="tam_logo">130dp</dimen>
 </resources>
