@@ -18,11 +18,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class Registro extends AppCompatActivity {
     TextView txt_cuentaCreada;
     Button btn_registrarse;
-    EditText editTextEmail, editTextPassword;
+    EditText editTextNombre, editTextEmail, editTextPassword;
     FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class Registro extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         txt_cuentaCreada=findViewById(R.id.txtview_cuentacreada);
         btn_registrarse=findViewById(R.id.btn_registrarse_register);
+        editTextNombre=findViewById(R.id.edittxt_name);
         editTextEmail=findViewById(R.id.edittxt_emailregister);
         editTextPassword=findViewById(R.id.edittxt_passwordRegister);
 
@@ -47,10 +49,16 @@ public class Registro extends AppCompatActivity {
         btn_registrarse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final String nombre;
                 String email, password;
+                nombre=String.valueOf(editTextNombre.getText()).trim();
                 email=String.valueOf(editTextEmail.getText());
                 password=String.valueOf(editTextPassword.getText());
 
+                if(TextUtils.isEmpty(nombre)){
+                    Toast.makeText(Registro.this, getString(R.string.pide_nombre), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(Registro.this, getString(R.string.pide_email), Toast.LENGTH_SHORT).show();
                     return;
@@ -63,6 +71,7 @@ public class Registro extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    guardarNombre(nombre);
                                     Toast.makeText(Registro.this, getString(R.string.registro_ok), Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Registro.this, Login.class));
                                     finish();
@@ -76,6 +85,20 @@ public class Registro extends AppCompatActivity {
             }
         });
 
+    }
+
+    //el nombre que se pedia en el formulario no lo leia nadie: se tecleaba y se tiraba.
+    //createUserWithEmailAndPassword ya deja la sesion iniciada, asi que aqui ya hay
+    //usuario al que ponerselo. Va al perfil de Auth y no a Firestore para que este
+    //disponible sin tener que leer nada, y para que sobreviva al borrado de datos.
+    private void guardarNombre(String nombre) {
+        FirebaseUser usuario = mAuth.getCurrentUser();
+        if (usuario == null) {
+            return;
+        }
+        usuario.updateProfile(new UserProfileChangeRequest.Builder()
+                .setDisplayName(nombre)
+                .build());
     }
 
 }

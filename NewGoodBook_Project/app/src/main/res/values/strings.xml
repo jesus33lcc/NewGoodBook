@@ -24,7 +24,7 @@
     <string name="hint_email">Correo electrónico</string>
     <string name="hint_password">Contraseña</string>
     <string name="hint_nombre">Nombre</string>
-    <string name="hint_nombre_usuario">Nombre de usuario</string>
+    <string name="pide_nombre">Introduce tu nombre</string>
     <string name="pide_email">Introduce un email</string>
     <string name="pide_password">Introduce una contraseña</string>
     <string name="login_ok">Inicio de sesión correcto</string>
