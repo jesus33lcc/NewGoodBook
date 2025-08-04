@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ficha para pantallas EXPANDIDAS (tablet en horizontal): a partir de 840dp de ancho.
+  Dos columnas, igual que la pantalla principal en este mismo rango:
+
+    · izquierda  → el libro como objeto: portada grande sobre marino, titulo y datos
+    · derecha    → acciones y sinopsis con el ancho de linea acotado
+
+  Sin esta variante la ficha caia en el layout de tablet vertical y en horizontal
+  dejaba la portada arriba con la sinopsis cruzando la pantalla de lado a lado.
+  Los ids son los mismos que en el resto de variantes: el codigo no cambia.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    tools:context=".LibroData">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarLibro"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/hero_fondo"
+        app:navigationIcon="@drawable/ic_volver"
+        app:navigationIconTint="@color/hero_texto"
+        app:title="@string/title_activity_libro"
+        app:titleTextColor="@color/hero_texto" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- ===== Columna izquierda: el libro ===== -->
+        <LinearLayout
+            android:id="@+id/bloquePortada"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@color/hero_fondo"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="28dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="200dp"
+                android:layout_height="300dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="14dp">
+
+                <ImageView
+                    android:id="@+id/imageVPortada"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/desc_portada"
+                    android:scaleType="centerCrop" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/textTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/chamberi_text_semibold"
+                android:maxLines="3"
+                android:textAlignment="center"
+                android:textColor="@color/hero_texto"
+                android:textSize="21sp"
+                tools:text="Les Dones i Els Dies" />
+
+            <TextView
+                android:id="@+id/textAutor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAlignment="center"
+                android:textColor="@color/md_tertiary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Gabriel Ferrater" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textNumPag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/fondo_meta"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="13sp"
+                    tools:text="106 págs." />
+
+                <TextView
+                    android:id="@+id/textFechaPub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/fondo_meta"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="13sp"
+                    tools:text="2004" />
+
+                <TextView
+                    android:id="@+id/textGeneros"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/fondo_meta"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="13sp"
+                    tools:text="Poesía" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===== Columna derecha: acciones y lectura ===== -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="32dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="20dp">
+
+            <!-- Las acciones no se estiran: se quedan en un ancho comodo y centradas -->
+            <LinearLayout
+                android:id="@+id/filaAcciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxWidth="520dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tBtnFavorite"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="?attr/colorSurface"
+                    android:text="@string/accion_favorito"
+                    android:textSize="13sp"
+                    app:icon="@drawable/ic_favorite_off"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tBtnCheck"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="?attr/colorSurface"
+                    android:text="@string/accion_leido"
+                    android:textSize="13sp"
+                    app:icon="@drawable/ic_checkbox_off"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tBtnAddList"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="?attr/colorSurface"
+                    android:text="@string/accion_a_lista"
+                    android:textSize="13sp"
+                    app:icon="@drawable/ic_addlist"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/etiquetaSinopsis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:letterSpacing="0.12"
+                android:text="@string/etiqueta_sinopsis"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="vertical">
+
+                <!-- maxWidth acota la linea a un ancho de lectura comodo: sin esto el
+                     texto cruzaba la pantalla entera y costaba saltar de renglon -->
+                <TextView
+                    android:id="@+id/textDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="620dp"
+                    android:fontFamily="@font/chamberi_text_regular"
+                    android:lineSpacingMultiplier="1.35"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="18dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="16sp"
+                    tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
