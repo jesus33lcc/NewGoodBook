@@ -113,10 +113,8 @@ public class HomeFragment extends Fragment {
         btnAddList.setOnClickListener(v ->
                 AccionesLibro.mostrarDialogoAnadirALista(getContext(), mViewModel.getLibroMostrado()));
 
-        //si al abrir no hay recomendacion, se pide al servidor en segundo plano
-        if (mViewModel.getLibroMostrado() == null) {
-            mViewModel.cargarRecomendaciones();
-        }
+        //al abrir se recupera el libro en el que se quedo; solo se pide otro si no hay
+        mViewModel.restaurarOCargar();
 
         return root;
     }

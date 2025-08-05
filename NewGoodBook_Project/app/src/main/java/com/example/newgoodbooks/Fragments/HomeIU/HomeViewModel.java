@@ -32,6 +32,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final LinkedList<Libro> listaLibrosMostrar = new LinkedList<>();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private volatile boolean cargando;
+    //el arranque solo se resuelve una vez por ViewModel, aunque el fragment se recree
+    private boolean arranqueResuelto;
 
     private final MutableLiveData<String> titulo = new MutableLiveData<>();
     private final MutableLiveData<String> autor = new MutableLiveData<>();
@@ -148,6 +150,35 @@ public class HomeViewModel extends AndroidViewModel {
         return (lista == null || lista.isEmpty()) ? "" : lista.get(0);
     }
 
+    //Punto de entrada al abrir Principal. Primero se mira si el usuario ya tenia un
+    //libro recomendado y se le devuelve ese: solo se pide uno nuevo si no lo hay.
+    //Antes se llamaba directamente a cargarRecomendaciones(), asi que cada arranque
+    //estrenaba libro y el anterior se perdia sin haberlo llegado a decidir.
+    public void restaurarOCargar() {
+        if (arranqueResuelto) {
+            return;
+        }
+        arranqueResuelto = true;
+        if (libroMostrado != null) {
+            cambiarVistaLibro();
+            return;
+        }
+        estaCargando.postValue(true);
+        repo.leerLibroActual(libro -> {
+            if (libro == null) {
+                //primera vez con esta cuenta: no hay nada guardado
+                estaCargando.postValue(false);
+                cargarRecomendaciones();
+                return;
+            }
+            libroMostrado = libro;
+            cambiarVistaLibro();
+            estaCargando.postValue(false);
+            //la cola se rellena por detras, sin tocar lo que se esta viendo
+            executor.execute(this::rellenarCola);
+        });
+    }
+
     //pide libros al servidor en segundo plano; si falla lo dice por pantalla
     public void cargarRecomendaciones() {
         if (cargando) {
@@ -170,6 +201,7 @@ public class HomeViewModel extends AndroidViewModel {
                     mostrarMensaje(texto(R.string.sin_conexion), texto(R.string.sin_conexion_detalle));
                 } else {
                     cambiarVistaLibro();
+                    fijarComoActual(libroMostrado);
                 }
             } finally {
                 cargando = false;
@@ -180,34 +212,64 @@ public class HomeViewModel extends AndroidViewModel {
 
     //pasa al siguiente libro de la cola y la rellena por detras
     public void cambioLibro() {
-        final Libro anterior = libroMostrado;
         Libro siguiente;
         synchronized (listaLibrosMostrar) {
             siguiente = listaLibrosMostrar.poll();
         }
-        //sin libro actual o sin cola, el boton hace de "Reintentar"
-        if (anterior == null || siguiente == null) {
-            if (siguiente != null) {
-                libroMostrado = siguiente;
-                cambiarVistaLibro();
-            }
-            cargarRecomendaciones();
+        if (siguiente != null) {
+            avanzarA(siguiente);
+            executor.execute(() -> {
+                int enCola;
+                synchronized (listaLibrosMostrar) {
+                    enCola = listaLibrosMostrar.size();
+                }
+                if (enCola < MINIMO_COLA) {
+                    rellenarCola();
+                }
+            });
             return;
         }
-        libroMostrado = siguiente;
-        cambiarVistaLibro();
-        //el libro que se deja atras pasa al historial (pestania Explorar)
-        repo.registrarVisita(anterior);
-
+        //Cola vacia: se pide un lote y se avanza en cuanto llega. Antes esto solo
+        //rellenaba la cola y dejaba el mismo libro en pantalla, asi que el boton no
+        //hacia nada visible y parecia roto. Se nota sobre todo nada mas abrir, que es
+        //cuando la cola todavia se esta llenando por detras.
+        if (cargando) {
+            return;
+        }
+        cargando = true;
+        estaCargando.postValue(true);
         executor.execute(() -> {
-            int enCola;
-            synchronized (listaLibrosMostrar) {
-                enCola = listaLibrosMostrar.size();
-            }
-            if (enCola < MINIMO_COLA) {
+            try {
                 rellenarCola();
+                Libro nuevo;
+                synchronized (listaLibrosMostrar) {
+                    nuevo = listaLibrosMostrar.poll();
+                }
+                if (nuevo != null) {
+                    avanzarA(nuevo);
+                } else if (libroMostrado == null) {
+                    mostrarMensaje(texto(R.string.sin_conexion), texto(R.string.sin_conexion_detalle));
+                }
+            } finally {
+                cargando = false;
+                estaCargando.postValue(false);
             }
         });
+    }
+
+    private void avanzarA(Libro libro) {
+        libroMostrado = libro;
+        cambiarVistaLibro();
+        fijarComoActual(libro);
+    }
+
+    //Un libro pasa a ser el actual: se guarda para el proximo arranque y entra en el
+    //historial. Antes al historial iba el que se dejaba atras, no el que se enseniaba,
+    //asi que el ultimo libro visto nunca llegaba a aparecer en Explorar. Al restaurar
+    //un libro guardado no se pasa por aqui: ya estaba registrado en su momento.
+    private void fijarComoActual(Libro libro) {
+        repo.guardarLibroActual(libro);
+        repo.registrarVisita(libro);
     }
 
     //rellena la cola con UNA sola llamada al servidor, que devuelve el lote entero

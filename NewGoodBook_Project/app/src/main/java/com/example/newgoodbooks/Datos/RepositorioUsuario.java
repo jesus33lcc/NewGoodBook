@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ public class RepositorioUsuario {
     private static final String COL_LEIDOS = "leidos";
     private static final String COL_HISTORIAL = "historial";
     private static final String COL_LISTAS = "listas";
+    //campo del documento raiz: el libro que se esta enseniando ahora en Principal
+    private static final String CAMPO_LIBRO_ACTUAL = "libroActual";
 
     private static RepositorioUsuario instancia;
 
@@ -266,6 +269,49 @@ public class RepositorioUsuario {
         } else {
             doc.set(libro.aMapa()).addOnFailureListener(e -> Log.w(TAG, "No se pudo anadir a " + coleccion, e));
         }
+    }
+
+    // ---------- libro recomendado en curso ----------
+
+    //Se avisa con el libro guardado, o con null si el usuario aun no tiene ninguno.
+    public interface AlLeerLibro {
+        void enLibro(@Nullable Libro libro);
+    }
+
+    //Lectura suelta, no una escucha: el libro en curso solo hace falta al arrancar y
+    //no interesa que cambie solo mientras se esta mirando. Firestore responde de su
+    //cache si no hay red, asi que esto tambien funciona sin conexion.
+    public void leerLibroActual(AlLeerLibro respuesta) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null) {
+            respuesta.enLibro(null);
+            return;
+        }
+        raiz.get()
+                .addOnSuccessListener(doc -> {
+                    Object guardado = doc.get(CAMPO_LIBRO_ACTUAL);
+                    respuesta.enLibro(guardado instanceof Map
+                            ? Libro.desdeMapa((Map<?, ?>) guardado) : null);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "No se pudo leer el libro en curso", e);
+                    respuesta.enLibro(null);
+                });
+    }
+
+    //Antes el libro recomendado solo vivia en el ViewModel, asi que al cerrar la app
+    //se perdia y al volver a entrar salia otro distinto. Guardarlo aqui lo mantiene
+    //entre arranques, y ademas igual en el movil y en la tablet.
+    public void guardarLibroActual(Libro libro) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put(CAMPO_LIBRO_ACTUAL, libro.aMapa());
+        //merge: el documento raiz puede no existir todavia y no hay que pisar lo demas
+        raiz.set(datos, SetOptions.merge())
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo guardar el libro en curso", e));
     }
 
     //Deja constancia de que el usuario ha visto este libro (pestania Explorar)
