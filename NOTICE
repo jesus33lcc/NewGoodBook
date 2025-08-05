@@ -1,0 +1,72 @@
+NewGoodBook
+Copyright (C) 2023-2025 Jesús Luis Condori Chambi (@jesus33lcc)
+Copyright (C) 2023-2025 Silvia (@SilviaCC1701)
+
+Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los
+términos de la Licencia Pública General de GNU, versión 3, publicada por la Free
+Software Foundation. El texto completo está en el fichero LICENSE.
+
+Se distribuye con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA, ni
+siquiera la garantía implícita de COMERCIALIZACIÓN o de APTITUD PARA UN PROPÓSITO
+PARTICULAR. Consulta la Licencia Pública General de GNU para más detalles.
+
+
+EXCEPCIÓN DE ENLAZADO
+---------------------
+
+Como excepción a la GPL versión 3, se concede permiso para enlazar y distribuir
+este programa combinado con las bibliotecas propietarias de Google necesarias
+para que funcione en Android: Firebase (Authentication, Cloud Firestore y Cloud
+Functions), Google Play Services y los Servicios de Google Play en general, y
+para distribuir la aplicación resultante a través de Google Play.
+
+Esta excepción cubre únicamente esas bibliotecas. Todo lo demás sigue sujeto a
+la GPL versión 3. Quien modifique este programa puede mantener la excepción en
+sus versiones modificadas, pero no está obligado a hacerlo.
+
+Sin esta excepción no se podría publicar la aplicación, porque la GPL no permite
+combinar código bajo sus términos con bibliotecas cuyo código fuente no está
+disponible, y todo el acceso a datos y al inicio de sesión pasa por Firebase.
+
+
+LICENCIA ANTERIOR
+-----------------
+
+Hasta 2025 este proyecto se distribuyó bajo la licencia MIT. Ese permiso no se
+revoca: las versiones publicadas entonces siguen disponibles bajo MIT, y su aviso
+se conserva aquí íntegro tal y como exige. A partir de 2025 el proyecto pasa a la
+GPL versión 3 con la excepción descrita arriba.
+
+    MIT License
+
+    Copyright (c) 2023 jesus33lcc
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+
+BIBLIOTECAS DE TERCEROS
+-----------------------
+
+AndroidX y Material Components for Android  -  Apache License 2.0
+Picasso (Square, Inc.)                      -  Apache License 2.0
+Firebase Android SDK                        -  Apache License 2.0 y términos de Google
+Google Play Services                        -  Términos del SDK de Android de Google
+
+Los datos de los libros proceden de la API de Google Books y están sujetos a sus
+propias condiciones de uso.
