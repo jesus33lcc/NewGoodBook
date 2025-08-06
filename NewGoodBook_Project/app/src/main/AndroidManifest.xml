@@ -9,15 +9,29 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/icon_newgoodbook"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/icon_newgoodbook_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NewGoodBooks"
-        tools:targetApi="31">
+        tools:targetApi="33">
+
+        <!-- Deja que AppCompat guarde el idioma elegido en dispositivos anteriores a
+             Android 13, que es donde el sistema todavia no lo recuerda por su cuenta. -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
         <activity
             android:name=".ContenidoLista"
             android:exported="false" />

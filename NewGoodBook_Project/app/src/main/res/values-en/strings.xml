@@ -1,0 +1,105 @@
+<resources>
+    <string name="app_name">NewGoodBook</string>
+    <string name="eslogan">Discover new worlds every day with NewGoodBook: a new book, a new adventure</string>
+    <string name="descripcion_inicio">This app was built by students</string>
+
+    <!-- Navigation -->
+    <string name="title_activity_libro">Book</string>
+    <string name="title_activity_principal">Home</string>
+    <string name="title_principal">Home</string>
+    <string name="title_explorar">Explore</string>
+    <string name="title_listas">Lists</string>
+    <string name="title_cerrar_sesion">Sign out</string>
+    <string name="title_mis_listas">My own lists</string>
+    <string name="title_resultados">Search results</string>
+    <string name="titulo_resultados_de">“%1$s”</string>
+
+    <!-- Authentication -->
+    <string name="iniciar_sesion">Sign in</string>
+    <string name="iniciar_sesion_google">Sign in with Google</string>
+    <string name="registrarse">Sign up</string>
+    <string name="sin_cuenta">No account yet? Sign up</string>
+    <string name="ya_tienes_cuenta">Already have an account? Sign in</string>
+    <string name="password_olvidada">Forgot your password?</string>
+    <string name="hint_email">Email address</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_nombre">Name</string>
+    <string name="pide_nombre">Enter your name</string>
+    <string name="pide_email">Enter an email address</string>
+    <string name="pide_password">Enter a password</string>
+    <string name="login_ok">Signed in</string>
+    <string name="login_ko">Could not sign you in</string>
+    <string name="login_google_ok">Signed in with Google</string>
+    <string name="login_google_ko">Could not sign you in with Google</string>
+    <string name="registro_ok">Account created</string>
+    <string name="registro_ko">Could not create your account</string>
+    <string name="pide_email_para_recuperar">Type your email address and tap again</string>
+    <string name="recuperar_enviado">If that address has an account, we have sent you an email to change the password</string>
+    <string name="cerrar_sesion_mensaje">You are about to sign out. Your lists will stay saved.</string>
+
+    <!-- Book detail / Home -->
+    <string name="etiqueta_autor">Author:</string>
+    <string name="etiqueta_paginas">Pages:</string>
+    <string name="etiqueta_fecha">Published:</string>
+    <string name="etiqueta_generos">Genres:</string>
+    <string name="siguiente">Next book</string>
+    <string name="accion_favorito">Favourite</string>
+    <string name="accion_leido">Read</string>
+    <string name="accion_a_lista">Add to list</string>
+    <string name="etiqueta_sinopsis">Synopsis</string>
+    <string name="formato_paginas">%1$s pages</string>
+    <string name="reintentar">Try again</string>
+    <string name="buscando">Searching…</string>
+    <string name="cargando">Loading…</string>
+    <string name="cargando_detalle">Looking for recommendations for you.</string>
+    <string name="sin_conexion">No connection</string>
+    <string name="sin_conexion_detalle">Books could not be loaded. Check your connection and tap Try again.</string>
+    <string name="libro_no_disponible">Could not open the book</string>
+
+    <!-- Lists -->
+    <string name="nueva_lista">New list</string>
+    <string name="seccion_siempre_contigo">Always with you</string>
+    <string name="seccion_tuyas">Yours</string>
+    <string name="vacio_listas_titulo">No lists yet</string>
+    <string name="vacio_listas_detalle">Create one to group books however you like: by author, by month or by anything else.</string>
+    <string name="hint_nombre_lista">List name</string>
+    <string name="anadir_a_lista">Add to list</string>
+    <string name="lista_sin_nombre">Give the list a name</string>
+    <string name="lista_nombre_reservado">That name is reserved</string>
+    <string name="lista_nombre_existente">You already have a list with that name</string>
+    <string name="lista_creada">List \'%1$s\' created</string>
+    <string name="lista_eliminada">List deleted</string>
+    <string name="lista_no_disponible">Could not open the list</string>
+    <string name="lista_confirmar_borrado">Delete \'%1$s\'?</string>
+    <string name="sin_listas">You do not have any lists yet. Create one in Lists.</string>
+    <string name="libro_anadido">Added to \'%1$s\'</string>
+    <string name="libro_ya_en_lista">That book is already in \'%1$s\'</string>
+    <string name="libro_eliminado">Book removed</string>
+
+    <!-- Explore -->
+    <string name="vacio_explorar_titulo">You have not seen any books yet</string>
+    <string name="vacio_explorar_detalle">The books you go through on Home will show up here.</string>
+    <string name="vacio_resultados_titulo">No results</string>
+    <string name="vacio_resultados_detalle">Try another title, or the author\'s name.</string>
+    <string name="vacio_lista_titulo">This list is empty</string>
+    <string name="vacio_lista_detalle">Add books from any book\'s page.</string>
+    <string name="buscar_hint">Search by title…</string>
+
+    <!-- Common -->
+    <string name="crear">Create</string>
+    <string name="cancelar">Cancel</string>
+    <string name="confirmar">Confirm</string>
+    <string name="eliminar">Delete</string>
+
+    <!-- Accessibility -->
+    <string name="desc_portada">Book cover</string>
+    <string name="desc_icono_lista">List icon</string>
+
+    <plurals name="n_libros">
+        <item quantity="one">%d book</item>
+        <item quantity="other">%d books</item>
+    </plurals>
+    <string name="desc_logo">NewGoodBook logo</string>
+    <string name="separador_o">or</string>
+    <string name="crear_cuenta">Create account</string>
+</resources>

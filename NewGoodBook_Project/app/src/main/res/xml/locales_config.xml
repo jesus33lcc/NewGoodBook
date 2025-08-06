@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Idiomas que ofrece la aplicacion. Android 13 y posteriores lo leen para
+     mostrar NewGoodBook en los ajustes de idioma por aplicacion del sistema. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="es" />
+    <locale android:name="en" />
+</locale-config>
