@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ajustes. Sustituye a la pestania que solo servia para cerrar sesion, donde bastaba
+  con rozarla para salir de la cuenta. Ahora cerrar sesion es una accion mas dentro de
+  la seccion de cuenta, y comparte pantalla con el tema, el idioma y los creditos.
+  Mismos encabezados de seccion que Listas, para que las dos se lean igual.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    tools:context=".Fragments.Ajustes">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarAjustes"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/hero_fondo"
+        app:title="@string/title_ajustes"
+        app:titleTextColor="@color/hero_texto" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <!-- ===== Cuenta ===== -->
+            <TextView
+                style="@style/EncabezadoSeccion"
+                android:text="@string/seccion_cuenta" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/margen_contenido"
+                android:paddingVertical="8dp">
+
+                <TextView
+                    android:id="@+id/nombreCuenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/chamberi_text_semibold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="17sp"
+                    tools:text="Jesús" />
+
+                <TextView
+                    android:id="@+id/correoCuenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="14sp"
+                    tools:text="jesus33lc@gmail.com" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCerrarSesion"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margen_contenido"
+                android:layout_marginTop="6dp"
+                android:minWidth="@dimen/ancho_max_boton"
+                android:paddingVertical="12dp"
+                android:text="@string/title_cerrar_sesion"
+                android:textSize="15sp"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/baseline_logout_24"
+                app:iconGravity="textStart" />
+
+            <!-- ===== Apariencia ===== -->
+            <TextView
+                style="@style/EncabezadoSeccion"
+                android:text="@string/seccion_apariencia" />
+
+            <include
+                android:id="@+id/filaTema"
+                layout="@layout/fila_ajuste" />
+
+            <include
+                android:id="@+id/filaIdioma"
+                layout="@layout/fila_ajuste" />
+
+            <!-- ===== Acerca de ===== -->
+            <TextView
+                style="@style/EncabezadoSeccion"
+                android:text="@string/seccion_acerca" />
+
+            <include
+                android:id="@+id/filaVersion"
+                layout="@layout/fila_ajuste" />
+
+            <include
+                android:id="@+id/filaCreditos"
+                layout="@layout/fila_ajuste" />
+
+            <include
+                android:id="@+id/filaLicencia"
+                layout="@layout/fila_ajuste" />
+
+            <include
+                android:id="@+id/filaDatos"
+                layout="@layout/fila_ajuste" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

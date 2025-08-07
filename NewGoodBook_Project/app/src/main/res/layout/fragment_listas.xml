@@ -18,9 +18,9 @@
         android:id="@+id/myToolbarMisListas"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/hero_fondo"
         app:title="@string/title_listas"
-        app:titleTextColor="?attr/colorOnPrimary" />
+        app:titleTextColor="@color/hero_texto" />
 
     <TextView
         style="@style/EncabezadoSeccion"

@@ -16,11 +16,11 @@
             android:id="@+id/myToolbarExplorer"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/hero_fondo"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:title="@string/title_explorar"
-            app:titleTextColor="?attr/colorOnPrimary"
+            app:titleTextColor="@color/hero_texto"
             app:menu="@menu/toolbar_search_explorar" />
 
         <FrameLayout

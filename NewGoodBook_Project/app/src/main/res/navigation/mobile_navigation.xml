@@ -21,9 +21,9 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/fragmentLogout"
-        android:name="com.example.newgoodbooks.FragmentLogout"
-        android:label="fragment_logout"
-        tools:layout="@layout/fragment_logout" />
+        android:id="@+id/ajustes"
+        android:name="com.example.newgoodbooks.Fragments.Ajustes"
+        android:label="fragment_ajustes"
+        tools:layout="@layout/fragment_ajustes" />
 
 </navigation>

@@ -16,8 +16,8 @@
         android:icon="@drawable/ic_listas"
         android:title="@string/title_listas" />
     <item
-        android:id="@+id/fragmentLogout"
-        android:icon="@drawable/baseline_logout_24"
-        android:title="@string/title_cerrar_sesion" />
+        android:id="@+id/ajustes"
+        android:icon="@drawable/ic_ajustes"
+        android:title="@string/title_ajustes" />
 
 </menu>

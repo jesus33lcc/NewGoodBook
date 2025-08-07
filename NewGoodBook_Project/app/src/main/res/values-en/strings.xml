@@ -102,4 +102,28 @@
     <string name="desc_logo">NewGoodBook logo</string>
     <string name="separador_o">or</string>
     <string name="crear_cuenta">Create account</string>
+
+    <!-- Settings -->
+    <string name="title_ajustes">Settings</string>
+    <string name="seccion_cuenta">Account</string>
+    <string name="seccion_apariencia">Appearance</string>
+    <string name="seccion_acerca">About</string>
+    <string name="ajuste_tema">Theme</string>
+    <string name="tema_sistema">Follow system</string>
+    <string name="tema_claro">Light</string>
+    <string name="tema_oscuro">Dark</string>
+    <string name="ajuste_idioma">Language</string>
+    <string name="idioma_sistema">Follow system</string>
+    <string name="idioma_es">Español</string>
+    <string name="idioma_en">English</string>
+    <string name="acerca_version">Version</string>
+    <string name="acerca_hecha_por">Made by</string>
+    <string name="acerca_hecha_por_detalle">Jesús (@jesus33lcc) and Silvia (@SilviaCC1701)</string>
+    <string name="acerca_licencia">Licence</string>
+    <string name="acerca_licencia_detalle">GPL-3.0</string>
+    <string name="acerca_datos">Book data</string>
+    <string name="acerca_datos_detalle">Google Books API</string>
+    <string name="sesion_sin_nombre">No name</string>
+    <string name="lista_favoritos">Favourite books</string>
+    <string name="lista_leidos">Books read</string>
 </resources>

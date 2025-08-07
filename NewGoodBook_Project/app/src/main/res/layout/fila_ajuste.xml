@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fila de ajuste: titulo arriba y valor actual debajo. Se reutiliza en toda la
+  pantalla para que las opciones y los datos informativos se lean igual.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margen_contenido"
+    android:paddingVertical="14dp">
+
+    <TextView
+        android:id="@+id/tituloAjuste"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="16sp"
+        tools:text="Tema" />
+
+    <TextView
+        android:id="@+id/valorAjuste"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="14sp"
+        tools:text="Según el sistema" />
+
+</LinearLayout>
