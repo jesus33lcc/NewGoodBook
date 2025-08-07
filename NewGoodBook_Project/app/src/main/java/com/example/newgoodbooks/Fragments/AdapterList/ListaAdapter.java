@@ -42,7 +42,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
     @Override
     public void onBindViewHolder(@NonNull ListaViewHolder holder, int position) {
         final Lista lista = listas.get(position);
-        holder.nombreLista.setText(lista.getNombre());
+        holder.nombreLista.setText(lista.getNombreVisible(context));
         holder.iconoLista.setImageResource(iconoDe(lista));
         int cuantos = lista.getLibros().size();
         holder.contador.setText(context.getResources()

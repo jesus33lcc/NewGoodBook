@@ -53,12 +53,12 @@ public final class AccionesLibro {
             return;
         }
         if (destino.getLibros().contains(libro)) {
-            Toast.makeText(contexto, contexto.getString(R.string.libro_ya_en_lista, destino.getNombre()),
+            Toast.makeText(contexto, contexto.getString(R.string.libro_ya_en_lista, destino.getNombreVisible(contexto)),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         repo.anadirLibroALista(destino.getId(), libro);
-        Toast.makeText(contexto, contexto.getString(R.string.libro_anadido, destino.getNombre()),
+        Toast.makeText(contexto, contexto.getString(R.string.libro_anadido, destino.getNombreVisible(contexto)),
                 Toast.LENGTH_SHORT).show();
     }
 }

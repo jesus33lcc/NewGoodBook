@@ -1,5 +1,9 @@
 package com.example.newgoodbooks.Modelos;
 
+import android.content.Context;
+
+import com.example.newgoodbooks.R;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,19 @@ public class Lista implements Serializable {
     //ademas de etiqueta. Antes estaban repetidos como literal en tres ficheros.
     public static final String NOMBRE_FAVORITOS = "Libros Favoritos";
     public static final String NOMBRE_LEIDOS = "Libros Leidos";
+
+    //Nombre para ensenar en pantalla. Las dos listas fijas se traducen; las que crea el
+    //usuario se quedan tal y como las escribio. Los de arriba siguen siendo constantes
+    //porque ademas de etiqueta hacen de identificador, y esos no se traducen.
+    public String getNombreVisible(Context contexto) {
+        if (ID_FAVORITOS.equals(id)) {
+            return contexto.getString(R.string.lista_favoritos);
+        }
+        if (ID_LEIDOS.equals(id)) {
+            return contexto.getString(R.string.lista_leidos);
+        }
+        return nombre;
+    }
 
     private String id;
     private String nombre;

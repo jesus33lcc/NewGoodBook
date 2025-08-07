@@ -91,13 +91,13 @@ public class ContenidoLista extends AppCompatActivity {
                     finish();
                     return;
                 }
-                toolbarListaSelected.setTitle(lista.getNombre());
+                toolbarListaSelected.setTitle(lista.getNombreVisible(this));
                 pintar(lista.getLibros());
             });
             return;
         }
         Lista fija = repo.getListaPorId(listaId);
-        toolbarListaSelected.setTitle(fija != null ? fija.getNombre() : getString(R.string.title_listas));
+        toolbarListaSelected.setTitle(fija != null ? fija.getNombreVisible(this) : getString(R.string.title_listas));
     }
 
     private void pintar(List<Libro> libros) {

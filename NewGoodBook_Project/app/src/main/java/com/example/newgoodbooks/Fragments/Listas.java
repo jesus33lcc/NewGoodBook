@@ -116,8 +116,12 @@ public class Listas extends Fragment {
                     return;
                 }
                 //los nombres de las listas fijas estan reservados
+                //tambien contra los nombres traducidos: con la app en ingles se podia
+                //crear una lista llamada igual que una de las fijas
                 if(nombre_newList.equalsIgnoreCase(Lista.NOMBRE_FAVORITOS)
-                        || nombre_newList.equalsIgnoreCase(Lista.NOMBRE_LEIDOS)){
+                        || nombre_newList.equalsIgnoreCase(Lista.NOMBRE_LEIDOS)
+                        || nombre_newList.equalsIgnoreCase(getString(R.string.lista_favoritos))
+                        || nombre_newList.equalsIgnoreCase(getString(R.string.lista_leidos))){
                     Toast.makeText(getActivity(), getString(R.string.lista_nombre_reservado), Toast.LENGTH_SHORT).show();
                     return;
                 }
