@@ -167,15 +167,65 @@ async function pedirABooks(params, apiKey, limite, maxIntentos = MAX_INTENTOS) {
   return null;
 }
 
+// FILTRO DE CALIDAD. Google Books mezcla con las novelas material que no se lee por
+// gusto: guias de estudio, critica academica, temarios y folletos de 16 paginas. Y
+// langRestrict es solo una pista, no una garantia: pidiendo "es" siguen colandose
+// libros en ingles y en catalan. Todo esto se descarta aqui, en el servidor, para que
+// la cache no se llene de basura y la app no tenga que saber nada de esto.
+const CATEGORIAS_VETADAS = [
+  "study aids", "education", "literary criticism", "reference",
+  "language arts", "bibliography", "juvenile nonfiction",
+  "business & economics", "self-help", "computers", "medical", "law",
+  "test preparation", "examinations", "games & activities",
+];
+// Lo que delata un resumen o una guia en el propio titulo
+const TITULOS_VETADOS = [
+  "study guide", "guia de estudio", "guía de estudio", "summary of",
+  "resumen de", "analysis of", "sparknotes", "cliffsnotes", "quicklet",
+  "bibliographic guide", "workbook", "teacher's guide", "lesson plan",
+  "a study guide for", "test prep", "exam review",
+];
+// Un libro de menos de 80 paginas casi nunca es la novela, sino un extracto o
+// un folleto. Y una sinopsis de dos lineas suele ser texto de relleno del editor.
+const PAGINAS_MINIMAS = 80;
+const PAGINAS_MAXIMAS = 5000;
+const DESCRIPCION_MINIMA = 120;
+
+function motivoRechazo(info, idioma) {
+  // langRestrict no basta: hay que comparar el idioma que declara el propio volumen
+  if (idioma && info.language &&
+      info.language.slice(0, 2) !== idioma.slice(0, 2)) {
+    return "idioma";
+  }
+  if (info.pageCount < PAGINAS_MINIMAS || info.pageCount > PAGINAS_MAXIMAS) {
+    return "paginas";
+  }
+  if (info.description.length < DESCRIPCION_MINIMA) return "descripcion";
+
+  const titulo = info.title.toLowerCase();
+  if (TITULOS_VETADOS.some((t) => titulo.includes(t))) return "titulo";
+
+  const categorias = info.categories.map((c) => String(c).toLowerCase());
+  if (categorias.some((c) => CATEGORIAS_VETADAS.some((v) => c.includes(v)))) {
+    return "categoria";
+  }
+  return null;
+}
+
 // Solo nos quedamos con los campos que la app usa: menos datos por la red
 // y la clave y el resto de la respuesta no salen de aqui.
-function aLibro(volume) {
+function aLibro(volume, idioma, tally) {
   const info = volume && volume.volumeInfo;
   if (!info) return null;
   const img = info.imageLinks && info.imageLinks.thumbnail;
   if (!volume.id || !info.title || !info.authors || !info.authors.length ||
       !info.pageCount || !info.publishedDate || !info.categories ||
       !info.categories.length || !info.description || !img) {
+    return null;
+  }
+  const motivo = motivoRechazo(info, idioma);
+  if (motivo) {
+    if (tally) tally[motivo] = (tally[motivo] || 0) + 1;
     return null;
   }
   return {
@@ -193,20 +243,41 @@ function aLibro(volume) {
 // Semillas de recomendacion. Deliberadamente son temas y autores reales:
 // con palabras vacias tipo "El" o "De" casi ningun volumen trae descripcion,
 // categorias ni portada, y el filtro los descartaba todos.
-const SEMILLAS = [
-  "subject:fiction", "subject:fantasy", "subject:science+fiction",
-  "subject:mystery", "subject:thriller", "subject:romance",
-  "subject:history", "subject:biography", "subject:poetry",
-  "subject:juvenile+fiction", "subject:drama",
-  "novela", "cuentos", "aventuras", "misterio", "historia",
-  "narrativa", "ensayo", "literatura", "clasicos", "relatos",
-  "inauthor:Stephen+King", "inauthor:Agatha+Christie",
-  "inauthor:Isaac+Asimov", "inauthor:Terry+Pratchett",
-  "inauthor:J.K.+Rowling", "inauthor:Gabriel+Garcia+Marquez",
-];
-// Pocos reintentos por semilla y mas semillas: si una consulta da 503, probar otra
-// distinta rinde mas que insistir en la misma, y ademas cachea mas variedad.
-const MAX_CONSULTAS = 8;
+// SEMILLAS POR IDIOMA. Medido el 26-07-2026: pidiendo langRestrict=es con semillas
+// en ingles, Books devuelve sobre todo ediciones inglesas y el filtro de idioma
+// tumbaba hasta 19 de cada 20 (inauthor:Terry+Pratchett). Con semillas en el idioma
+// que se pide, "cuentos" no perdio ninguno. Es mas barato preguntar bien que filtrar
+// despues: cada consulta descartada entera es una llamada tirada.
+const SEMILLAS_POR_IDIOMA = {
+  es: [
+    "novela", "cuentos", "narrativa", "relatos", "aventuras", "misterio",
+    "literatura espanola", "literatura hispanoamericana", "novela historica",
+    "novela negra", "ciencia ficcion", "poesia", "clasicos",
+    "inauthor:Gabriel+Garcia+Marquez", "inauthor:Isabel+Allende",
+    "inauthor:Carlos+Ruiz+Zafon", "inauthor:Mario+Vargas+Llosa",
+    "inauthor:Arturo+Perez-Reverte", "inauthor:Almudena+Grandes",
+    "inauthor:J.K.+Rowling", "inauthor:Agatha+Christie",
+  ],
+  en: [
+    "subject:fiction", "subject:fantasy", "subject:science+fiction",
+    "subject:mystery", "subject:thriller", "subject:romance",
+    "subject:history", "subject:biography", "subject:poetry",
+    "inauthor:Stephen+King", "inauthor:Agatha+Christie",
+    "inauthor:Isaac+Asimov", "inauthor:Terry+Pratchett",
+    "inauthor:J.K.+Rowling", "inauthor:Neil+Gaiman",
+  ],
+};
+
+function semillasDe(idioma) {
+  return SEMILLAS_POR_IDIOMA[String(idioma).slice(0, 2)] ||
+      SEMILLAS_POR_IDIOMA[IDIOMA_POR_DEFECTO];
+}
+
+const MAX_CONSULTAS = 10;
+// TOPE POR SEMILLA. Sin esto una sola consulta productiva llenaba la cola entera:
+// en la prueba del 26-07-2026 salieron 6 Harry Potter seguidos de 11 libros. Cortando
+// por semilla se obliga a repartir entre varias y la recomendacion deja de repetirse.
+const MAX_POR_SEMILLA = 4;
 const INTENTOS_POR_SEMILLA = 2;
 
 function barajar(lista) {
@@ -273,7 +344,8 @@ exports.buscarLibros = onCall(
       }, GOOGLE_BOOKS_API_KEY.value(), limite);
 
       if (!datos) return {libros: [], error: "no-disponible"};
-      const libros = (datos.items || []).map(aLibro).filter(Boolean);
+      const libros = (datos.items || [])
+          .map((v) => aLibro(v, idioma)).filter(Boolean);
       return {libros};
     });
 
@@ -289,7 +361,7 @@ exports.librosAleatorios = onCall(
       const idioma = String((request.data && request.data.idioma) || IDIOMA_POR_DEFECTO)
           .slice(0, 5);
 
-      const semillas = termino ? [termino] : barajar(SEMILLAS.slice());
+      const semillas = termino ? [termino] : barajar(semillasDe(idioma).slice());
 
       const encontrados = [];
       const vistos = new Set();
@@ -314,12 +386,25 @@ exports.librosAleatorios = onCall(
           langRestrict: idioma,
         }, GOOGLE_BOOKS_API_KEY.value(), limite, INTENTOS_POR_SEMILLA);
         if (!datos) continue;
-        for (const libro of (datos.items || []).map(aLibro)) {
-          if (libro && !vistos.has(libro.id)) {
+        const crudos = (datos.items || []).length;
+        const tally = {};
+        let aceptados = 0;
+        let deEstaSemilla = 0;
+        for (const libro of (datos.items || []).map((v) => aLibro(v, idioma, tally))) {
+          if (!libro) continue;
+          aceptados++;
+          if (deEstaSemilla >= MAX_POR_SEMILLA) continue;
+          if (!vistos.has(libro.id)) {
             vistos.add(libro.id);
             encontrados.push(libro);
+            deEstaSemilla++;
           }
         }
+        // Queda registrado a proposito: Google Books cambia con el tiempo y si el
+        // filtro empieza a dejar pasar muy poco, la cola se vacia y el boton
+        // "Siguiente" se pone a tardar. Aqui se ve venir.
+        logger.info(`${semilla}: ${aceptados}/${crudos} pasan · ` +
+            JSON.stringify(tally));
       }
 
       if (!encontrados.length) return {libros: [], error: "no-disponible"};
