@@ -92,7 +92,7 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="2dp"
                 android:text="@string/password_olvidada"
                 android:textSize="13sp" />

@@ -65,21 +65,6 @@
                     tools:text="jesus33lc@gmail.com" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCerrarSesion"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margen_contenido"
-                android:layout_marginTop="6dp"
-                android:minWidth="@dimen/ancho_max_boton"
-                android:paddingVertical="12dp"
-                android:text="@string/title_cerrar_sesion"
-                android:textSize="15sp"
-                app:cornerRadius="24dp"
-                app:icon="@drawable/baseline_logout_24"
-                app:iconGravity="textStart" />
-
             <!-- ===== Apariencia ===== -->
             <TextView
                 style="@style/EncabezadoSeccion"
@@ -115,5 +100,23 @@
                 layout="@layout/fila_ajuste" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- Anclado abajo y fuera del scroll, con el mismo formato que el boton de
+         crear lista: es la unica accion de la pantalla y cierra el recorrido. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCerrarSesion"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margen_contenido"
+        android:layout_marginBottom="16dp"
+        android:minWidth="@dimen/ancho_max_boton"
+        android:paddingVertical="12dp"
+        android:text="@string/title_cerrar_sesion"
+        android:textSize="15sp"
+        app:cornerRadius="24dp"
+        app:icon="@drawable/baseline_logout_24"
+        app:iconGravity="textStart" />
 
 </LinearLayout>
