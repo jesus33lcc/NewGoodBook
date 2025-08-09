@@ -322,17 +322,89 @@ async function enriquecer(libros, limite) {
     const doc = libro.isbn ? porIsbn.get(libro.isbn) : null;
     if (!doc) continue;
     enriquecidos++;
-    if (typeof doc.ratings_average === "number") {
-      libro.valoracion = Math.round(doc.ratings_average * 10) / 10;
-      libro.numVotos = doc.ratings_count || 0;
-    }
-    // las materias "series:Harry_Potter" son ruido de catalogacion
-    libro.materias = (doc.subject || [])
-        .filter((s) => !String(s).startsWith("series:"))
-        .slice(0, OL_MAX_MATERIAS);
+    volcar(libro, doc);
   }
+
+  // SEGUNDA PASADA POR TITULO. Medido el 26-07-2026: cruzando solo por ISBN casaban
+  // 6 de cada 20. Google Books devuelve muchas ediciones digitales cuyo ISBN no esta
+  // en Open Library, aunque la obra si lo este y con valoraciones. Se rescatan por
+  // titulo, exigiendo ademas que coincida un autor para no cazar un libro distinto
+  // que se llame igual.
+  const sinCasar = libros.filter((l) => !l.materias);
+  if (sinCasar.length) {
+    enriquecidos += await rescatarPorTitulo(sinCasar, limite);
+  }
+
   logger.info(`Open Library: ${enriquecidos}/${libros.length} enriquecidos`);
   return libros;
+}
+
+// Materias que no dicen nada del libro: son etiquetas internas del catalogo de
+// Open Library. "Spanish language books" salia como si fuese un tema.
+const MATERIAS_RUIDO = [
+  "language books", "accessible book", "protected daisy", "in library",
+  "large type books", "open library staff picks", "internet archive wishlist",
+  "overdrive", "lending library", "popular print disabled books",
+];
+
+function esMateriaUtil(materia) {
+  const m = String(materia).toLowerCase();
+  if (m.startsWith("series:")) return false;
+  return !MATERIAS_RUIDO.some((r) => m.includes(r));
+}
+
+function volcar(libro, doc) {
+  if (typeof doc.ratings_average === "number") {
+    libro.valoracion = Math.round(doc.ratings_average * 10) / 10;
+    libro.numVotos = doc.ratings_count || 0;
+  }
+  libro.materias = (doc.subject || [])
+      .filter(esMateriaUtil)
+      .slice(0, OL_MAX_MATERIAS);
+}
+
+// Sin tildes, sin puntuacion y sin subtitulo: "El Quijote: edicion RAE" -> "el quijote"
+function normalizar(texto) {
+  return String(texto || "")
+      .split(":")[0]
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .toLowerCase().replace(/[^a-z0-9 ]/g, " ")
+      .replace(/\s+/g, " ").trim();
+}
+
+function mismoAutor(libro, doc) {
+  const suyos = (doc.author_name || []).map(normalizar);
+  if (!suyos.length) return false;
+  return (libro.autor || []).some((a) => {
+    const mio = normalizar(a);
+    return suyos.some((s) => s === mio || s.endsWith(" " + mio.split(" ").pop()));
+  });
+}
+
+async function rescatarPorTitulo(libros, limite) {
+  const lote = libros.slice(0, 10);
+  // OJO: se pregunta con el titulo TAL CUAL, con sus tildes. Normalizarlo antes de
+  // consultar hacia que Open Library no encontrase nada ("cien anos de soledad" no
+  // casa con "Cien años de soledad" en su indice). normalizar() es solo para
+  // comparar lo que vuelve. Se quita el subtitulo, que si estorba al buscar.
+  const consulta = lote
+      .map((l) => `title:"${String(l.titulo).split(":")[0].replace(/"/g, "").trim()}"`)
+      .join(" OR ");
+  const url = `${OL_BUSQUEDA}?q=${encodeURIComponent(consulta)}&limit=60` +
+      "&fields=title,author_name,ratings_average,ratings_count,subject";
+  const datos = await pedirAOpenLibrary(url, limite);
+  if (!datos || !Array.isArray(datos.docs)) return 0;
+
+  let casados = 0;
+  for (const libro of lote) {
+    const mio = normalizar(libro.titulo);
+    const doc = datos.docs.find((d) =>
+      normalizar(d.title) === mio && mismoAutor(libro, d));
+    if (!doc) continue;
+    casados++;
+    volcar(libro, doc);
+  }
+  return casados;
 }
 
 // Semillas de recomendacion. Deliberadamente son temas y autores reales:
