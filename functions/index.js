@@ -237,7 +237,102 @@ function aLibro(volume, idioma, tally) {
     generos: info.categories,
     descripcion: info.description,
     linkImg: img.replace("http://", "https://"),
+    // el ISBN es la llave para cruzar con Open Library; se prefiere el de 13
+    isbn: isbnDe(info),
+    editorial: info.publisher || null,
   };
+}
+
+function isbnDe(info) {
+  const ids = info.industryIdentifiers || [];
+  const trece = ids.find((i) => i.type === "ISBN_13");
+  const diez = ids.find((i) => i.type === "ISBN_10");
+  return (trece && trece.identifier) || (diez && diez.identifier) || null;
+}
+
+// ---------- Open Library ----------
+// Google Books no da valoraciones y sus categorias son burdas ("Fiction" a secas).
+// Open Library si: nota media, numero de votos y materias mucho mas finas. Se usa
+// para COMPLETAR lo de Google, no para sustituirlo: la sinopsis y la portada de
+// Open Library son irregulares y casi siempre en ingles.
+const OL_BUSQUEDA = "https://openlibrary.org/search.json";
+// Identificarse sube su limite de 1 a 3 peticiones por segundo.
+const OL_AGENTE = "NewGoodBook/1.0 (https://github.com/jesus33lcc/NewGoodBook)";
+const OL_MAX_MATERIAS = 8;
+
+async function pedirAOpenLibrary(url, limite) {
+  const enMemoria = cacheGet(url);
+  if (enMemoria) return enMemoria;
+  const persistida = await leerDeFirestore(url);
+  if (persistida && persistida.fresco) {
+    cacheSet(url, persistida.datos);
+    return persistida.datos;
+  }
+  const viejo = persistida ? persistida.datos : null;
+  if (Date.now() >= limite) return viejo;
+  try {
+    const res = await fetch(url, {
+      headers: {"User-Agent": OL_AGENTE},
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      logger.warn(`Open Library respondio ${res.status}`);
+      return viejo;
+    }
+    const datos = await res.json();
+    cacheSet(url, datos);
+    guardarEnFirestore(url, datos); //sin await: no bloquea la respuesta
+    return datos;
+  } catch (e) {
+    logger.warn("Fallo llamando a Open Library", e);
+    return viejo;
+  }
+}
+
+// Enriquece un lote entero con UNA sola consulta: Open Library acepta varios
+// "isbn:" unidos por OR. Ir libro a libro no cabria en su limite de peticiones.
+// Si algo falla se devuelven los libros tal cual: esto anade datos, nunca decide
+// si un libro se ensenia o no.
+async function enriquecer(libros, limite) {
+  const conIsbn = libros.filter((l) => l.isbn).slice(0, 20);
+  if (!conIsbn.length) {
+    logger.warn(`Open Library: ninguno de los ${libros.length} libros trae ISBN`);
+    return libros;
+  }
+
+  const consulta = conIsbn.map((l) => `isbn:${l.isbn}`).join(" OR ");
+  const url = `${OL_BUSQUEDA}?q=${encodeURIComponent(consulta)}&limit=40` +
+      "&fields=isbn,ratings_average,ratings_count,subject";
+  const datos = await pedirAOpenLibrary(url, limite);
+  if (!datos || !Array.isArray(datos.docs)) {
+    logger.warn("Open Library: sin respuesta utilizable");
+    return libros;
+  }
+  logger.info(`Open Library: ${datos.docs.length} obras para ${conIsbn.length} isbn`);
+
+  // Se indexa por TODOS los isbn de cada obra: el que pedimos es el de una edicion
+  // concreta y Open Library responde con la obra, que agrupa muchas.
+  const porIsbn = new Map();
+  for (const doc of datos.docs) {
+    for (const isbn of (doc.isbn || [])) porIsbn.set(isbn, doc);
+  }
+
+  let enriquecidos = 0;
+  for (const libro of libros) {
+    const doc = libro.isbn ? porIsbn.get(libro.isbn) : null;
+    if (!doc) continue;
+    enriquecidos++;
+    if (typeof doc.ratings_average === "number") {
+      libro.valoracion = Math.round(doc.ratings_average * 10) / 10;
+      libro.numVotos = doc.ratings_count || 0;
+    }
+    // las materias "series:Harry_Potter" son ruido de catalogacion
+    libro.materias = (doc.subject || [])
+        .filter((s) => !String(s).startsWith("series:"))
+        .slice(0, OL_MAX_MATERIAS);
+  }
+  logger.info(`Open Library: ${enriquecidos}/${libros.length} enriquecidos`);
+  return libros;
 }
 
 // Semillas de recomendacion. Deliberadamente son temas y autores reales:
@@ -346,7 +441,7 @@ exports.buscarLibros = onCall(
       if (!datos) return {libros: [], error: "no-disponible"};
       const libros = (datos.items || [])
           .map((v) => aLibro(v, idioma)).filter(Boolean);
-      return {libros};
+      return {libros: await enriquecer(libros, limite)};
     });
 
 // Lote de recomendaciones aleatorias, para llenar la cola de la pantalla Home
@@ -408,5 +503,6 @@ exports.librosAleatorios = onCall(
       }
 
       if (!encontrados.length) return {libros: [], error: "no-disponible"};
-      return {libros: barajar(encontrados).slice(0, cuantos)};
+      const salida = barajar(encontrados).slice(0, cuantos);
+      return {libros: await enriquecer(salida, limite)};
     });

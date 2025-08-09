@@ -16,6 +16,14 @@ public class Libro implements Serializable {
     private List<String> generos;
     private String descripcion;
     private String linkImg;
+    //Datos que aporta Open Library, no Google Books. Son OPCIONALES a proposito: los
+    //libros ya guardados en Firestore no los tienen, y muchos volumenes tampoco. Nada
+    //de esto puede hacer que un libro se descarte.
+    private double valoracion;
+    private int numVotos;
+    private List<String> materias;
+    private String isbn;
+    private String editorial;
 
     public Libro(String id, String titulo, List<String> autor, int numPag, String fechaPublicacion, List<String> generos, String descripcion, String linkImg) {
         this.id = id;
@@ -50,6 +58,15 @@ public class Libro implements Serializable {
         Object paginas = mapa.get("numPag");
         libro.numPag = (paginas instanceof Number) ? ((Number) paginas).intValue() : 0;
 
+        //los opcionales se leen sin exigirlos: si faltan quedan a cero o vacios
+        Object nota = mapa.get("valoracion");
+        libro.valoracion = (nota instanceof Number) ? ((Number) nota).doubleValue() : 0;
+        Object votos = mapa.get("numVotos");
+        libro.numVotos = (votos instanceof Number) ? ((Number) votos).intValue() : 0;
+        libro.materias = listaTextos(mapa.get("materias"));
+        libro.isbn = texto(mapa.get("isbn"));
+        libro.editorial = texto(mapa.get("editorial"));
+
         if (libro.id == null || libro.titulo == null || libro.linkImg == null
                 || libro.autor.isEmpty() || libro.generos.isEmpty()) {
             return null;
@@ -69,8 +86,21 @@ public class Libro implements Serializable {
         mapa.put("generos", generos != null ? generos : new ArrayList<String>());
         mapa.put("descripcion", descripcion);
         mapa.put("linkImg", linkImg);
+        mapa.put("valoracion", valoracion);
+        mapa.put("numVotos", numVotos);
+        mapa.put("materias", materias != null ? materias : new ArrayList<String>());
+        mapa.put("isbn", isbn);
+        mapa.put("editorial", editorial);
         return mapa;
     }
+
+    //Hay valoracion util solo si la respaldan unos cuantos votos: una nota de 5,0
+    //puesta por una sola persona no dice nada y quedaria fatal en la ficha.
+    public boolean tieneValoracion() {
+        return valoracion > 0 && numVotos >= MINIMO_VOTOS;
+    }
+
+    public static final int MINIMO_VOTOS = 5;
 
     private static String texto(Object valor) {
         return valor == null ? null : String.valueOf(valor);
@@ -162,6 +192,46 @@ public class Libro implements Serializable {
 
     public void setLinkImg(String linkImg) {
         this.linkImg = linkImg;
+    }
+
+    public double getValoracion() {
+        return valoracion;
+    }
+
+    public void setValoracion(double valoracion) {
+        this.valoracion = valoracion;
+    }
+
+    public int getNumVotos() {
+        return numVotos;
+    }
+
+    public void setNumVotos(int numVotos) {
+        this.numVotos = numVotos;
+    }
+
+    public List<String> getMaterias() {
+        return materias != null ? materias : new ArrayList<String>();
+    }
+
+    public void setMaterias(List<String> materias) {
+        this.materias = materias;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getEditorial() {
+        return editorial;
+    }
+
+    public void setEditorial(String editorial) {
+        this.editorial = editorial;
     }
     @Override
     public int hashCode() {
