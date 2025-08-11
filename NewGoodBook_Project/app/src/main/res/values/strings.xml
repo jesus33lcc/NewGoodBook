@@ -129,4 +129,5 @@
     <string name="etiqueta_temas">Temas</string>
     <string name="etiqueta_editorial">Editorial</string>
     <string name="desc_valoracion">%1$s (%2$d valoraciones)</string>
+    <string name="accion_no_interesa">No me interesa</string>
 </resources>

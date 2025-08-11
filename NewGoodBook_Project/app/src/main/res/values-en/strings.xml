@@ -129,4 +129,5 @@
     <string name="etiqueta_temas">Topics</string>
     <string name="etiqueta_editorial">Publisher</string>
     <string name="desc_valoracion">%1$s (%2$d ratings)</string>
+    <string name="accion_no_interesa">Not interested</string>
 </resources>
