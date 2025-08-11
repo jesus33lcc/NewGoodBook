@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import com.example.newgoodbooks.R;
 import com.google.android.material.button.MaterialButton;
 import com.example.newgoodbooks.UI.AccionesLibro;
+import com.example.newgoodbooks.UI.DatosLibro;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
 
@@ -39,6 +40,7 @@ public class HomeFragment extends Fragment {
     private MaterialButton btnCheck;
     private MaterialButton btnAddList;
     private TextView etiquetaSinopsis;
+    private TextView valoracion;
 
     public HomeFragment(){
     }
@@ -56,6 +58,7 @@ public class HomeFragment extends Fragment {
         numPag = binding.textNumPag;
         fecha = binding.textFechaPub;
         genero = binding.textGeneros;
+        valoracion = binding.textValoracion;
         descripcion = binding.textDescripcion;
         botonSig = binding.btnSiguiente;
         portada = binding.imageVPortada;
@@ -79,6 +82,9 @@ public class HomeFragment extends Fragment {
         //El estado del boton depende de DOS cosas: si hay libro y si esta buscando.
         //Antes solo miraba lo primero, asi que mientras cargaba ya ofrecia "Reintentar".
         mViewModel.getHayLibro().observe(getViewLifecycleOwner(), hay -> refrescarEstado());
+        //la valoracion no siempre existe: el ayudante esconde la pildora cuando falta
+        mViewModel.getLibroEnPantalla().observe(getViewLifecycleOwner(),
+                libro -> DatosLibro.pintarValoracion(valoracion, libro));
         mViewModel.getEstaCargando().observe(getViewLifecycleOwner(), c -> refrescarEstado());
 
         mViewModel.getTitulo().observe(getViewLifecycleOwner(), titulo::setText);

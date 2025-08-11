@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.UI.AccionesLibro;
+import com.example.newgoodbooks.UI.DatosLibro;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.button.MaterialButton;
 import androidx.core.content.ContextCompat;
 import android.content.res.ColorStateList;
@@ -31,6 +33,8 @@ public class LibroData extends AppCompatActivity {
     MaterialButton btnFav;
     MaterialButton btnCheck;
     private MaterialButton btnAddList;
+    private TextView valoracionTXT, etiquetaTemas, editorialTXT;
+    private ChipGroup grupoTemas;
     public LibroData(){ }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,10 @@ public class LibroData extends AppCompatActivity {
         fechaPubTXT = findViewById(R.id.textFechaPub);
         generosTXT = findViewById(R.id.textGeneros);
         descripcionTXT = findViewById(R.id.textDescripcion);
+        valoracionTXT = findViewById(R.id.textValoracion);
+        etiquetaTemas = findViewById(R.id.etiquetaTemas);
+        grupoTemas = findViewById(R.id.grupoTemas);
+        editorialTXT = findViewById(R.id.textEditorial);
         btnFav=findViewById(R.id.tBtnFavorite);
         btnCheck=findViewById(R.id.tBtnCheck);
         btnAddList=findViewById(R.id.tBtnAddList);
@@ -70,6 +78,10 @@ public class LibroData extends AppCompatActivity {
             fechaPubTXT.setText(soloAnio(bookSelected.getFechaPublicacion()));
             generosTXT.setText(bookSelected.getGeneros().isEmpty() ? "" : bookSelected.getGeneros().get(0));
             descripcionTXT.setText(bookSelected.getDescripcion());
+            //datos de Open Library: cada uno se esconde solo si no viene
+            DatosLibro.pintarValoracion(valoracionTXT, bookSelected);
+            DatosLibro.pintarTemas(etiquetaTemas, grupoTemas, bookSelected);
+            DatosLibro.pintarEditorial(editorialTXT, bookSelected);
 
 
             //el estado de los dos toggles lo manda Firestore: si lo marcas aqui,

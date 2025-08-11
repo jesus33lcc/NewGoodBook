@@ -126,4 +126,7 @@
     <string name="sesion_sin_nombre">No name</string>
     <string name="lista_favoritos">Favourite books</string>
     <string name="lista_leidos">Books read</string>
+    <string name="etiqueta_temas">Topics</string>
+    <string name="etiqueta_editorial">Publisher</string>
+    <string name="desc_valoracion">%1$s (%2$d ratings)</string>
 </resources>

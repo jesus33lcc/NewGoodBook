@@ -123,6 +123,22 @@
                             android:textColor="@color/hero_meta"
                             android:textSize="12sp"
                             tools:text="2004" />
+                        <TextView
+                            android:id="@+id/textValoracion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/fondo_meta"
+                            android:drawablePadding="4dp"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:textColor="@color/hero_meta"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            app:drawableStartCompat="@drawable/ic_estrella"
+                            tools:text="4,2"
+                            tools:visibility="visible" />
                     </LinearLayout>
 
                     <TextView
@@ -216,10 +232,46 @@
                 android:lineSpacingMultiplier="1.25"
                 android:paddingHorizontal="@dimen/margen_contenido"
                 android:paddingTop="6dp"
-                android:paddingBottom="24dp"
+                android:paddingBottom="18dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="17sp"
                 tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
+
+            <!-- Temas y editorial: datos de Open Library. Se ocultan enteros si el
+                 libro no los trae, que pasa a menudo. -->
+            <TextView
+                android:id="@+id/etiquetaTemas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:letterSpacing="0.12"
+                android:paddingHorizontal="@dimen/margen_contenido"
+                android:text="@string/etiqueta_temas"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/grupoTemas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margen_contenido"
+                android:paddingTop="6dp"
+                app:chipSpacingVertical="0dp" />
+
+            <TextView
+                android:id="@+id/textEditorial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:paddingHorizontal="@dimen/margen_contenido"
+                android:paddingBottom="24dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="13sp"
+                android:visibility="gone"
+                tools:text="Editorial · Salamandra" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

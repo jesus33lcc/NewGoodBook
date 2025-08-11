@@ -115,6 +115,22 @@
                     android:textColor="@color/hero_meta"
                     android:textSize="13sp"
                     tools:text="2004" />
+                <TextView
+                    android:id="@+id/textValoracion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/fondo_meta"
+                    android:drawablePadding="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:textColor="@color/hero_meta"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_estrella"
+                    tools:text="4,2"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/textGeneros"
@@ -211,20 +227,59 @@
                 android:fillViewport="true"
                 android:scrollbars="vertical">
 
-                <!-- maxWidth acota la linea a un ancho de lectura comodo: sin esto el
-                     texto cruzaba la pantalla entera y costaba saltar de renglon -->
-                <TextView
-                    android:id="@+id/textDescripcion"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxWidth="620dp"
-                    android:fontFamily="@font/chamberi_text_regular"
-                    android:lineSpacingMultiplier="1.35"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="18dp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="16sp"
-                    tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
+                    android:orientation="vertical">
+
+                    <!-- maxWidth acota la linea a un ancho de lectura comodo: sin esto el
+                         texto cruzaba la pantalla entera y costaba saltar de renglon -->
+                    <TextView
+                        android:id="@+id/textDescripcion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="620dp"
+                        android:fontFamily="@font/chamberi_text_regular"
+                        android:lineSpacingMultiplier="1.35"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="18dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="16sp"
+                        tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
+
+                    <!-- Temas y editorial: datos de Open Library. Se ocultan enteros si
+                         el libro no los trae, que pasa a menudo. Aqui sin margen lateral
+                         propio: ya lo pone la columna. -->
+                    <TextView
+                        android:id="@+id/etiquetaTemas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.12"
+                        android:text="@string/etiqueta_temas"
+                        android:textAllCaps="true"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/grupoTemas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="6dp"
+                        app:chipSpacingVertical="0dp" />
+
+                    <TextView
+                        android:id="@+id/textEditorial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:paddingBottom="20dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        tools:text="Editorial · Salamandra" />
+                </LinearLayout>
             </ScrollView>
         </LinearLayout>
     </LinearLayout>
