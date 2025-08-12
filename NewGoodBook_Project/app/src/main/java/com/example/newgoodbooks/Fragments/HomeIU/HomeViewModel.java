@@ -290,14 +290,11 @@ public class HomeViewModel extends AndroidViewModel {
         if (faltan <= 0) {
             return;
         }
-        //la mitad de las veces se pide algo parecido a lo que ya le gusta, y la otra
-        //mitad se deja al azar del servidor, para que las recomendaciones no se cierren
-        //siempre sobre los mismos autores
-        String semilla = null;
-        if (new java.util.Random().nextBoolean()) {
-            semilla = repo.semillaDeRecomendacion();
-        }
-        List<Libro> nuevos = ClienteFunciones.librosAleatorios(faltan, semilla);
+        //Ya no se manda semilla: el servidor construye el perfil de gustos leyendo
+        //favoritos, leidos y descartados, y decide a que preguntar. Mandarla desde
+        //aqui cortocircuitaba ese perfil, porque el servidor la usaba como unica
+        //consulta.
+        List<Libro> nuevos = ClienteFunciones.librosAleatorios(faltan);
         if (nuevos.isEmpty()) {
             return;
         }
@@ -309,6 +306,17 @@ public class HomeViewModel extends AndroidViewModel {
                 }
             }
         }
+    }
+
+    //Descarta el libro que se ve y pasa al siguiente. El descarte viaja a Firestore
+    //y el servidor lo usa para restar peso a sus materias y a su autor.
+    public void descartarLibro() {
+        Libro descartado = libroMostrado;
+        if (descartado == null) {
+            return;
+        }
+        repo.descartar(descartado);
+        cambioLibro();
     }
 
     public void alternarFavorito() {

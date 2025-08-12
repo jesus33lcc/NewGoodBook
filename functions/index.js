@@ -440,6 +440,121 @@ function semillasDe(idioma) {
       SEMILLAS_POR_IDIOMA[IDIOMA_POR_DEFECTO];
 }
 
+// ================= PERFIL DE GUSTOS Y PUNTUACION =================
+// Antes la recomendacion era una semilla al azar de una lista fija: la app no
+// aprendia nada de lo que marcabas. Ahora se lee lo que el usuario ya ha hecho y
+// se usa para DOS cosas distintas:
+//   · elegir a QUIEN preguntar  -> autores y generos de Google, que es su vocabulario
+//   · ordenar lo que llega      -> materias finas de Open Library, mucho mas precisas
+// El perfil se calcula aqui y no en el movil: la funcion ya entra a Firestore con el
+// SDK admin, asi no viaja nada por la red y el movil no necesita saber de esto.
+const COL_USUARIOS = "usuarios";
+const PESO_FAVORITO = 3;
+const PESO_LEIDO = 2;
+// Los descartes RESTAN. Sin senial negativa un recomendador no aprende: solo repite
+// lo que ya acerto y no tiene forma de saber que algo no gusta.
+const PESO_DESCARTADO = -3;
+const MAX_PERFIL = 200;
+// De cada 3 recomendaciones, 1 viene de fuera del perfil. Sin esta cuota el sistema
+// se cierra sobre lo mismo y nunca descubre nada nuevo.
+const UNA_DE_CADA = 3;
+
+async function leerColeccion(uid, coleccion) {
+  try {
+    const snap = await db.collection(COL_USUARIOS).doc(uid)
+        .collection(coleccion).limit(MAX_PERFIL).get();
+    return snap.docs.map((d) => d.data());
+  } catch (e) {
+    logger.warn(`No se pudo leer ${coleccion} de ${uid}`, e);
+    return [];
+  }
+}
+
+async function perfilDeGustos(uid) {
+  const [favoritos, leidos, descartados, historial] = await Promise.all([
+    leerColeccion(uid, "favoritos"),
+    leerColeccion(uid, "leidos"),
+    leerColeccion(uid, "descartados"),
+    leerColeccion(uid, "historial"),
+  ]);
+
+  const materias = new Map();
+  const generos = new Map();
+  const autores = new Map();
+  const vistos = new Set();
+  const suma = (mapa, clave, peso) => {
+    if (!clave) return;
+    const k = String(clave).trim();
+    if (k) mapa.set(k, (mapa.get(k) || 0) + peso);
+  };
+
+  const digerir = (libros, peso) => {
+    for (const l of libros) {
+      if (l.id) vistos.add(l.id);
+      for (const m of (l.materias || [])) suma(materias, String(m).toLowerCase(), peso);
+      for (const g of (l.generos || [])) suma(generos, g, peso);
+      for (const a of (l.autor || [])) suma(autores, a, peso);
+    }
+  };
+  digerir(favoritos, PESO_FAVORITO);
+  digerir(leidos, PESO_LEIDO);
+  digerir(descartados, PESO_DESCARTADO);
+  // el historial solo sirve para no repetir: haber visto algo no dice que guste
+  for (const l of historial) if (l.id) vistos.add(l.id);
+
+  return {materias, generos, autores, vistos,
+    tamanio: favoritos.length + leidos.length};
+}
+
+const mejores = (mapa, cuantos) => [...mapa.entries()]
+    .filter(([, peso]) => peso > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, cuantos)
+    .map(([clave]) => clave);
+
+// Se pregunta a Google con SU vocabulario: nombres de autor y sus propias categorias.
+// Las materias de Open Library ("magic realism") no son terminos de Google y como
+// semilla rinden mal; ahi solo se usan para puntuar.
+function semillasDePerfil(perfil) {
+  const autores = mejores(perfil.autores, 3).map((a) => `inauthor:"${a}"`);
+  const generos = mejores(perfil.generos, 3).map((g) => `subject:"${g}"`);
+  return [...autores, ...generos];
+}
+
+function puntuar(libro, perfil) {
+  let afinidad = 0;
+  for (const m of (libro.materias || [])) {
+    afinidad += perfil.materias.get(String(m).toLowerCase()) || 0;
+  }
+  for (const g of (libro.generos || [])) afinidad += perfil.generos.get(g) || 0;
+  // el autor pesa doble: acertar con el autor acierta mas que acertar con el tema
+  for (const a of (libro.autor || [])) afinidad += (perfil.autores.get(a) || 0) * 2;
+
+  // La nota solo cuenta si la respaldan votos suficientes; centrada en 3 para que
+  // un libro mediocre reste y uno bueno sume, en vez de premiar por existir.
+  const calidad = (libro.numVotos >= 5) ? (libro.valoracion - 3) * 2 : 0;
+  return afinidad + calidad;
+}
+
+// Mezcla lo afin con lo nuevo, sin que lo segundo quede al final de la cola donde
+// nunca se llega: se intercala una exploracion de cada UNA_DE_CADA.
+function intercalar(afines, exploracion, cuantos) {
+  const salida = [];
+  let i = 0;
+  let j = 0;
+  while (salida.length < cuantos && (i < afines.length || j < exploracion.length)) {
+    const tocaExplorar = (salida.length + 1) % UNA_DE_CADA === 0;
+    if (tocaExplorar && j < exploracion.length) {
+      salida.push(exploracion[j++]);
+    } else if (i < afines.length) {
+      salida.push(afines[i++]);
+    } else if (j < exploracion.length) {
+      salida.push(exploracion[j++]);
+    }
+  }
+  return salida;
+}
+
 const MAX_CONSULTAS = 10;
 // TOPE POR SEMILLA. Sin esto una sola consulta productiva llenaba la cola entera:
 // en la prueba del 26-07-2026 salieron 6 Harry Potter seguidos de 11 libros. Cortando
@@ -480,7 +595,7 @@ function exigirUsuario(request) {
         if (ahora - v.desde > VENTANA_MS) contadores.delete(k);
       }
     }
-    return;
+    return uid;
   }
   previo.veces++;
   if (previo.veces > MAX_LLAMADAS) {
@@ -488,6 +603,7 @@ function exigirUsuario(request) {
     throw new HttpsError("resource-exhausted",
         "Demasiadas peticiones seguidas. Espera un momento.");
   }
+  return uid;
 }
 
 // Busqueda por titulo
@@ -520,7 +636,7 @@ exports.buscarLibros = onCall(
 exports.librosAleatorios = onCall(
     {secrets: [GOOGLE_BOOKS_API_KEY]},
     async (request) => {
-      exigirUsuario(request);
+      const uid = exigirUsuario(request);
       const cuantos = Math.min(Math.max(Number(
           (request.data && request.data.cuantos) || 10), 1), 20);
       const termino = String((request.data && request.data.termino) || "").trim();
@@ -528,10 +644,20 @@ exports.librosAleatorios = onCall(
       const idioma = String((request.data && request.data.idioma) || IDIOMA_POR_DEFECTO)
           .slice(0, 5);
 
-      const semillas = termino ? [termino] : barajar(semillasDe(idioma).slice());
+      const perfil = await perfilDeGustos(uid);
+      const deExploracion = new Set(barajar(semillasDe(idioma).slice()));
+      // Las del perfil van primero, pero SIEMPRE acompaniadas de exploracion: quien
+      // no ha marcado nada todavia no tiene perfil, y quien lo tiene no debe quedarse
+      // encerrado en el. Que semilla produjo cada libro se recuerda para poder
+      // intercalar despues lo afin con lo nuevo.
+      const delPerfil = semillasDePerfil(perfil);
+      const semillas = termino ? [termino] :
+        [...delPerfil, ...deExploracion];
+      logger.info(`Perfil de ${uid}: ${perfil.tamanio} libros marcados, ` +
+          `${delPerfil.length} semillas propias, ${perfil.vistos.size} ya vistos`);
 
       const encontrados = [];
-      const vistos = new Set();
+      const vistos = new Set(perfil.vistos);
       let consultas = 0;
       const limite = Date.now() + PRESUPUESTO_MS;
 
@@ -545,6 +671,7 @@ exports.librosAleatorios = onCall(
           break;
         }
         consultas++;
+        const esDelPerfil = delPerfil.includes(semilla);
         const datos = await pedirABooks({
           q: semilla,
           orderBy: "relevance",
@@ -561,8 +688,10 @@ exports.librosAleatorios = onCall(
           if (!libro) continue;
           aceptados++;
           if (deEstaSemilla >= MAX_POR_SEMILLA) continue;
+          //vistos ya trae de serie lo marcado y descartado: no se vuelve a ofrecer
           if (!vistos.has(libro.id)) {
             vistos.add(libro.id);
+            libro.delPerfil = esDelPerfil; //marca de trabajo, se quita al final
             encontrados.push(libro);
             deEstaSemilla++;
           }
@@ -575,6 +704,17 @@ exports.librosAleatorios = onCall(
       }
 
       if (!encontrados.length) return {libros: [], error: "no-disponible"};
-      const salida = barajar(encontrados).slice(0, cuantos);
-      return {libros: await enriquecer(salida, limite)};
+
+      // Se enriquece ANTES de puntuar: la nota y las materias finas con las que se
+      // decide el orden las pone Open Library, no Google.
+      await enriquecer(encontrados, limite);
+
+      const afines = encontrados.filter((l) => l.delPerfil)
+          .sort((a, b) => puntuar(b, perfil) - puntuar(a, perfil));
+      const nuevos = barajar(encontrados.filter((l) => !l.delPerfil));
+      const salida = intercalar(afines, nuevos, cuantos);
+      for (const libro of salida) delete libro.delPerfil;
+      logger.info(`Devueltos ${salida.length}: ${afines.length} afines, ` +
+          `${nuevos.length} de exploracion`);
+      return {libros: salida};
     });

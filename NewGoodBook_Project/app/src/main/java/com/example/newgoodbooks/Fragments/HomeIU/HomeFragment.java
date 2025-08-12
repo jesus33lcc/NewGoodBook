@@ -41,6 +41,7 @@ public class HomeFragment extends Fragment {
     private MaterialButton btnAddList;
     private TextView etiquetaSinopsis;
     private TextView valoracion;
+    private MaterialButton btnNoInteresa;
 
     public HomeFragment(){
     }
@@ -66,6 +67,7 @@ public class HomeFragment extends Fragment {
         btnCheck = binding.tBtnCheck;
         btnAddList = binding.tBtnAddList;
         etiquetaSinopsis = binding.etiquetaSinopsis;
+        btnNoInteresa = binding.btnNoInteresa;
 
         mViewModel.getLinkImagen().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -113,6 +115,7 @@ public class HomeFragment extends Fragment {
         pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
 
         botonSig.setOnClickListener(v -> mViewModel.cambioLibro());
+        btnNoInteresa.setOnClickListener(v -> mViewModel.descartarLibro());
         //los toggles solo avisan al repositorio: el estado vuelve por Firestore
         btnFav.setOnClickListener(v -> mViewModel.alternarFavorito());
         btnCheck.setOnClickListener(v -> mViewModel.alternarLeido());
@@ -140,6 +143,7 @@ public class HomeFragment extends Fragment {
         btnFav.setEnabled(hayLibro);
         btnCheck.setEnabled(hayLibro);
         btnAddList.setEnabled(hayLibro);
+        btnNoInteresa.setEnabled(hayLibro);
         //las pildoras vacias daban sensacion de app rota mientras no habia datos
         int visibilidad = hayLibro ? View.VISIBLE : View.INVISIBLE;
         numPag.setVisibility(visibilidad);

@@ -38,6 +38,7 @@ public class RepositorioUsuario {
     private static final String COL_LEIDOS = "leidos";
     private static final String COL_HISTORIAL = "historial";
     private static final String COL_LISTAS = "listas";
+    private static final String COL_DESCARTADOS = "descartados";
     //campo del documento raiz: el libro que se esta enseniando ahora en Principal
     private static final String CAMPO_LIBRO_ACTUAL = "libroActual";
 
@@ -155,33 +156,6 @@ public class RepositorioUsuario {
 
     public LiveData<List<Lista>> getListas() {
         return listas;
-    }
-
-    //Devuelve un autor o genero de los libros marcados como favoritos, para pedirle
-    //al servidor recomendaciones parecidas. null si el usuario aun no tiene favoritos.
-    @Nullable
-    public String semillaDeRecomendacion() {
-        List<Libro> gustan = favoritos.getValue();
-        if (gustan == null || gustan.isEmpty()) {
-            return null;
-        }
-        List<String> candidatos = new ArrayList<>();
-        for (Libro libro : gustan) {
-            if (libro.getAutor() != null) {
-                for (String a : libro.getAutor()) {
-                    candidatos.add("inauthor:" + a);
-                }
-            }
-            if (libro.getGeneros() != null) {
-                for (String g : libro.getGeneros()) {
-                    candidatos.add("subject:" + g);
-                }
-            }
-        }
-        if (candidatos.isEmpty()) {
-            return null;
-        }
-        return candidatos.get(new java.util.Random().nextInt(candidatos.size()));
     }
 
     public boolean esFavorito(Libro libro) {
@@ -312,6 +286,21 @@ public class RepositorioUsuario {
         //merge: el documento raiz puede no existir todavia y no hay que pisar lo demas
         raiz.set(datos, SetOptions.merge())
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudo guardar el libro en curso", e));
+    }
+
+    //Descartar un libro. No es solo "no me lo enseñes mas": es la unica senial
+    //NEGATIVA que tiene el recomendador. Sin ella solo sabe que has marcado, nunca
+    //que algo no te interesa, y acaba repitiendose. La funcion lee esta coleccion
+    //para restar peso a sus materias y autores.
+    public void descartar(Libro libro) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>(libro.aMapa());
+        datos.put("descartado", System.currentTimeMillis());
+        raiz.collection(COL_DESCARTADOS).document(libro.getId()).set(datos)
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo descartar el libro", e));
     }
 
     //Deja constancia de que el usuario ha visto este libro (pestania Explorar)
