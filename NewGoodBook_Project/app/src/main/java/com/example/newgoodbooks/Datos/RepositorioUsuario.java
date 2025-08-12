@@ -41,6 +41,9 @@ public class RepositorioUsuario {
     private static final String COL_DESCARTADOS = "descartados";
     //campo del documento raiz: el libro que se esta enseniando ahora en Principal
     private static final String CAMPO_LIBRO_ACTUAL = "libroActual";
+    //preferencias elegidas al empezar; las lee tambien la Cloud Function
+    private static final String CAMPO_GENEROS = "generosPreferidos";
+    private static final String CAMPO_ONBOARDING = "onboardingHecho";
 
     private static RepositorioUsuario instancia;
 
@@ -301,6 +304,46 @@ public class RepositorioUsuario {
         datos.put("descartado", System.currentTimeMillis());
         raiz.collection(COL_DESCARTADOS).document(libro.getId()).set(datos)
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudo descartar el libro", e));
+    }
+
+    // ---------- gustos elegidos al empezar ----------
+
+    //Se guardan en el documento raiz porque los lee la Cloud Function para armar el
+    //perfil: asi quien no ha marcado nada todavia ya tiene por donde empezar.
+    public void guardarGenerosPreferidos(List<String> generos) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || generos == null) {
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put(CAMPO_GENEROS, generos);
+        datos.put(CAMPO_ONBOARDING, true);
+        raiz.set(datos, SetOptions.merge())
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudieron guardar los generos", e));
+    }
+
+    //Marca el proceso como hecho aunque se haya omitido: si no, volveria a salir
+    //en cada arranque y seria insoportable.
+    public void marcarOnboardingHecho() {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null) {
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put(CAMPO_ONBOARDING, true);
+        raiz.set(datos, SetOptions.merge())
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo marcar el onboarding", e));
+    }
+
+    //Anade sin alternar: en el onboarding los libros vienen recien traidos y
+    //alternar podria quitarlos si el listener aun no habia llegado.
+    public void anadirFavorito(Libro libro) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        raiz.collection(COL_FAVORITOS).document(libro.getId()).set(libro.aMapa())
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo anadir a favoritos", e));
     }
 
     //Deja constancia de que el usuario ha visto este libro (pestania Explorar)

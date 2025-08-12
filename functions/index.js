@@ -454,6 +454,7 @@ const PESO_LEIDO = 2;
 // Los descartes RESTAN. Sin senial negativa un recomendador no aprende: solo repite
 // lo que ya acerto y no tiene forma de saber que algo no gusta.
 const PESO_DESCARTADO = -3;
+const PESO_ELEGIDO = 1;
 const MAX_PERFIL = 200;
 // De cada 3 recomendaciones, 1 viene de fuera del perfil. Sin esta cuota el sistema
 // se cierra sobre lo mismo y nunca descubre nada nuevo.
@@ -470,12 +471,24 @@ async function leerColeccion(uid, coleccion) {
   }
 }
 
+async function leerElegidos(uid) {
+  try {
+    const doc = await db.collection(COL_USUARIOS).doc(uid).get();
+    const generos = doc.exists ? doc.get("generosPreferidos") : null;
+    return Array.isArray(generos) ? generos : [];
+  } catch (e) {
+    logger.warn(`No se pudieron leer los generos elegidos de ${uid}`, e);
+    return [];
+  }
+}
+
 async function perfilDeGustos(uid) {
-  const [favoritos, leidos, descartados, historial] = await Promise.all([
+  const [favoritos, leidos, descartados, historial, elegidos] = await Promise.all([
     leerColeccion(uid, "favoritos"),
     leerColeccion(uid, "leidos"),
     leerColeccion(uid, "descartados"),
     leerColeccion(uid, "historial"),
+    leerElegidos(uid),
   ]);
 
   const materias = new Map();
@@ -496,6 +509,10 @@ async function perfilDeGustos(uid) {
       for (const a of (l.autor || [])) suma(autores, a, peso);
     }
   };
+  // Los generos elegidos al empezar pesan menos que un favorito de verdad: son una
+  // declaracion de intenciones, no una prueba. Pero sin ellos una cuenta nueva no
+  // tiene ningun perfil del que tirar.
+  for (const g of elegidos) suma(generos, g, PESO_ELEGIDO);
   digerir(favoritos, PESO_FAVORITO);
   digerir(leidos, PESO_LEIDO);
   digerir(descartados, PESO_DESCARTADO);
@@ -503,7 +520,7 @@ async function perfilDeGustos(uid) {
   for (const l of historial) if (l.id) vistos.add(l.id);
 
   return {materias, generos, autores, vistos,
-    tamanio: favoritos.length + leidos.length};
+    tamanio: favoritos.length + leidos.length, elegidos: elegidos.length};
 }
 
 const mejores = (mapa, cuantos) => [...mapa.entries()]
@@ -517,7 +534,12 @@ const mejores = (mapa, cuantos) => [...mapa.entries()]
 // semilla rinden mal; ahi solo se usan para puntuar.
 function semillasDePerfil(perfil) {
   const autores = mejores(perfil.autores, 3).map((a) => `inauthor:"${a}"`);
-  const generos = mejores(perfil.generos, 3).map((g) => `subject:"${g}"`);
+  // Sin este filtro se preguntaba por categorias que el propio filtro veta despues
+  // ("Literary Criticism" salio de un libro marcado): 20 resultados tirados enteros.
+  const generos = mejores(perfil.generos, 5)
+      .filter((g) => !CATEGORIAS_VETADAS.some((v) => g.toLowerCase().includes(v)))
+      .slice(0, 3)
+      .map((g) => (g.includes(":") ? g : `subject:"${g}"`));
   return [...autores, ...generos];
 }
 
@@ -654,7 +676,8 @@ exports.librosAleatorios = onCall(
       const semillas = termino ? [termino] :
         [...delPerfil, ...deExploracion];
       logger.info(`Perfil de ${uid}: ${perfil.tamanio} libros marcados, ` +
-          `${delPerfil.length} semillas propias, ${perfil.vistos.size} ya vistos`);
+          `${delPerfil.length} semillas propias, ${perfil.elegidos} generos elegidos, ` +
+          `${perfil.vistos.size} ya vistos`);
 
       const encontrados = [];
       const vistos = new Set(perfil.vistos);
@@ -678,7 +701,11 @@ exports.librosAleatorios = onCall(
           maxResults: "40",
           printType: "books",
           langRestrict: idioma,
-        }, GOOGLE_BOOKS_API_KEY.value(), limite, INTENTOS_POR_SEMILLA);
+          // Con termino solo hay UNA semilla, asi que rendirse a los dos intentos deja
+          // la pantalla vacia: es lo que pasaba al elegir gustos. Sin termino se prueban
+          // muchas semillas y compensa cambiar de consulta antes que insistir.
+        }, GOOGLE_BOOKS_API_KEY.value(), limite,
+        termino ? MAX_INTENTOS : INTENTOS_POR_SEMILLA);
         if (!datos) continue;
         const crudos = (datos.items || []).length;
         const tally = {};
