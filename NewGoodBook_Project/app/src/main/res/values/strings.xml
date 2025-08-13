@@ -141,4 +141,7 @@
     <string name="onboarding_sin_libros">No hemos podido cargar libros. Puedes continuar igualmente.</string>
     <string name="ajuste_gustos">Mis gustos</string>
     <string name="ajuste_gustos_detalle">Volver a elegir géneros y libros</string>
+    <string name="opciones_lista">Opciones de la lista</string>
+    <string name="lista_deshacer">Deshacer</string>
+    <string name="lista_nombre_largo">El nombre es demasiado largo</string>
 </resources>

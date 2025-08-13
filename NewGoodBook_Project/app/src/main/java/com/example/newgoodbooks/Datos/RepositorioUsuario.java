@@ -392,6 +392,26 @@ public class RepositorioUsuario {
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudo crear la lista", e));
     }
 
+    //Vuelve a crear una lista borrada con su MISMO id y sus libros, para poder
+    //deshacer. Con crearLista() se generaria un id nuevo y el deshacer dejaria una
+    //lista distinta con el mismo nombre.
+    public void restaurarLista(Lista lista) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || lista == null || lista.getId() == null) {
+            return;
+        }
+        List<Map<String, Object>> comoMapas = new ArrayList<>();
+        for (Libro libro : lista.getLibros()) {
+            comoMapas.add(libro.aMapa());
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("nombre", lista.getNombre());
+        datos.put("libros", comoMapas);
+        datos.put("creada", System.currentTimeMillis());
+        raiz.collection(COL_LISTAS).document(lista.getId()).set(datos)
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo restaurar la lista", e));
+    }
+
     public void borrarLista(Lista lista) {
         DocumentReference raiz = raizUsuario();
         if (raiz == null || lista == null || lista.getId() == null || lista.esImborrable()) {

@@ -62,7 +62,7 @@ public class ContenidoLista extends AppCompatActivity {
             @Override
             public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
                 buffer.add(new MyButton(ContenidoLista.this,
-                        "Delete",
+                        getString(R.string.eliminar),
                         30,
                         R.drawable.ic_delete4ever,
                         Color.parseColor("#FF3C30"),

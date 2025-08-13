@@ -55,4 +55,15 @@
             android:textSize="13sp"
             tools:text="7 libros" />
     </LinearLayout>
+
+    <!-- Deslizar para borrar no se descubre solo. Este boton hace visible que la fila
+         tiene acciones; el deslizamiento se mantiene para quien ya lo conocia.
+         Se esconde en las listas fijas, que no se pueden borrar. -->
+    <ImageButton
+        android:id="@+id/opcionesLista_btn"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/opciones_lista"
+        android:src="@drawable/ic_mas_opciones" />
 </LinearLayout>

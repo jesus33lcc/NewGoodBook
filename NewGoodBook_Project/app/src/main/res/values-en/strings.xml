@@ -141,4 +141,7 @@
     <string name="onboarding_sin_libros">We could not load any books. You can continue anyway.</string>
     <string name="ajuste_gustos">My taste</string>
     <string name="ajuste_gustos_detalle">Choose genres and books again</string>
+    <string name="opciones_lista">List options</string>
+    <string name="lista_deshacer">Undo</string>
+    <string name="lista_nombre_largo">That name is too long</string>
 </resources>

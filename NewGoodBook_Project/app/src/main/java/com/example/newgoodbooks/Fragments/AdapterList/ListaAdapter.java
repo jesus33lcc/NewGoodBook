@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,12 +25,24 @@ import java.util.List;
 //como elegian el icono, y encima lo hacian comparando el nombre con cadenas magicas.
 //Ahora el icono se resuelve por el id de la lista.
 public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHolder> {
+
+    //Aviso de que se han pedido las opciones de una fila. Lo resuelve quien monta el
+    //adaptador, que es quien sabe si puede borrar y como confirmarlo.
+    public interface AlPedirOpciones {
+        void enLista(Lista lista, android.view.View ancla);
+    }
+
     private final Context context;
     private List<Lista> listas;
+    private AlPedirOpciones alPedirOpciones;
 
     public ListaAdapter(Context context, List<Lista> listas) {
         this.context = context;
         this.listas = listas != null ? listas : new ArrayList<Lista>();
+    }
+
+    public void setAlPedirOpciones(AlPedirOpciones escucha) {
+        this.alPedirOpciones = escucha;
     }
 
     @NonNull
@@ -47,6 +60,13 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
         int cuantos = lista.getLibros().size();
         holder.contador.setText(context.getResources()
                 .getQuantityString(R.plurals.n_libros, cuantos, cuantos));
+
+        //Las listas fijas no se pueden borrar: sin opciones que ofrecer, el boton
+        //sobra y ademas confundiria.
+        boolean hayOpciones = alPedirOpciones != null && !lista.esImborrable();
+        holder.opciones.setVisibility(hayOpciones ? View.VISIBLE : View.GONE);
+        holder.opciones.setOnClickListener(hayOpciones
+                ? v -> alPedirOpciones.enLista(lista, v) : null);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,12 +135,14 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
         private final ImageView iconoLista;
         private final TextView nombreLista;
         private final TextView contador;
+        private final ImageButton opciones;
 
         public ListaViewHolder(@NonNull View itemView) {
             super(itemView);
             iconoLista = itemView.findViewById(R.id.iconoTypeLista_img);
             nombreLista = itemView.findViewById(R.id.nombreLista_txt);
             contador = itemView.findViewById(R.id.contadorLista_txt);
+            opciones = itemView.findViewById(R.id.opcionesLista_btn);
         }
     }
 }
