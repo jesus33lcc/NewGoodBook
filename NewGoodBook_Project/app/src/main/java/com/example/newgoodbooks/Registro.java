@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -73,7 +74,12 @@ public class Registro extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     guardarNombre(nombre);
                                     Toast.makeText(Registro.this, getString(R.string.registro_ok), Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(Registro.this, Login.class));
+                                    //createUserWithEmailAndPassword ya deja la sesion abierta:
+                                    //mandar al login obligaba a escribir las credenciales otra vez.
+                                    //Se va directo a elegir gustos, que es lo que necesita el
+                                    //recomendador para no empezar a ciegas.
+                                    RepositorioUsuario.get().conectar();
+                                    startActivity(new Intent(Registro.this, Onboarding.class));
                                     finish();
 
                                 } else {

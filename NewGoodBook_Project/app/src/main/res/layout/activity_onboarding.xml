@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Eleccion de gustos al empezar. Dos pasos en una sola pantalla: primero generos
+  (chips) y luego libros (portadas). Se alterna la visibilidad de los dos bloques en
+  vez de usar dos actividades, porque el titulo, el pie y el boton son los mismos y
+  asi el paso atras no saca al usuario del proceso.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    tools:context=".Onboarding">
+
+    <!-- Cabecera de marca, igual que en el resto de la aplicacion. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/hero_fondo"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margen_contenido"
+        android:paddingTop="28dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/tituloPaso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chamberi_text_semibold"
+            android:text="@string/onboarding_titulo_generos"
+            android:textColor="@color/hero_texto"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/detallePaso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/onboarding_detalle_generos"
+            android:textColor="@color/hero_meta"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Paso 1: generos -->
+    <ScrollView
+        android:id="@+id/pasoGeneros"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/grupoGeneros"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/margen_contenido"
+            android:paddingVertical="20dp" />
+    </ScrollView>
+
+    <!-- Paso 2: portadas -->
+    <FrameLayout
+        android:id="@+id/pasoLibros"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rejillaLibros"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/margen_contenido"
+            android:paddingVertical="16dp"
+            tools:listitem="@layout/item_portada" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/cargandoLibros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+        <TextView
+            android:id="@+id/avisoSinLibros"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingHorizontal="40dp"
+            android:text="@string/onboarding_sin_libros"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinuar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margen_contenido"
+        android:minWidth="@dimen/ancho_max_boton"
+        android:fontFamily="@font/chamberi_text_semibold"
+        android:paddingVertical="12dp"
+        android:text="@string/onboarding_continuar"
+        android:textSize="16sp"
+        app:cornerRadius="24dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOmitir"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:text="@string/onboarding_omitir"
+        android:textSize="14sp" />
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<resources>
+    <!--
+      Generos del onboarding. Dos listas EN PARALELO: lo que ve el usuario y el termino
+      con el que se le pregunta a Google Books. Se separan porque el nombre se traduce y
+      el termino de consulta no: Google indexa sus categorias en ingles.
+      El orden de las dos tiene que coincidir.
+    -->
+    <string-array name="generos_nombres">
+        <item>Ficción</item>
+        <item>Fantasía</item>
+        <item>Ciencia ficción</item>
+        <item>Misterio</item>
+        <item>Intriga</item>
+        <item>Romance</item>
+        <item>Novela histórica</item>
+        <item>Poesía</item>
+        <item>Terror</item>
+        <item>Aventuras</item>
+        <item>Biografía</item>
+        <item>Juvenil</item>
+    </string-array>
+
+    <string-array name="generos_consultas" translatable="false">
+        <item>novela</item>
+        <item>novela fantástica</item>
+        <item>ciencia ficción</item>
+        <item>novela de misterio</item>
+        <item>novela negra</item>
+        <item>novela romántica</item>
+        <item>novela histórica</item>
+        <item>poesía</item>
+        <item>novela de terror</item>
+        <item>novela de aventuras</item>
+        <item>biografía</item>
+        <item>literatura juvenil</item>
+    </string-array>
+</resources>

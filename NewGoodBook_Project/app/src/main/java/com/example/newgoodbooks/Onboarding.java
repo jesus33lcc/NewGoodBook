@@ -1,0 +1,193 @@
+package com.example.newgoodbooks;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.newgoodbooks.Cliente.ClienteFunciones;
+import com.example.newgoodbooks.Datos.RepositorioUsuario;
+import com.example.newgoodbooks.Fragments.AdapterList.PortadaAdapter;
+import com.example.newgoodbooks.Modelos.Libro;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+//Eleccion de gustos al empezar. Existe porque el recomendador de la pantalla principal
+//se alimenta de lo que el usuario ha marcado, y una cuenta recien creada no ha marcado
+//nada: sin esto las primeras recomendaciones son puro azar.
+//
+//Los libros que se eligen aqui se guardan como FAVORITOS, no en un sitio aparte. Asi
+//alimentan el mismo perfil que ya usa el servidor y no hay dos verdades que mantener.
+public class Onboarding extends AppCompatActivity {
+    private static final int MINIMO_GENEROS = 3;
+    private static final int LIBROS_A_ENSENAR = 18;
+
+    private ChipGroup grupoGeneros;
+    private View pasoGeneros;
+    private View pasoLibros;
+    private RecyclerView rejilla;
+    private CircularProgressIndicator cargando;
+    private TextView avisoSinLibros;
+    private TextView tituloPaso;
+    private TextView detallePaso;
+    private MaterialButton btnContinuar;
+
+    private PortadaAdapter adaptador;
+    private final List<String> consultas = new ArrayList<>();
+    private boolean enPasoLibros;
+
+    private final RepositorioUsuario repo = RepositorioUsuario.get();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler principal = new Handler(Looper.getMainLooper());
+
+    @Override
+    protected void onCreate(Bundle estado) {
+        super.onCreate(estado);
+        setContentView(R.layout.activity_onboarding);
+
+        grupoGeneros = findViewById(R.id.grupoGeneros);
+        pasoGeneros = findViewById(R.id.pasoGeneros);
+        pasoLibros = findViewById(R.id.pasoLibros);
+        rejilla = findViewById(R.id.rejillaLibros);
+        cargando = findViewById(R.id.cargandoLibros);
+        avisoSinLibros = findViewById(R.id.avisoSinLibros);
+        tituloPaso = findViewById(R.id.tituloPaso);
+        detallePaso = findViewById(R.id.detallePaso);
+        btnContinuar = findViewById(R.id.btnContinuar);
+
+        montarGeneros();
+        //la rejilla se adapta al ancho: 3 columnas en movil, 5 en tablet
+        rejilla.setLayoutManager(new GridLayoutManager(this, columnas()));
+
+        btnContinuar.setOnClickListener(v -> avanzar());
+        findViewById(R.id.btnOmitir).setOnClickListener(v -> {
+            repo.marcarOnboardingHecho();
+            irAPrincipal();
+        });
+    }
+
+    private int columnas() {
+        int anchoDp = getResources().getConfiguration().screenWidthDp;
+        if (anchoDp >= 840) {
+            return 6;
+        }
+        return anchoDp >= 600 ? 5 : 3;
+    }
+
+    private void montarGeneros() {
+        String[] nombres = getResources().getStringArray(R.array.generos_nombres);
+        String[] terminos = getResources().getStringArray(R.array.generos_consultas);
+        int cuantos = Math.min(nombres.length, terminos.length);
+        for (int i = 0; i < cuantos; i++) {
+            Chip chip = new Chip(this);
+            chip.setText(nombres[i]);
+            chip.setCheckable(true);
+            chip.setTag(terminos[i]);
+            grupoGeneros.addView(chip);
+        }
+    }
+
+    private List<String> generosElegidos() {
+        List<String> elegidos = new ArrayList<>();
+        for (int i = 0; i < grupoGeneros.getChildCount(); i++) {
+            View hijo = grupoGeneros.getChildAt(i);
+            if (hijo instanceof Chip && ((Chip) hijo).isChecked()) {
+                elegidos.add(String.valueOf(hijo.getTag()));
+            }
+        }
+        return elegidos;
+    }
+
+    private void avanzar() {
+        if (!enPasoLibros) {
+            List<String> generos = generosElegidos();
+            if (generos.size() < MINIMO_GENEROS) {
+                Toast.makeText(this, R.string.onboarding_pide_generos, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            repo.guardarGenerosPreferidos(generos);
+            consultas.clear();
+            for (String genero : generos) {
+                consultas.add("subject:\"" + genero + "\"");
+            }
+            pasarALibros();
+            return;
+        }
+        //segundo paso: lo elegido pasa a favoritos y de ahi al perfil del recomendador
+        if (adaptador != null) {
+            for (Libro libro : adaptador.getElegidos()) {
+                repo.anadirFavorito(libro);
+            }
+        }
+        repo.marcarOnboardingHecho();
+        irAPrincipal();
+    }
+
+    private void pasarALibros() {
+        enPasoLibros = true;
+        tituloPaso.setText(R.string.onboarding_titulo_libros);
+        detallePaso.setText(R.string.onboarding_detalle_libros);
+        btnContinuar.setText(R.string.onboarding_empezar);
+        pasoGeneros.setVisibility(View.GONE);
+        pasoLibros.setVisibility(View.VISIBLE);
+        cargando.setVisibility(View.VISIBLE);
+
+        executor.execute(() -> {
+            final List<Libro> traidos = new ArrayList<>();
+            //una consulta por genero elegido, para que la rejilla no sea toda del mismo
+            for (String consulta : consultas) {
+                if (traidos.size() >= LIBROS_A_ENSENAR) {
+                    break;
+                }
+                for (Libro libro : ClienteFunciones.librosAleatorios(6, consulta)) {
+                    if (!traidos.contains(libro)) {
+                        traidos.add(libro);
+                    }
+                }
+            }
+            principal.post(() -> mostrarLibros(traidos));
+        });
+    }
+
+    private void mostrarLibros(List<Libro> libros) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        cargando.setVisibility(View.GONE);
+        if (libros.isEmpty()) {
+            //sin conexion no se bloquea el registro: se puede seguir sin elegir nada
+            avisoSinLibros.setVisibility(View.VISIBLE);
+            return;
+        }
+        adaptador = new PortadaAdapter(this, libros);
+        rejilla.setAdapter(adaptador);
+    }
+
+    private void irAPrincipal() {
+        Intent intent = new Intent(this, Principal.class);
+        //sin esto se puede volver atras al onboarding con el gesto de retroceso
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
+    }
+}

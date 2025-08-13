@@ -130,4 +130,15 @@
     <string name="etiqueta_editorial">Editorial</string>
     <string name="desc_valoracion">%1$s (%2$d valoraciones)</string>
     <string name="accion_no_interesa">No me interesa</string>
+    <string name="onboarding_titulo_generos">¿Qué te gusta leer?</string>
+    <string name="onboarding_detalle_generos">Elige al menos tres géneros. Nos sirven para empezar a recomendarte.</string>
+    <string name="onboarding_titulo_libros">Marca los que te gusten</string>
+    <string name="onboarding_detalle_libros">Cuantos más marques, mejor acertaremos. Puedes cambiarlos luego.</string>
+    <string name="onboarding_continuar">Continuar</string>
+    <string name="onboarding_empezar">Empezar</string>
+    <string name="onboarding_omitir">Omitir</string>
+    <string name="onboarding_pide_generos">Elige al menos tres géneros</string>
+    <string name="onboarding_sin_libros">No hemos podido cargar libros. Puedes continuar igualmente.</string>
+    <string name="ajuste_gustos">Mis gustos</string>
+    <string name="ajuste_gustos_detalle">Volver a elegir géneros y libros</string>
 </resources>

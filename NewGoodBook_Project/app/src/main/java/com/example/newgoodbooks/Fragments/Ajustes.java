@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import com.example.newgoodbooks.App;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Inicio;
+import com.example.newgoodbooks.Onboarding;
 import com.example.newgoodbooks.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,6 +68,14 @@ public class Ajustes extends Fragment {
                 getString(R.string.acerca_licencia), getString(R.string.acerca_licencia_detalle));
         rellenar(vista.findViewById(R.id.filaDatos),
                 getString(R.string.acerca_datos), getString(R.string.acerca_datos_detalle));
+
+        //Rehacer la eleccion de gustos: ademas de util, es la unica forma de llegar al
+        //onboarding cuando la cuenta ya existe.
+        View filaGustos = vista.findViewById(R.id.filaGustos);
+        rellenar(filaGustos, getString(R.string.ajuste_gustos),
+                getString(R.string.ajuste_gustos_detalle));
+        filaGustos.setOnClickListener(v -> startActivity(
+                new android.content.Intent(requireContext(), Onboarding.class)));
 
         vista.findViewById(R.id.btnCerrarSesion).setOnClickListener(v -> confirmarCierre());
     }

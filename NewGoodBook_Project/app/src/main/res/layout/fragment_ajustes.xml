@@ -65,6 +65,10 @@
                     tools:text="jesus33lc@gmail.com" />
             </LinearLayout>
 
+            <include
+                android:id="@+id/filaGustos"
+                layout="@layout/fila_ajuste" />
+
             <!-- ===== Apariencia ===== -->
             <TextView
                 style="@style/EncabezadoSeccion"

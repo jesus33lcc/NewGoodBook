@@ -1,0 +1,32 @@
+<resources>
+    <!-- En ingles si rinden bien las categorias propias de Google. -->
+    <string-array name="generos_nombres">
+        <item>Fiction</item>
+        <item>Fantasy</item>
+        <item>Science fiction</item>
+        <item>Mystery</item>
+        <item>Thriller</item>
+        <item>Romance</item>
+        <item>Historical fiction</item>
+        <item>Poetry</item>
+        <item>Horror</item>
+        <item>Adventure</item>
+        <item>Biography</item>
+        <item>Young adult</item>
+    </string-array>
+
+    <string-array name="generos_consultas" translatable="false">
+        <item>subject:"Fiction"</item>
+        <item>subject:"Fantasy"</item>
+        <item>subject:"Science fiction"</item>
+        <item>subject:"Mystery"</item>
+        <item>subject:"Thrillers"</item>
+        <item>subject:"Romance"</item>
+        <item>subject:"Historical fiction"</item>
+        <item>subject:"Poetry"</item>
+        <item>subject:"Horror"</item>
+        <item>subject:"Adventure stories"</item>
+        <item>subject:"Biography &amp; Autobiography"</item>
+        <item>subject:"Young Adult Fiction"</item>
+    </string-array>
+</resources>

@@ -130,4 +130,15 @@
     <string name="etiqueta_editorial">Publisher</string>
     <string name="desc_valoracion">%1$s (%2$d ratings)</string>
     <string name="accion_no_interesa">Not interested</string>
+    <string name="onboarding_titulo_generos">What do you like to read?</string>
+    <string name="onboarding_detalle_generos">Pick at least three genres. We use them to start recommending.</string>
+    <string name="onboarding_titulo_libros">Mark the ones you like</string>
+    <string name="onboarding_detalle_libros">The more you mark, the better we get. You can change them later.</string>
+    <string name="onboarding_continuar">Continue</string>
+    <string name="onboarding_empezar">Start</string>
+    <string name="onboarding_omitir">Skip</string>
+    <string name="onboarding_pide_generos">Pick at least three genres</string>
+    <string name="onboarding_sin_libros">We could not load any books. You can continue anyway.</string>
+    <string name="ajuste_gustos">My taste</string>
+    <string name="ajuste_gustos_detalle">Choose genres and books again</string>
 </resources>
