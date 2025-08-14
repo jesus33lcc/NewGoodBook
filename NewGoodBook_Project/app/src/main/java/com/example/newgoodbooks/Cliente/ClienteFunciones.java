@@ -63,6 +63,22 @@ public class ClienteFunciones {
         return libros.isEmpty() ? null : libros.get(0);
     }
 
+    //Borra la cuenta y todos sus datos. true si el servidor confirma. Bloquea, como
+    //el resto: llamar fuera del hilo principal.
+    public static boolean borrarCuenta() {
+        try {
+            Task<HttpsCallableResult> tarea = getFunciones()
+                    .getHttpsCallable("borrarCuenta").call(new HashMap<String, Object>());
+            HttpsCallableResult resultado = Tasks.await(tarea, ESPERA_MAX_SEG, TimeUnit.SECONDS);
+            Object cuerpo = resultado != null ? resultado.getData() : null;
+            return (cuerpo instanceof Map)
+                    && Boolean.TRUE.equals(((Map<?, ?>) cuerpo).get("borrada"));
+        } catch (Exception e) {
+            Log.w(TAG, "Fallo borrando la cuenta", e);
+            return false;
+        }
+    }
+
     private static List<Libro> llamarYExtraer(String funcion, Map<String, Object> datos) {
         List<Libro> libros = new ArrayList<>();
         try {

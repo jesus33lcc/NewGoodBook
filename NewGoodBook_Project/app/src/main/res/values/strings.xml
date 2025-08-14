@@ -145,4 +145,11 @@
     <string name="lista_deshacer">Deshacer</string>
     <string name="lista_nombre_largo">El nombre es demasiado largo</string>
     <string name="cambiar_vista">Cambiar de vista</string>
+    <string name="ajuste_borrar_cuenta">Eliminar cuenta</string>
+    <string name="ajuste_borrar_cuenta_detalle">Borra tu cuenta y todos tus datos</string>
+    <string name="borrar_cuenta_aviso">Se borrarán tu cuenta, tus listas, tu historial y tus preferencias. Esto no se puede deshacer.</string>
+    <string name="borrar_cuenta_confirmar">Eliminar definitivamente</string>
+    <string name="borrar_cuenta_ok">Cuenta eliminada</string>
+    <string name="borrar_cuenta_ko">No se ha podido eliminar la cuenta. Inténtalo más tarde.</string>
+    <string name="borrando_cuenta">Eliminando…</string>
 </resources>

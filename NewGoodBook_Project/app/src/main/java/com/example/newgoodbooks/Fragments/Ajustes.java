@@ -15,7 +15,10 @@ import androidx.fragment.app.Fragment;
 
 import android.content.pm.PackageManager;
 
+import android.widget.Toast;
+
 import com.example.newgoodbooks.App;
+import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Inicio;
 import com.example.newgoodbooks.Onboarding;
@@ -78,6 +81,7 @@ public class Ajustes extends Fragment {
                 new android.content.Intent(requireContext(), Onboarding.class)));
 
         vista.findViewById(R.id.btnCerrarSesion).setOnClickListener(v -> confirmarCierre());
+        vista.findViewById(R.id.btnBorrarCuenta).setOnClickListener(v -> confirmarBorradoCuenta());
     }
 
     private void pintarCuenta(View vista) {
@@ -184,10 +188,50 @@ public class Ajustes extends Fragment {
                 .show();
     }
 
+    //Play exige poder borrar la cuenta desde la propia aplicacion. Se avisa de todo lo
+    //que se pierde y se pide una segunda confirmacion explicita: no es un boton mas.
+    private void confirmarBorradoCuenta() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.ajuste_borrar_cuenta)
+                .setMessage(R.string.borrar_cuenta_aviso)
+                .setPositiveButton(R.string.borrar_cuenta_confirmar, (d, w) -> borrarCuenta())
+                .setNegativeButton(R.string.cancelar, null)
+                .show();
+    }
+
+    private void borrarCuenta() {
+        Toast.makeText(requireContext(), R.string.borrando_cuenta, Toast.LENGTH_SHORT).show();
+        //El borrado lo hace el servidor: el movil no puede vaciar subcolecciones ni
+        //borrar el usuario si la sesion no es reciente.
+        new Thread(() -> {
+            final boolean hecho = ClienteFunciones.borrarCuenta();
+            if (!isAdded()) {
+                return;
+            }
+            requireActivity().runOnUiThread(() -> {
+                if (!hecho) {
+                    Toast.makeText(requireContext(), R.string.borrar_cuenta_ko,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(requireContext(), R.string.borrar_cuenta_ok,
+                        Toast.LENGTH_LONG).show();
+                //la cuenta ya no existe: solo queda soltar la sesion local y salir
+                salirDeLaSesion();
+            });
+        }).start();
+    }
+
     private void cerrarSesion() {
         if (!isAdded()) {
             return;
         }
+        salirDeLaSesion();
+    }
+
+    //Suelta escuchas, sesion y cache local, y vuelve a la pantalla de bienvenida.
+    //Lo comparten cerrar sesion y borrar la cuenta.
+    private void salirDeLaSesion() {
         //los datos viven en Firestore bajo el uid, asi que ya no se mezclan entre cuentas.
         //Aun asi hay que soltar las escuchas y vaciar la cache local del dispositivo.
         RepositorioUsuario.get().desconectar();

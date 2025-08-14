@@ -145,4 +145,11 @@
     <string name="lista_deshacer">Undo</string>
     <string name="lista_nombre_largo">That name is too long</string>
     <string name="cambiar_vista">Switch view</string>
+    <string name="ajuste_borrar_cuenta">Delete account</string>
+    <string name="ajuste_borrar_cuenta_detalle">Delete your account and all your data</string>
+    <string name="borrar_cuenta_aviso">Your account, lists, history and preferences will be deleted. This cannot be undone.</string>
+    <string name="borrar_cuenta_confirmar">Delete permanently</string>
+    <string name="borrar_cuenta_ok">Account deleted</string>
+    <string name="borrar_cuenta_ko">The account could not be deleted. Try again later.</string>
+    <string name="borrando_cuenta">Deleting…</string>
 </resources>

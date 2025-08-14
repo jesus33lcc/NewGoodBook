@@ -4,6 +4,7 @@ const {defineSecret} = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const {initializeApp} = require("firebase-admin/app");
 const {getFirestore} = require("firebase-admin/firestore");
+const {getAuth} = require("firebase-admin/auth");
 const crypto = require("crypto");
 
 initializeApp();
@@ -745,3 +746,28 @@ exports.librosAleatorios = onCall(
           `${nuevos.length} de exploracion`);
       return {libros: salida};
     });
+
+// ---------- BORRAR LA CUENTA ----------
+// Google Play EXIGE que se pueda borrar la cuenta desde dentro de la aplicacion.
+// Se hace aqui y no en el movil por dos razones:
+//   · el cliente no puede borrar subcolecciones enteras, tendria que ir documento a
+//     documento y cualquier corte a medias dejaria datos huerfanos;
+//   · FirebaseUser.delete() falla con "requires-recent-login" si la sesion es de hace
+//     rato, mientras que el SDK admin borra el usuario sin esa condicion.
+// Orden a proposito: primero los datos y despues la cuenta. Al reves, si fallara el
+// segundo paso quedarian datos de un usuario que ya no existe y nadie podria borrarlos.
+exports.borrarCuenta = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Hay que iniciar sesion.");
+  }
+  const uid = request.auth.uid;
+  try {
+    await db.recursiveDelete(db.collection(COL_USUARIOS).doc(uid));
+    await getAuth().deleteUser(uid);
+    logger.info(`Cuenta ${uid} borrada con todos sus datos`);
+    return {borrada: true};
+  } catch (e) {
+    logger.error(`No se pudo borrar la cuenta ${uid}`, e);
+    throw new HttpsError("internal", "No se ha podido borrar la cuenta.");
+  }
+});

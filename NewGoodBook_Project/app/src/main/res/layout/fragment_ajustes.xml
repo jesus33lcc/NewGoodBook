@@ -102,8 +102,22 @@
             <include
                 android:id="@+id/filaDatos"
                 layout="@layout/fila_ajuste" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBorrarCuenta"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:text="@string/ajuste_borrar_cuenta"
+                android:textColor="?attr/colorError"
+                android:textSize="14sp" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- Borrar la cuenta va dentro del scroll y al final de "Acerca de": es una accion
+         destructiva y no debe competir en visibilidad con cerrar sesion. -->
 
     <!-- Anclado abajo y fuera del scroll, con el mismo formato que el boton de
          crear lista: es la unica accion de la pantalla y cierra el recorrido. -->
