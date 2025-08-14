@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
+import com.example.newgoodbooks.UI.ModoVista;
 import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Libro;
@@ -41,8 +42,21 @@ public class ContenidoLista extends AppCompatActivity {
         setContentView(R.layout.activity_contenido_lista);
 
         toolbarListaSelected = findViewById(R.id.toolbarContentList);
+        //Conmutador de lista o cuadricula, comun a las tres pantallas de libros.
+        toolbarListaSelected.inflateMenu(R.menu.menu_vista);
+        ModoVista.pintarIcono(this, toolbarListaSelected.getMenu());
+        toolbarListaSelected.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.accion_vista) {
+                ModoVista.alternar(this);
+                ModoVista.pintarIcono(this, toolbarListaSelected.getMenu());
+                ModoVista.aplicar(this, recyclerViewContenido, libroListAdapter);
+                return true;
+            }
+            return false;
+        });
+
         recyclerViewContenido = findViewById(R.id.listRecyclerContentLista);
-        recyclerViewContenido.setLayoutManager(new LinearLayoutManager(this));
+
 
         listaId = getIntent().getStringExtra(EXTRA_LISTA_ID);
         if (listaId == null) {
@@ -52,7 +66,7 @@ public class ContenidoLista extends AppCompatActivity {
         }
 
         libroListAdapter = new LibroListAdapter(this, librosActuales);
-        recyclerViewContenido.setAdapter(libroListAdapter);
+        ModoVista.aplicar(this, recyclerViewContenido, libroListAdapter);
 
         observarLista();
 

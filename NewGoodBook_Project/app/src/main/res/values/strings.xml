@@ -144,4 +144,5 @@
     <string name="opciones_lista">Opciones de la lista</string>
     <string name="lista_deshacer">Deshacer</string>
     <string name="lista_nombre_largo">El nombre es demasiado largo</string>
+    <string name="cambiar_vista">Cambiar de vista</string>
 </resources>

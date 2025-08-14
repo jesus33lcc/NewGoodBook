@@ -2,14 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_searchExplore"
-        android:title="@string/buscar_hint"
-        android:icon="@drawable/ic_explorar"
-        android:iconTint="#FFFFFFFF"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item
         android:id="@+id/accion_vista"
         android:icon="@drawable/ic_vista_cuadricula"
         android:iconTint="@color/hero_texto"

@@ -20,6 +20,14 @@ import java.util.List;
 public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.LibroViewHolder> {
     private Context context;
     private List<Libro> listLibroDatos;
+    //true = cuadricula. Se infla otro layout, pero los ids son los mismos, asi que
+    //onBindViewHolder no cambia.
+    private boolean cuadricula;
+
+    public void setCuadricula(boolean cuadricula) {
+        this.cuadricula = cuadricula;
+    }
+
     public LibroListAdapter(Context context, List<Libro> listLibrosFill){
         this.context = context;
         this.listLibroDatos = listLibrosFill;
@@ -27,7 +35,8 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
     @NonNull
     @Override
     public LibroViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new LibroViewHolder(LayoutInflater.from(context).inflate(R.layout.item_book_list,parent,false));
+        return new LibroViewHolder(LayoutInflater.from(context).inflate(
+                cuadricula ? R.layout.item_book_grid : R.layout.item_book_list, parent, false));
     }
 
     @Override

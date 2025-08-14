@@ -26,6 +26,7 @@ import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.UI.EstadoVacio;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.UI.ModoVista;
 import com.example.newgoodbooks.ResultadoSearchView;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class Explorar extends Fragment {
 
         // Sobre el RecyclerView
         librosRecyclerView = view.findViewById(R.id.listRecyclerLibros);
-        librosRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
         // Insertar Libros en lista.
         initialize_ListFillBook(new ArrayList<Libro>());
@@ -74,6 +75,19 @@ public class Explorar extends Fragment {
         MenuItem searchItem = toolbarSearch.getMenu().findItem(R.id.action_searchExplore);
         searchViewExplorar = (SearchView) searchItem.getActionView();
         searchViewExplorar.setQueryHint(getString(R.string.buscar_hint));
+
+        //Conmutador de lista o cuadricula. La eleccion es comun a las tres pantallas
+        //que ensenian libros, asi que se guarda y se lee desde ModoVista.
+        ModoVista.pintarIcono(requireContext(), toolbarSearch.getMenu());
+        toolbarSearch.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.accion_vista) {
+                ModoVista.alternar(requireContext());
+                ModoVista.pintarIcono(requireContext(), toolbarSearch.getMenu());
+                ModoVista.aplicar(requireContext(), librosRecyclerView, libroListAdapter);
+                return true;
+            }
+            return false;
+        });
 
         // Configuracion color del SearchView
         int colorBlanco = ContextCompat.getColor(requireContext(), android.R.color.white);
@@ -104,7 +118,7 @@ public class Explorar extends Fragment {
 
     public void initialize_ListFillBook(List<Libro> listaLibrosFill){
         libroListAdapter = new LibroListAdapter(getActivity(),listaLibrosFill);
-        librosRecyclerView.setAdapter(libroListAdapter);
+        ModoVista.aplicar(requireContext(), librosRecyclerView, libroListAdapter);
     }
 
 }

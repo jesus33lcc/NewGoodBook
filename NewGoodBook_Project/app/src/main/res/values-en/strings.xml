@@ -144,4 +144,5 @@
     <string name="opciones_lista">List options</string>
     <string name="lista_deshacer">Undo</string>
     <string name="lista_nombre_largo">That name is too long</string>
+    <string name="cambiar_vista">Switch view</string>
 </resources>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Libro en modo cuadricula. La portada guarda PROPORCION DE LIBRO (2:3), no un cuadrado:
+  con alto fijo, en una tablet la celda salia casi cuadrada y las portadas parecian
+  fichas, no libros. Con dimensionRatio el alto se calcula desde el ancho de la columna,
+  asi que la proporcion se mantiene en cualquier pantalla y con cualquier numero de
+  columnas. El titulo va a dos lineas fijas para que las filas no se descuadren.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:padding="6dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/tarjetaPortada"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="4dp"
+        app:layout_constraintDimensionRatio="H,2:3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/portadaBook_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_portada"
+            android:scaleType="centerCrop" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tituloBook_txt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/chamberi_text_semibold"
+        android:lines="2"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tarjetaPortada"
+        tools:text="Cien años de soledad" />
+
+    <!-- Existe para que el adaptador no tenga que saber en que modo esta: se rellena
+         igual y aqui simplemente no se ve. -->
+    <TextView
+        android:id="@+id/autorBook_txt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tituloBook_txt" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
