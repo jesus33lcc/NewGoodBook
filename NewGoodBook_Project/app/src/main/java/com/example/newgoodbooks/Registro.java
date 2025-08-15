@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityRegistroBinding;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -22,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class Registro extends AppCompatActivity {
+    private ActivityRegistroBinding binding;
     TextView txt_cuentaCreada;
     Button btn_registrarse;
     EditText editTextNombre, editTextEmail, editTextPassword;
@@ -29,14 +32,15 @@ public class Registro extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registro);
+        binding = ActivityRegistroBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         // asignacion de las variables locales
         mAuth=FirebaseAuth.getInstance();
-        txt_cuentaCreada=findViewById(R.id.txtview_cuentacreada);
-        btn_registrarse=findViewById(R.id.btn_registrarse_register);
-        editTextNombre=findViewById(R.id.edittxt_name);
-        editTextEmail=findViewById(R.id.edittxt_emailregister);
-        editTextPassword=findViewById(R.id.edittxt_passwordRegister);
+        txt_cuentaCreada=binding.txtviewCuentacreada;
+        btn_registrarse=binding.btnRegistrarseRegister;
+        editTextNombre=binding.edittxtName;
+        editTextEmail=binding.edittxtEmailregister;
+        editTextPassword=binding.edittxtPasswordRegister;
 
         //metodo click, si tiene una cuenta lo lleva al Login
         txt_cuentaCreada.setOnClickListener(new View.OnClickListener() {

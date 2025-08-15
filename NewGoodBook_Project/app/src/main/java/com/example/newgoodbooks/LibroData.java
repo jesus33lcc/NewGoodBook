@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityLibroDataBinding;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -21,6 +23,7 @@ import android.content.res.ColorStateList;
 import com.squareup.picasso.Picasso;
 
 public class LibroData extends AppCompatActivity {
+    private ActivityLibroDataBinding binding;
     private View view;
     private Libro bookSelected;
     ImageView portadaIMG;
@@ -39,7 +42,8 @@ public class LibroData extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_libro_data);
+        binding = ActivityLibroDataBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         bookSelected = (Libro) getIntent().getSerializableExtra("libro");
         initView();
@@ -47,26 +51,26 @@ public class LibroData extends AppCompatActivity {
     }
 
     private void initView(){
-        portadaIMG = findViewById(R.id.imageVPortada);
-        tituloTXT = findViewById(R.id.textTitulo);
-        autorTXT = findViewById(R.id.textAutor);
-        numPagTXT = findViewById(R.id.textNumPag);
-        fechaPubTXT = findViewById(R.id.textFechaPub);
-        generosTXT = findViewById(R.id.textGeneros);
-        descripcionTXT = findViewById(R.id.textDescripcion);
-        valoracionTXT = findViewById(R.id.textValoracion);
-        etiquetaTemas = findViewById(R.id.etiquetaTemas);
-        grupoTemas = findViewById(R.id.grupoTemas);
-        editorialTXT = findViewById(R.id.textEditorial);
-        btnFav=findViewById(R.id.tBtnFavorite);
-        btnCheck=findViewById(R.id.tBtnCheck);
-        btnAddList=findViewById(R.id.tBtnAddList);
+        portadaIMG = binding.imageVPortada;
+        tituloTXT = binding.textTitulo;
+        autorTXT = binding.textAutor;
+        numPagTXT = binding.textNumPag;
+        fechaPubTXT = binding.textFechaPub;
+        generosTXT = binding.textGeneros;
+        descripcionTXT = binding.textDescripcion;
+        valoracionTXT = binding.textValoracion;
+        etiquetaTemas = binding.etiquetaTemas;
+        grupoTemas = binding.grupoTemas;
+        editorialTXT = binding.textEditorial;
+        btnFav=binding.tBtnFavorite;
+        btnCheck=binding.tBtnCheck;
+        btnAddList=binding.tBtnAddList;
 
-        com.google.android.material.appbar.MaterialToolbar barra = findViewById(R.id.toolbarLibro);
+        com.google.android.material.appbar.MaterialToolbar barra = binding.toolbarLibro;
         if (barra != null) {
             barra.setNavigationOnClickListener(v -> finish());
         }
-        pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
+        DatosLibro.pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
     }
 
     private void setDetailsLibro(){
@@ -75,7 +79,7 @@ public class LibroData extends AppCompatActivity {
             tituloTXT.setText(bookSelected.getTitulo());
             autorTXT.setText(bookSelected.getAutor().isEmpty() ? "" : bookSelected.getAutor().get(0));
             numPagTXT.setText(getString(R.string.formato_paginas, String.valueOf(bookSelected.getNumPag())));
-            fechaPubTXT.setText(soloAnio(bookSelected.getFechaPublicacion()));
+            fechaPubTXT.setText(DatosLibro.soloAnio(bookSelected.getFechaPublicacion()));
             generosTXT.setText(bookSelected.getGeneros().isEmpty() ? "" : bookSelected.getGeneros().get(0));
             descripcionTXT.setText(bookSelected.getDescripcion());
             //datos de Open Library: cada uno se esconde solo si no viene
@@ -87,10 +91,10 @@ public class LibroData extends AppCompatActivity {
             //el estado de los dos toggles lo manda Firestore: si lo marcas aqui,
             //la pantalla Home y el otro dispositivo se enteran solos
             RepositorioUsuario repo = RepositorioUsuario.get();
-            repo.getFavoritos().observe(this, libros -> pintarAccion(btnFav,
+            repo.getFavoritos().observe(this, libros -> DatosLibro.pintarAccion(btnFav,
                     libros != null && libros.contains(bookSelected),
                     R.drawable.ic_favorite_on, R.drawable.ic_favorite_off));
-            repo.getLeidos().observe(this, libros -> pintarAccion(btnCheck,
+            repo.getLeidos().observe(this, libros -> DatosLibro.pintarAccion(btnCheck,
                     libros != null && libros.contains(bookSelected),
                     R.drawable.ic_checkbox_on, R.drawable.ic_checkbox_off));
 
@@ -105,23 +109,6 @@ public class LibroData extends AppCompatActivity {
     }
 
     // Marca una acción como activa.
-    private void pintarAccion(MaterialButton boton, boolean activo, int iconoOn, int iconoOff) {
-        int acento = ContextCompat.getColor(this, R.color.md_tertiary);
-        int apagado = com.google.android.material.color.MaterialColors.getColor(
-                boton, com.google.android.material.R.attr.colorOnSurfaceVariant);
-        boton.setIconResource(activo ? iconoOn : iconoOff);
-        boton.setIconTint(ColorStateList.valueOf(activo ? acento : apagado));
-        boton.setTextColor(activo ? acento : apagado);
-        boton.setStrokeColor(ColorStateList.valueOf(activo ? acento
-                : com.google.android.material.color.MaterialColors.getColor(
-                        boton, com.google.android.material.R.attr.colorOutline)));
-    }
 
     // Devuelve solo el año de una fecha de publicación.
-    private static String soloAnio(String fecha) {
-        if (fecha == null) {
-            return "";
-        }
-        return fecha.length() >= 4 ? fecha.substring(0, 4) : fecha;
-    }
 }

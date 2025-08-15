@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityInicioBinding;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,18 +12,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class Inicio extends AppCompatActivity {
+    private ActivityInicioBinding binding;
     Button btn_Login, btn_Register;
     TextView nombre, eslogan, desc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inicio);
+        binding = ActivityInicioBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         // asignacion de las variables locales
-        btn_Login=findViewById(R.id.btn_iniciosesion);
-        btn_Register=findViewById(R.id.btn_registrarse);
-        nombre=findViewById(R.id.txtview_nombre);
-        eslogan=findViewById(R.id.txtview_descripcion_inicio);
-        desc=findViewById(R.id.textview_desc);
+        btn_Login=binding.btnIniciosesion;
+        btn_Register=binding.btnRegistrarse;
+        nombre=binding.txtviewNombre;
+        eslogan=binding.txtviewDescripcionInicio;
+        desc=binding.textviewDesc;
         //metodo click, lo lleva al Login
         btn_Login.setOnClickListener(new View.OnClickListener() {
             @Override

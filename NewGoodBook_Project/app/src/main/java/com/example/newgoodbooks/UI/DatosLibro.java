@@ -1,11 +1,16 @@
 package com.example.newgoodbooks.UI;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -22,6 +27,32 @@ public final class DatosLibro {
     private static final int MAX_TEMAS = 6;
 
     private DatosLibro() {
+    }
+
+    //Marca un boton de accion como activo: icono lleno y acento dorado. Estaba
+    //duplicado LITERALMENTE en LibroData y HomeFragment; cada retoque habia que
+    //hacerlo dos veces y una se olvidaba.
+    public static void pintarAccion(MaterialButton boton, boolean activo,
+                                    int iconoOn, int iconoOff) {
+        int acento = ContextCompat.getColor(boton.getContext(), R.color.md_tertiary);
+        int apagado = MaterialColors.getColor(boton,
+                com.google.android.material.R.attr.colorOnSurfaceVariant);
+        boton.setIconResource(activo ? iconoOn : iconoOff);
+        boton.setIconTint(ColorStateList.valueOf(activo ? acento : apagado));
+        boton.setTextColor(activo ? acento : apagado);
+        boton.setStrokeColor(ColorStateList.valueOf(activo ? acento
+                : MaterialColors.getColor(boton,
+                        com.google.android.material.R.attr.colorOutline)));
+    }
+
+    //Google devuelve la fecha como "2009-10-13" o como "2004". En la ficha solo
+    //interesa el anio: la fecha completa no aporta y descuadra la pildora.
+    //Tambien estaba duplicado, en LibroData y en HomeViewModel.
+    public static String soloAnio(String fecha) {
+        if (fecha == null) {
+            return "";
+        }
+        return fecha.length() >= 4 ? fecha.substring(0, 4) : fecha;
     }
 
     public static void pintarValoracion(TextView pildora, Libro libro) {

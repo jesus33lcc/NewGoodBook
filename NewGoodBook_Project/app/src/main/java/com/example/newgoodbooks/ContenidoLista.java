@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityContenidoListaBinding;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContenidoLista extends AppCompatActivity {
+    private ActivityContenidoListaBinding binding;
     //Se recibe el ID de la lista, no el objeto. Antes llegaba una copia Serializable
     //y cualquier borrado habia que hacerlo dos veces para que se persistiera.
     public static final String EXTRA_LISTA_ID = "lista_id";
@@ -39,9 +42,10 @@ public class ContenidoLista extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contenido_lista);
+        binding = ActivityContenidoListaBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        toolbarListaSelected = findViewById(R.id.toolbarContentList);
+        toolbarListaSelected = binding.toolbarContentList;
         //Conmutador de lista o cuadricula, comun a las tres pantallas de libros.
         toolbarListaSelected.inflateMenu(R.menu.menu_vista);
         ModoVista.pintarIcono(this, toolbarListaSelected.getMenu());
@@ -55,7 +59,7 @@ public class ContenidoLista extends AppCompatActivity {
             return false;
         });
 
-        recyclerViewContenido = findViewById(R.id.listRecyclerContentLista);
+        recyclerViewContenido = binding.listRecyclerContentLista;
 
 
         listaId = getIntent().getStringExtra(EXTRA_LISTA_ID);
@@ -117,7 +121,7 @@ public class ContenidoLista extends AppCompatActivity {
     private void pintar(List<Libro> libros) {
         librosActuales = libros != null ? libros : new ArrayList<>();
         libroListAdapter.actualizar(librosActuales);
-        EstadoVacio.mostrar(findViewById(R.id.estadoVacio), librosActuales.isEmpty(),
+        EstadoVacio.mostrar(binding.estadoVacio.getRoot(), librosActuales.isEmpty(),
                 R.drawable.ic_listas, R.string.vacio_lista_titulo, R.string.vacio_lista_detalle);
     }
 

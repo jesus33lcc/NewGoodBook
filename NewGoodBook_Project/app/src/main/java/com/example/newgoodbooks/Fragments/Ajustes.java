@@ -23,6 +23,7 @@ import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Inicio;
 import com.example.newgoodbooks.Onboarding;
 import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.databinding.FragmentAjustesBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 //cerraba la sesion nada mas rozarla. Aqui salir es una accion deliberada y con
 //confirmacion, y ademas hay sitio para el tema, el idioma y los creditos.
 public class Ajustes extends Fragment {
+    private FragmentAjustesBinding binding;
 
     //el orden de los tres modos tiene que coincidir con el de las etiquetas del dialogo
     private static final int[] MODOS_TEMA = {
@@ -47,7 +49,8 @@ public class Ajustes extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup contenedor, Bundle estado) {
-        return inflater.inflate(R.layout.fragment_ajustes, contenedor, false);
+        binding = FragmentAjustesBinding.inflate(inflater, contenedor, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -56,38 +59,38 @@ public class Ajustes extends Fragment {
 
         pintarCuenta(vista);
 
-        filaTema = vista.findViewById(R.id.filaTema);
-        filaIdioma = vista.findViewById(R.id.filaIdioma);
+        filaTema = binding.filaTema.getRoot();
+        filaIdioma = binding.filaIdioma.getRoot();
         filaTema.setOnClickListener(v -> elegirTema());
         filaIdioma.setOnClickListener(v -> elegirIdioma());
         refrescarApariencia();
 
         //informativas: no se pulsan, solo cuentan de que esta hecha la aplicacion
-        rellenar(vista.findViewById(R.id.filaVersion),
+        rellenar(binding.filaVersion.getRoot(),
                 getString(R.string.acerca_version), versionInstalada());
-        rellenar(vista.findViewById(R.id.filaCreditos),
+        rellenar(binding.filaCreditos.getRoot(),
                 getString(R.string.acerca_hecha_por), getString(R.string.acerca_hecha_por_detalle));
-        rellenar(vista.findViewById(R.id.filaLicencia),
+        rellenar(binding.filaLicencia.getRoot(),
                 getString(R.string.acerca_licencia), getString(R.string.acerca_licencia_detalle));
-        rellenar(vista.findViewById(R.id.filaDatos),
+        rellenar(binding.filaDatos.getRoot(),
                 getString(R.string.acerca_datos), getString(R.string.acerca_datos_detalle));
 
         //Rehacer la eleccion de gustos: ademas de util, es la unica forma de llegar al
         //onboarding cuando la cuenta ya existe.
-        View filaGustos = vista.findViewById(R.id.filaGustos);
+        View filaGustos = binding.filaGustos.getRoot();
         rellenar(filaGustos, getString(R.string.ajuste_gustos),
                 getString(R.string.ajuste_gustos_detalle));
         filaGustos.setOnClickListener(v -> startActivity(
                 new android.content.Intent(requireContext(), Onboarding.class)));
 
-        vista.findViewById(R.id.btnCerrarSesion).setOnClickListener(v -> confirmarCierre());
-        vista.findViewById(R.id.btnBorrarCuenta).setOnClickListener(v -> confirmarBorradoCuenta());
+        binding.btnCerrarSesion.setOnClickListener(v -> confirmarCierre());
+        binding.btnBorrarCuenta.setOnClickListener(v -> confirmarBorradoCuenta());
     }
 
     private void pintarCuenta(View vista) {
         FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
-        TextView nombre = vista.findViewById(R.id.nombreCuenta);
-        TextView correo = vista.findViewById(R.id.correoCuenta);
+        TextView nombre = binding.nombreCuenta;
+        TextView correo = binding.correoCuenta;
         if (usuario == null) {
             nombre.setText(R.string.sesion_sin_nombre);
             correo.setText("");
@@ -242,5 +245,11 @@ public class Ajustes extends Fragment {
         //vacia la pila: sin esto se puede volver atras a la app ya sin sesion
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

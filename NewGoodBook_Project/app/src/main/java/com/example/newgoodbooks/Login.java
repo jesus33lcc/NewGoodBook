@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityLoginBinding;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class Login extends AppCompatActivity {
+    private ActivityLoginBinding binding;
     private static final String TAG = "Login";
 
     private Button btn_login, btn_loginGoogle;
@@ -39,15 +42,16 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         // asignacion de las variables locales
         mAuth = FirebaseAuth.getInstance();
-        btn_login = findViewById(R.id.btn_iniciosesion);
-        btn_loginGoogle = findViewById(R.id.btn_iniciocongoogle);
-        txt_passwordlost = findViewById(R.id.txt_passwordlost);
-        txt_noCuenta = findViewById(R.id.txt_sincuenta);
-        editTextEmail = findViewById(R.id.editxt_email);
-        editTextPassword = findViewById(R.id.edittxt_password);
+        btn_login = binding.btnIniciosesion;
+        btn_loginGoogle = binding.btnIniciocongoogle;
+        txt_passwordlost = binding.txtPasswordlost;
+        txt_noCuenta = binding.txtSincuenta;
+        editTextEmail = binding.editxtEmail;
+        editTextPassword = binding.edittxtPassword;
 
         prepararGoogle();
 

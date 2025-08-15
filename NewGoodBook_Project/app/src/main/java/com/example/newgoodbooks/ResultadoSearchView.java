@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityResultadoSearchViewBinding;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +22,7 @@ import com.example.newgoodbooks.UI.ModoVista;
 import com.example.newgoodbooks.Modelos.Libro;
 
 public class ResultadoSearchView extends AppCompatActivity {
+    private ActivityResultadoSearchViewBinding binding;
     Toolbar toolbarResultados;
     RecyclerView recyclerViewResultados;
     List<Libro> listaLibrosResultados;
@@ -30,13 +33,14 @@ public class ResultadoSearchView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resultado_search_view);
+        binding = ActivityResultadoSearchViewBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        recyclerViewResultados = findViewById(R.id.listRecyclerResultadosLibros);
+        recyclerViewResultados = binding.listRecyclerResultadosLibros;
 
 
         titulo_a_buscar = getIntent().getStringExtra("titulo_a_buscar");
-        com.google.android.material.appbar.MaterialToolbar barra = findViewById(R.id.toolbarResultados);
+        com.google.android.material.appbar.MaterialToolbar barra = binding.toolbarResultados;
         //Conmutador de lista o cuadricula, comun a las tres pantallas de libros.
         barra.inflateMenu(R.menu.menu_vista);
         ModoVista.pintarIcono(this, barra.getMenu());
@@ -80,7 +84,7 @@ public class ResultadoSearchView extends AppCompatActivity {
             @Override
             public void run() {
                 initialize_ListFillBook(listaLibrosResultados);
-                EstadoVacio.mostrar(findViewById(R.id.estadoVacio),
+                EstadoVacio.mostrar(binding.estadoVacio.getRoot(),
                         listaLibrosResultados.isEmpty(), R.drawable.ic_explorar,
                         R.string.vacio_resultados_titulo, R.string.vacio_resultados_detalle);
             }

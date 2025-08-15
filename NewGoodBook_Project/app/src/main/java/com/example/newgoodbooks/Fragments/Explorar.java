@@ -26,6 +26,7 @@ import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.UI.EstadoVacio;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.databinding.FragmentExplorarBinding;
 import com.example.newgoodbooks.UI.ModoVista;
 import com.example.newgoodbooks.ResultadoSearchView;
 
@@ -34,6 +35,7 @@ import java.util.List;
 
 
 public class Explorar extends Fragment {
+    private FragmentExplorarBinding binding;
     private View view;
     private RecyclerView librosRecyclerView;
     LibroListAdapter libroListAdapter;
@@ -50,17 +52,18 @@ public class Explorar extends Fragment {
     @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_explorar,container,false);
+        binding = FragmentExplorarBinding.inflate(inflater, container, false);
+        view = binding.getRoot();
 
         // Sobre el RecyclerView
-        librosRecyclerView = view.findViewById(R.id.listRecyclerLibros);
+        librosRecyclerView = binding.listRecyclerLibros;
 
 
         // Insertar Libros en lista.
         initialize_ListFillBook(new ArrayList<Libro>());
         //el historial llega solo desde Firestore; antes se leia de un estatico
         //envuelto en un hilo y un Handler que no hacian falta para nada
-        final View vacio = view.findViewById(R.id.estadoVacio);
+        final View vacio = binding.estadoVacio.getRoot();
         RepositorioUsuario.get().getHistorial().observe(getViewLifecycleOwner(), libros -> {
             libroListAdapter.actualizar(libros);
             EstadoVacio.mostrar(vacio, libros == null || libros.isEmpty(),
@@ -69,7 +72,7 @@ public class Explorar extends Fragment {
         });
 
         // Sobre el Toolbar
-        toolbarSearch = view.findViewById(R.id.myToolbarExplorer);
+        toolbarSearch = binding.myToolbarExplorer;
 
         // Sobre el SearchView
         MenuItem searchItem = toolbarSearch.getMenu().findItem(R.id.action_searchExplore);
@@ -121,4 +124,11 @@ public class Explorar extends Fragment {
         ModoVista.aplicar(requireContext(), librosRecyclerView, libroListAdapter);
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //sin esto el binding sobrevive a la vista y se filtra
+        binding = null;
+    }
 }

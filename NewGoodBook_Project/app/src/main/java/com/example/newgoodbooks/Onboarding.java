@@ -1,5 +1,7 @@
 package com.example.newgoodbooks;
 
+import com.example.newgoodbooks.databinding.ActivityOnboardingBinding;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,7 @@ import java.util.concurrent.Executors;
 //Los libros que se eligen aqui se guardan como FAVORITOS, no en un sitio aparte. Asi
 //alimentan el mismo perfil que ya usa el servidor y no hay dos verdades que mantener.
 public class Onboarding extends AppCompatActivity {
+    private ActivityOnboardingBinding binding;
     private static final int MINIMO_GENEROS = 3;
     private static final int LIBROS_A_ENSENAR = 18;
 
@@ -57,24 +60,25 @@ public class Onboarding extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle estado) {
         super.onCreate(estado);
-        setContentView(R.layout.activity_onboarding);
+        binding = ActivityOnboardingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        grupoGeneros = findViewById(R.id.grupoGeneros);
-        pasoGeneros = findViewById(R.id.pasoGeneros);
-        pasoLibros = findViewById(R.id.pasoLibros);
-        rejilla = findViewById(R.id.rejillaLibros);
-        cargando = findViewById(R.id.cargandoLibros);
-        avisoSinLibros = findViewById(R.id.avisoSinLibros);
-        tituloPaso = findViewById(R.id.tituloPaso);
-        detallePaso = findViewById(R.id.detallePaso);
-        btnContinuar = findViewById(R.id.btnContinuar);
+        grupoGeneros = binding.grupoGeneros;
+        pasoGeneros = binding.pasoGeneros;
+        pasoLibros = binding.pasoLibros;
+        rejilla = binding.rejillaLibros;
+        cargando = binding.cargandoLibros;
+        avisoSinLibros = binding.avisoSinLibros;
+        tituloPaso = binding.tituloPaso;
+        detallePaso = binding.detallePaso;
+        btnContinuar = binding.btnContinuar;
 
         montarGeneros();
         //la rejilla se adapta al ancho: 3 columnas en movil, 5 en tablet
         rejilla.setLayoutManager(new GridLayoutManager(this, columnas()));
 
         btnContinuar.setOnClickListener(v -> avanzar());
-        findViewById(R.id.btnOmitir).setOnClickListener(v -> {
+        binding.btnOmitir.setOnClickListener(v -> {
             repo.marcarOnboardingHecho();
             irAPrincipal();
         });

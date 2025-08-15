@@ -98,21 +98,21 @@ public class HomeFragment extends Fragment {
         mViewModel.getEstadoTBtnFav().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean marcado) {
-                pintarAccion(btnFav, Boolean.TRUE.equals(marcado),
+                DatosLibro.pintarAccion(btnFav, Boolean.TRUE.equals(marcado),
                         R.drawable.ic_favorite_on, R.drawable.ic_favorite_off);
             }
         });
         mViewModel.getEstadoTBtnCheck().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean marcado) {
-                pintarAccion(btnCheck, Boolean.TRUE.equals(marcado),
+                DatosLibro.pintarAccion(btnCheck, Boolean.TRUE.equals(marcado),
                         R.drawable.ic_checkbox_on, R.drawable.ic_checkbox_off);
             }
         });
 
         //los tres botones de accion deben verse igual en reposo; "A lista" no tiene
         //estado activo, pero heredaba el color primario del estilo por defecto
-        pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
+        DatosLibro.pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
 
         botonSig.setOnClickListener(v -> mViewModel.cambioLibro());
         btnNoInteresa.setOnClickListener(v -> mViewModel.descartarLibro());
@@ -152,19 +152,6 @@ public class HomeFragment extends Fragment {
         autor.setVisibility(visibilidad);
     }
 
-    //Marca una accion como activa: icono lleno y acento dorado. Antes eran ToggleButton,
-    //que no permitian este tratamiento sin pelearse con su fondo por defecto.
-    private void pintarAccion(MaterialButton boton, boolean activo, int iconoOn, int iconoOff) {
-        int acento = ContextCompat.getColor(requireContext(), R.color.md_tertiary);
-        int apagado = com.google.android.material.color.MaterialColors.getColor(
-                boton, com.google.android.material.R.attr.colorOnSurfaceVariant);
-        boton.setIconResource(activo ? iconoOn : iconoOff);
-        boton.setIconTint(android.content.res.ColorStateList.valueOf(activo ? acento : apagado));
-        boton.setTextColor(activo ? acento : apagado);
-        boton.setStrokeColor(android.content.res.ColorStateList.valueOf(
-                activo ? acento : com.google.android.material.color.MaterialColors.getColor(
-                        boton, com.google.android.material.R.attr.colorOutline)));
-    }
 
     @Override
     public void onDestroyView() {

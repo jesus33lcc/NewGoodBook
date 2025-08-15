@@ -20,6 +20,7 @@ import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.databinding.FragmentListasBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -31,6 +32,7 @@ import java.util.List;
 
 
 public class Listas extends Fragment {
+    private FragmentListasBinding binding;
     private RecyclerView listasRecyclerView;
     private RecyclerView misListasRecyclerView;
     private com.google.android.material.button.MaterialButton btn_newAddLista;
@@ -46,17 +48,18 @@ public class Listas extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_listas, container, false);
+        binding = FragmentListasBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listasRecyclerView = view.findViewById(R.id.misListasCheckFav);
-        misListasRecyclerView = view.findViewById(R.id.misListaPersonalizadas);
-        btn_newAddLista = view.findViewById(R.id.btn_newLista);
-        vacioListas = view.findViewById(R.id.vacioListas);
+        listasRecyclerView = binding.misListasCheckFav;
+        misListasRecyclerView = binding.misListaPersonalizadas;
+        btn_newAddLista = binding.btnNewLista;
+        vacioListas = binding.vacioListas;
 
         listasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         misListasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -204,5 +207,11 @@ public class Listas extends Fragment {
             return;
         }
         confirmarBorrado(misListas.get(index));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
