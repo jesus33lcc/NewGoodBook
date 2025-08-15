@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Lo unico que hace falta: hablar con las Cloud Functions y descargar portadas.
+         Habia cuatro permisos mas de almacenamiento. Dos de ellos, WRITE_INTERNAL_STORAGE
+         y READ_INTERNAL_STORAGE, NO EXISTEN en Android y el sistema los ignoraba. Los de
+         almacenamiento externo tampoco pintaban nada: no se escribe fuera de la app.
+         Piden explicacion en la ficha de Play, asi que sobraban por partida doble. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App"

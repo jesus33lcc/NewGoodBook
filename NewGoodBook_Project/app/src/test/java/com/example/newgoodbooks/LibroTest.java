@@ -3,6 +3,8 @@ package com.example.newgoodbooks;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.example.newgoodbooks.Modelos.Libro;
@@ -116,5 +118,51 @@ public class LibroTest {
         Map<String, Object> otro = mapaCompleto();
         otro.put("id", "xyz789");
         assertNotEquals(a, Libro.desdeMapa(otro));
+    }
+
+    // ---------- datos de Open Library (anadidos en la fase 17) ----------
+
+    @Test
+    public void desdeMapa_leeValoracionMateriasEIsbn() {
+        Map<String, Object> m = mapaCompleto();
+        m.put("valoracion", 4.2);
+        m.put("numVotos", 87L);
+        m.put("materias", Arrays.asList("magic realism", "novel"));
+        m.put("isbn", "9788420412146");
+        m.put("editorial", "Diana");
+        Libro libro = Libro.desdeMapa(m);
+        assertEquals(4.2, libro.getValoracion(), 0.001);
+        assertEquals(87, libro.getNumVotos());
+        assertEquals(2, libro.getMaterias().size());
+        assertEquals("9788420412146", libro.getIsbn());
+        assertEquals("Diana", libro.getEditorial());
+    }
+
+    //Lo importante: son OPCIONALES. Un libro guardado antes de la fase 17 no los trae
+    //y tiene que seguir leyendose igual, no descartarse.
+    @Test
+    public void desdeMapa_sinLosDatosNuevosSigueSiendoValido() {
+        Libro libro = Libro.desdeMapa(mapaCompleto());
+        assertNotNull(libro);
+        assertEquals(0, libro.getNumVotos());
+        assertTrue(libro.getMaterias().isEmpty());
+        assertNull(libro.getIsbn());
+    }
+
+    //Una nota de 5,0 puesta por una sola persona no dice nada: no debe ensenarse.
+    @Test
+    public void tieneValoracion_exigeVotosSuficientes() {
+        Map<String, Object> m = mapaCompleto();
+        m.put("valoracion", 5.0);
+        m.put("numVotos", 1L);
+        assertFalse("una nota con un solo voto no vale", Libro.desdeMapa(m).tieneValoracion());
+
+        m.put("numVotos", (long) Libro.MINIMO_VOTOS);
+        assertTrue(Libro.desdeMapa(m).tieneValoracion());
+    }
+
+    @Test
+    public void tieneValoracion_esFalsaSiNoHayNota() {
+        assertFalse(Libro.desdeMapa(mapaCompleto()).tieneValoracion());
     }
 }
