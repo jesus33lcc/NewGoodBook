@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class Inicio extends AppCompatActivity {
     private ActivityInicioBinding binding;
-    Button btn_Login, btn_Register;
+    Button botonAcceder, botonRegistro;
     TextView nombre, eslogan, desc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +21,13 @@ public class Inicio extends AppCompatActivity {
         binding = ActivityInicioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         // asignacion de las variables locales
-        btn_Login=binding.btnIniciosesion;
-        btn_Register=binding.btnRegistrarse;
+        botonAcceder=binding.btnIniciosesion;
+        botonRegistro=binding.btnRegistrarse;
         nombre=binding.txtviewNombre;
         eslogan=binding.txtviewDescripcionInicio;
         desc=binding.textviewDesc;
         //metodo click, lo lleva al Login
-        btn_Login.setOnClickListener(new View.OnClickListener() {
+        botonAcceder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Inicio.this, Login.class));
@@ -35,7 +35,7 @@ public class Inicio extends AppCompatActivity {
             }
         });
         //metodo click, lo lleva al Register
-        btn_Register.setOnClickListener(new View.OnClickListener() {
+        botonRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Inicio.this, Registro.class));

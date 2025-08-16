@@ -32,8 +32,8 @@ public class Login extends AppCompatActivity {
     private ActivityLoginBinding binding;
     private static final String TAG = "Login";
 
-    private Button btn_login, btn_loginGoogle;
-    private TextView txt_noCuenta, txt_passwordlost;
+    private Button botonAcceder, botonGoogle;
+    private TextView enlaceSinCuenta, enlacePasswordOlvidada;
     private EditText editTextEmail, editTextPassword;
     private FirebaseAuth mAuth;
     private GoogleSignInClient clienteGoogle;
@@ -46,10 +46,10 @@ public class Login extends AppCompatActivity {
         setContentView(binding.getRoot());
         // asignacion de las variables locales
         mAuth = FirebaseAuth.getInstance();
-        btn_login = binding.btnIniciosesion;
-        btn_loginGoogle = binding.btnIniciocongoogle;
-        txt_passwordlost = binding.txtPasswordlost;
-        txt_noCuenta = binding.txtSincuenta;
+        botonAcceder = binding.btnIniciosesion;
+        botonGoogle = binding.btnIniciocongoogle;
+        enlacePasswordOlvidada = binding.txtPasswordlost;
+        enlaceSinCuenta = binding.txtSincuenta;
         editTextEmail = binding.editxtEmail;
         editTextPassword = binding.edittxtPassword;
 
@@ -57,7 +57,7 @@ public class Login extends AppCompatActivity {
 
         //metodo click, recoge el email y la contraseña introducida.
         //si la cuenta esta registrada lo lleva a la vista Principal
-        btn_login.setOnClickListener(v -> {
+        botonAcceder.setOnClickListener(v -> {
             String email = String.valueOf(editTextEmail.getText()).trim();
             String password = String.valueOf(editTextPassword.getText());
 
@@ -81,10 +81,10 @@ public class Login extends AppCompatActivity {
 
         //el enlace de contrasena olvidada estaba en el layout sin listener, igual que
         //le pasaba al boton de Google: existia pero no hacia nada
-        txt_passwordlost.setOnClickListener(v -> pedirRestablecerPassword());
+        enlacePasswordOlvidada.setOnClickListener(v -> pedirRestablecerPassword());
 
         //metodo click, si no tiene una cuenta lo lleva al Registro
-        txt_noCuenta.setOnClickListener(v -> {
+        enlaceSinCuenta.setOnClickListener(v -> {
             startActivity(new Intent(Login.this, Registro.class));
             finish();
         });
@@ -139,7 +139,7 @@ public class Login extends AppCompatActivity {
                     }
                 });
 
-        btn_loginGoogle.setOnClickListener(v -> {
+        botonGoogle.setOnClickListener(v -> {
             //se cierra la sesion de Google previa para que siempre deje elegir cuenta
             clienteGoogle.signOut().addOnCompleteListener(
                     ignorado -> lanzadorGoogle.launch(clienteGoogle.getSignInIntent()));

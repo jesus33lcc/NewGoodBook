@@ -25,8 +25,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class Registro extends AppCompatActivity {
     private ActivityRegistroBinding binding;
-    TextView txt_cuentaCreada;
-    Button btn_registrarse;
+    TextView enlaceYaTengoCuenta;
+    Button botonRegistrarse;
     EditText editTextNombre, editTextEmail, editTextPassword;
     FirebaseAuth mAuth;
     @Override
@@ -36,14 +36,14 @@ public class Registro extends AppCompatActivity {
         setContentView(binding.getRoot());
         // asignacion de las variables locales
         mAuth=FirebaseAuth.getInstance();
-        txt_cuentaCreada=binding.txtviewCuentacreada;
-        btn_registrarse=binding.btnRegistrarseRegister;
+        enlaceYaTengoCuenta=binding.txtviewCuentacreada;
+        botonRegistrarse=binding.btnRegistrarseRegister;
         editTextNombre=binding.edittxtName;
         editTextEmail=binding.edittxtEmailregister;
         editTextPassword=binding.edittxtPasswordRegister;
 
         //metodo click, si tiene una cuenta lo lleva al Login
-        txt_cuentaCreada.setOnClickListener(new View.OnClickListener() {
+        enlaceYaTengoCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Registro.this, Login.class));
@@ -51,7 +51,7 @@ public class Registro extends AppCompatActivity {
             }
         });
         //coge los campos de email y password e intenta crear una cuenta, luego de eso lo lleva al login
-        btn_registrarse.setOnClickListener(new View.OnClickListener() {
+        botonRegistrarse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final String nombre;

@@ -11,12 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.PortadaAdapter;
+import com.example.newgoodbooks.Fragments.GustosViewModel;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -50,12 +52,11 @@ public class Onboarding extends AppCompatActivity {
     private MaterialButton btnContinuar;
 
     private PortadaAdapter adaptador;
+    private GustosViewModel modelo;
     private final List<String> consultas = new ArrayList<>();
     private boolean enPasoLibros;
 
     private final RepositorioUsuario repo = RepositorioUsuario.get();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler principal = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle estado) {
@@ -76,6 +77,11 @@ public class Onboarding extends AppCompatActivity {
         montarGeneros();
         //la rejilla se adapta al ancho: 3 columnas en movil, 5 en tablet
         rejilla.setLayoutManager(new GridLayoutManager(this, columnas()));
+
+        modelo = new ViewModelProvider(this).get(GustosViewModel.class);
+        modelo.getCargando().observe(this, hay ->
+                cargando.setVisibility(Boolean.TRUE.equals(hay) ? View.VISIBLE : View.GONE));
+        modelo.getLibros().observe(this, this::mostrarLibros);
 
         btnContinuar.setOnClickListener(v -> avanzar());
         binding.btnOmitir.setOnClickListener(v -> {
@@ -148,35 +154,17 @@ public class Onboarding extends AppCompatActivity {
         btnContinuar.setText(R.string.onboarding_empezar);
         pasoGeneros.setVisibility(View.GONE);
         pasoLibros.setVisibility(View.VISIBLE);
-        cargando.setVisibility(View.VISIBLE);
-
-        executor.execute(() -> {
-            final List<Libro> traidos = new ArrayList<>();
-            //una consulta por genero elegido, para que la rejilla no sea toda del mismo
-            for (String consulta : consultas) {
-                if (traidos.size() >= LIBROS_A_ENSENAR) {
-                    break;
-                }
-                for (Libro libro : ClienteFunciones.librosAleatorios(6, consulta)) {
-                    if (!traidos.contains(libro)) {
-                        traidos.add(libro);
-                    }
-                }
-            }
-            principal.post(() -> mostrarLibros(traidos));
-        });
+        modelo.traerLibros(consultas);
     }
 
     private void mostrarLibros(List<Libro> libros) {
-        if (isFinishing() || isDestroyed()) {
-            return;
-        }
-        cargando.setVisibility(View.GONE);
-        if (libros.isEmpty()) {
+        if (libros == null || libros.isEmpty()) {
             //sin conexion no se bloquea el registro: se puede seguir sin elegir nada
-            avisoSinLibros.setVisibility(View.VISIBLE);
+            avisoSinLibros.setVisibility(
+                    Boolean.TRUE.equals(modelo.getCargando().getValue()) ? View.GONE : View.VISIBLE);
             return;
         }
+        avisoSinLibros.setVisibility(View.GONE);
         adaptador = new PortadaAdapter(this, libros);
         rejilla.setAdapter(adaptador);
     }
@@ -189,9 +177,4 @@ public class Onboarding extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        executor.shutdown();
-    }
 }

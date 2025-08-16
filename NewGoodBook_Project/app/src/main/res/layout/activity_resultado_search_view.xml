@@ -32,6 +32,14 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_book_list" />
 
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/cargandoResultados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
         <include
             android:id="@+id/estadoVacio"
             layout="@layout/estado_vacio" />

@@ -1,46 +1,45 @@
 package com.example.newgoodbooks;
 
-import com.example.newgoodbooks.databinding.ActivityResultadoSearchViewBinding;
+import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toolbar;
+import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
+import com.example.newgoodbooks.Fragments.BusquedaViewModel;
+import com.example.newgoodbooks.Modelos.Libro;
+import com.example.newgoodbooks.UI.EstadoVacio;
+import com.example.newgoodbooks.UI.ModoVista;
+import com.example.newgoodbooks.databinding.ActivityResultadoSearchViewBinding;
+import com.google.android.material.appbar.MaterialToolbar;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
-import com.example.newgoodbooks.Cliente.ClienteFunciones;
-import com.example.newgoodbooks.UI.EstadoVacio;
-import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
-import com.example.newgoodbooks.UI.ModoVista;
-import com.example.newgoodbooks.Modelos.Libro;
-
+//Resultados de buscar por titulo. La busqueda vive en el ViewModel: antes salia de
+//onCreate y se repetia entera en cada giro de pantalla.
 public class ResultadoSearchView extends AppCompatActivity {
+    //clave del extra que manda Explorar
+    public static final String EXTRA_CONSULTA = "titulo_a_buscar";
+
     private ActivityResultadoSearchViewBinding binding;
-    Toolbar toolbarResultados;
-    RecyclerView recyclerViewResultados;
-    List<Libro> listaLibrosResultados;
-    LibroListAdapter libroListAdapter;
-    private String titulo_a_buscar;
-    public ResultadoSearchView() { }
+    private LibroListAdapter adaptador;
+    private BusquedaViewModel modelo;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle estado) {
+        super.onCreate(estado);
         binding = ActivityResultadoSearchViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        recyclerViewResultados = binding.listRecyclerResultadosLibros;
+        modelo = new ViewModelProvider(this).get(BusquedaViewModel.class);
+        String consulta = getIntent().getStringExtra(EXTRA_CONSULTA);
 
-
-        titulo_a_buscar = getIntent().getStringExtra("titulo_a_buscar");
-        com.google.android.material.appbar.MaterialToolbar barra = binding.toolbarResultados;
+        MaterialToolbar barra = binding.toolbarResultados;
+        if (consulta != null) {
+            barra.setTitle(getString(R.string.titulo_resultados_de, consulta));
+        }
         //Conmutador de lista o cuadricula, comun a las tres pantallas de libros.
         barra.inflateMenu(R.menu.menu_vista);
         ModoVista.pintarIcono(this, barra.getMenu());
@@ -48,46 +47,34 @@ public class ResultadoSearchView extends AppCompatActivity {
             if (item.getItemId() == R.id.accion_vista) {
                 ModoVista.alternar(this);
                 ModoVista.pintarIcono(this, barra.getMenu());
-                ModoVista.aplicar(this, recyclerViewResultados, libroListAdapter);
+                ModoVista.aplicar(this, binding.listRecyclerResultadosLibros, adaptador);
                 return true;
             }
             return false;
         });
 
-        if (barra != null && titulo_a_buscar != null) {
-            barra.setTitle(getString(R.string.titulo_resultados_de, titulo_a_buscar));
-        }
-        List<Libro> listaLibrosVacia = new ArrayList<>();
-        initialize_ListFillBook(listaLibrosVacia);
-        buscarTitulo();
-    }
+        mostrarLibros(new ArrayList<Libro>());
 
-    public void initialize_ListFillBook(List<Libro> listaLibrosFill){
-        libroListAdapter = new LibroListAdapter(this,listaLibrosFill);
-        ModoVista.aplicar(this, recyclerViewResultados, libroListAdapter);
-    }
-
-    private void buscarTitulo(){
-        Executor executor= Executors.newSingleThreadExecutor();
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                listaLibrosResultados=new ArrayList<>(ClienteFunciones.buscarTitulo(titulo_a_buscar));
-                fillRecycleList();
-            }
+        modelo.getBuscando().observe(this, this::pintarEstado);
+        modelo.getResultados().observe(this, libros -> {
+            mostrarLibros(libros != null ? libros : new ArrayList<Libro>());
+            pintarEstado(Boolean.FALSE);
         });
+        modelo.buscar(consulta);
     }
 
-    private void fillRecycleList(){
-        Handler handler=new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                initialize_ListFillBook(listaLibrosResultados);
-                EstadoVacio.mostrar(binding.estadoVacio.getRoot(),
-                        listaLibrosResultados.isEmpty(), R.drawable.ic_explorar,
-                        R.string.vacio_resultados_titulo, R.string.vacio_resultados_detalle);
-            }
-        });
+    private void mostrarLibros(List<Libro> libros) {
+        adaptador = new LibroListAdapter(this, libros);
+        ModoVista.aplicar(this, binding.listRecyclerResultadosLibros, adaptador);
+    }
+
+    //Mientras busca no se anuncia "Sin resultados": eso era mentira y ademas alarmaba.
+    private void pintarEstado(Boolean buscando) {
+        boolean cargando = Boolean.TRUE.equals(buscando);
+        binding.cargandoResultados.setVisibility(cargando ? View.VISIBLE : View.GONE);
+        List<Libro> libros = modelo.getResultados().getValue();
+        boolean vacio = !cargando && (libros == null || libros.isEmpty());
+        EstadoVacio.mostrar(binding.estadoVacio.getRoot(), vacio, R.drawable.ic_explorar,
+                R.string.vacio_resultados_titulo, R.string.vacio_resultados_detalle);
     }
 }

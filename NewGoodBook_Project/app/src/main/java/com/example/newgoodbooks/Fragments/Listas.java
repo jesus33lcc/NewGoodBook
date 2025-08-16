@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.ListaAdapter;
-import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
@@ -33,9 +32,9 @@ import java.util.List;
 
 public class Listas extends Fragment {
     private FragmentListasBinding binding;
-    private RecyclerView listasRecyclerView;
-    private RecyclerView misListasRecyclerView;
-    private com.google.android.material.button.MaterialButton btn_newAddLista;
+    private RecyclerView rejillaListasFijas;
+    private RecyclerView rejillaListasPropias;
+    private com.google.android.material.button.MaterialButton botonNuevaLista;
     private View vacioListas;
     private ListaAdapter adaptadorFijas;
     private ListaAdapter adaptadorPersonales;
@@ -56,19 +55,19 @@ public class Listas extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listasRecyclerView = binding.misListasCheckFav;
-        misListasRecyclerView = binding.misListaPersonalizadas;
-        btn_newAddLista = binding.btnNewLista;
+        rejillaListasFijas = binding.misListasCheckFav;
+        rejillaListasPropias = binding.misListaPersonalizadas;
+        botonNuevaLista = binding.btnNewLista;
         vacioListas = binding.vacioListas;
 
-        listasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        misListasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        rejillaListasFijas.setLayoutManager(new LinearLayoutManager(getContext()));
+        rejillaListasPropias.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adaptadorFijas = new ListaAdapter(getActivity(), new ArrayList<>());
-        listasRecyclerView.setAdapter(adaptadorFijas);
+        rejillaListasFijas.setAdapter(adaptadorFijas);
         adaptadorPersonales = new ListaAdapter(getActivity(), misListas);
         adaptadorPersonales.setAlPedirOpciones(this::menuDeLista);
-        misListasRecyclerView.setAdapter(adaptadorPersonales);
+        rejillaListasPropias.setAdapter(adaptadorPersonales);
 
         //Las listas llegan solas desde Firestore: si creas una en el movil, aparece
         //en la tablet sin refrescar nada. Antes habia que reconstruir el adaptador a mano.
@@ -84,31 +83,19 @@ public class Listas extends Fragment {
         repo.getLeidos().observe(getViewLifecycleOwner(),
                 libros -> adaptadorFijas.actualizar(repo.getListasImborrables()));
 
-        btn_newAddLista.setOnClickListener(v -> showInputTextDialog_newList());
+        botonNuevaLista.setOnClickListener(v -> mostrarDialogoNuevaLista());
 
-        //swipe a la izquierda para borrar, solo en las listas personalizadas
-        new MySwipeHelper(getContext(), misListasRecyclerView, 200) {
-            @Override
-            public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
-                buffer.add(new MyButton(getContext(),
-                        getString(R.string.eliminar),
-                        30,
-                        R.drawable.ic_delete4ever,
-                        Color.parseColor("#FF3C30"),
-                        new MyButtonClickListener() {
-                            @Override
-                            public void onClick(int pos) {
-                                showTextDialog_ConfirmDelete(pos);
-                            }
-                        }));
-            }
-        };
+        //Deslizar a la izquierda descubre el boton de borrar. Se mantiene como atajo
+        //para quien ya lo conocia; la via visible es el menu de la fila.
+        new MySwipeHelper(getContext(), 200, getString(R.string.eliminar),
+                R.drawable.ic_delete4ever, Color.parseColor("#FF3C30"),
+                this::confirmarBorradoPorPosicion).engancharA(rejillaListasPropias);
     }
 
     //Crear lista. El campo es de Material y el error sale DEBAJO del propio campo, no
     //como aviso flotante: antes el dialogo se cerraba al fallar y habia que empezar de
     //cero para leer un mensaje que aparecia en la otra punta de la pantalla.
-    public void showInputTextDialog_newList(){
+    public void mostrarDialogoNuevaLista(){
         View contenido = getLayoutInflater().inflate(R.layout.dialogo_nueva_lista, null);
         TextInputLayout capa = contenido.findViewById(R.id.capaNombreLista);
         TextInputEditText campo = contenido.findViewById(R.id.campoNombreLista);
@@ -202,7 +189,7 @@ public class Listas extends Fragment {
         aviso.show();
     }
 
-    private void showTextDialog_ConfirmDelete(int index){
+    private void confirmarBorradoPorPosicion(int index){
         if (index < 0 || index >= misListas.size()) {
             return;
         }

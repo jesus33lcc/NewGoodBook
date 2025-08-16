@@ -37,10 +37,10 @@ import java.util.List;
 public class Explorar extends Fragment {
     private FragmentExplorarBinding binding;
     private View view;
-    private RecyclerView librosRecyclerView;
-    LibroListAdapter libroListAdapter;
-    Toolbar toolbarSearch;
-    private SearchView searchViewExplorar;
+    private RecyclerView rejillaLibros;
+    LibroListAdapter adaptadorLibros;
+    Toolbar barraExplorar;
+    private SearchView buscador;
 
     public Explorar() { } // Se requiere de un constructor vacio.
 
@@ -56,37 +56,37 @@ public class Explorar extends Fragment {
         view = binding.getRoot();
 
         // Sobre el RecyclerView
-        librosRecyclerView = binding.listRecyclerLibros;
+        rejillaLibros = binding.listRecyclerLibros;
 
 
         // Insertar Libros en lista.
-        initialize_ListFillBook(new ArrayList<Libro>());
+        montarAdaptador(new ArrayList<Libro>());
         //el historial llega solo desde Firestore; antes se leia de un estatico
         //envuelto en un hilo y un Handler que no hacian falta para nada
         final View vacio = binding.estadoVacio.getRoot();
         RepositorioUsuario.get().getHistorial().observe(getViewLifecycleOwner(), libros -> {
-            libroListAdapter.actualizar(libros);
+            adaptadorLibros.actualizar(libros);
             EstadoVacio.mostrar(vacio, libros == null || libros.isEmpty(),
                     R.drawable.ic_explorar, R.string.vacio_explorar_titulo,
                     R.string.vacio_explorar_detalle);
         });
 
         // Sobre el Toolbar
-        toolbarSearch = binding.myToolbarExplorer;
+        barraExplorar = binding.myToolbarExplorer;
 
         // Sobre el SearchView
-        MenuItem searchItem = toolbarSearch.getMenu().findItem(R.id.action_searchExplore);
-        searchViewExplorar = (SearchView) searchItem.getActionView();
-        searchViewExplorar.setQueryHint(getString(R.string.buscar_hint));
+        MenuItem searchItem = barraExplorar.getMenu().findItem(R.id.action_searchExplore);
+        buscador = (SearchView) searchItem.getActionView();
+        buscador.setQueryHint(getString(R.string.buscar_hint));
 
         //Conmutador de lista o cuadricula. La eleccion es comun a las tres pantallas
         //que ensenian libros, asi que se guarda y se lee desde ModoVista.
-        ModoVista.pintarIcono(requireContext(), toolbarSearch.getMenu());
-        toolbarSearch.setOnMenuItemClickListener(item -> {
+        ModoVista.pintarIcono(requireContext(), barraExplorar.getMenu());
+        barraExplorar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.accion_vista) {
                 ModoVista.alternar(requireContext());
-                ModoVista.pintarIcono(requireContext(), toolbarSearch.getMenu());
-                ModoVista.aplicar(requireContext(), librosRecyclerView, libroListAdapter);
+                ModoVista.pintarIcono(requireContext(), barraExplorar.getMenu());
+                ModoVista.aplicar(requireContext(), rejillaLibros, adaptadorLibros);
                 return true;
             }
             return false;
@@ -94,18 +94,18 @@ public class Explorar extends Fragment {
 
         // Configuracion color del SearchView
         int colorBlanco = ContextCompat.getColor(requireContext(), android.R.color.white);
-        EditText searchEditText = searchViewExplorar.findViewById(androidx.appcompat.R.id.search_src_text);
+        EditText searchEditText = buscador.findViewById(androidx.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(colorBlanco);
         searchEditText.setHintTextColor(colorBlanco);
         Drawable iconoSearch = searchItem.getIcon();
         iconoSearch.setColorFilter(colorBlanco, PorterDuff.Mode.SRC_ATOP);
 
         // Configuracion de busqueda del SearchView
-        searchViewExplorar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        buscador.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Intent viewResultadosActivity = new Intent(getContext(), ResultadoSearchView.class);
-                viewResultadosActivity.putExtra("titulo_a_buscar", query);
+                viewResultadosActivity.putExtra(ResultadoSearchView.EXTRA_CONSULTA, query);
                 getContext().startActivity(viewResultadosActivity);
                 return true;
             }
@@ -119,9 +119,9 @@ public class Explorar extends Fragment {
         return view;
     }
 
-    public void initialize_ListFillBook(List<Libro> listaLibrosFill){
-        libroListAdapter = new LibroListAdapter(getActivity(),listaLibrosFill);
-        ModoVista.aplicar(requireContext(), librosRecyclerView, libroListAdapter);
+    public void montarAdaptador(List<Libro> listaLibrosFill){
+        adaptadorLibros = new LibroListAdapter(getActivity(),listaLibrosFill);
+        ModoVista.aplicar(requireContext(), rejillaLibros, adaptadorLibros);
     }
 
 

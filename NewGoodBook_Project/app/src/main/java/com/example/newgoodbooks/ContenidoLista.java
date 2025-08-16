@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.UI.ModoVista;
-import com.example.newgoodbooks.Helper.MyButtonClickListener;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
@@ -32,9 +31,9 @@ public class ContenidoLista extends AppCompatActivity {
     //y cualquier borrado habia que hacerlo dos veces para que se persistiera.
     public static final String EXTRA_LISTA_ID = "lista_id";
 
-    private Toolbar toolbarListaSelected;
-    private RecyclerView recyclerViewContenido;
-    private LibroListAdapter libroListAdapter;
+    private Toolbar barraLista;
+    private RecyclerView rejillaContenido;
+    private LibroListAdapter adaptadorLibros;
     private String listaId;
     private List<Libro> librosActuales = new ArrayList<>();
     private final RepositorioUsuario repo = RepositorioUsuario.get();
@@ -45,21 +44,21 @@ public class ContenidoLista extends AppCompatActivity {
         binding = ActivityContenidoListaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        toolbarListaSelected = binding.toolbarContentList;
+        barraLista = binding.toolbarContentList;
         //Conmutador de lista o cuadricula, comun a las tres pantallas de libros.
-        toolbarListaSelected.inflateMenu(R.menu.menu_vista);
-        ModoVista.pintarIcono(this, toolbarListaSelected.getMenu());
-        toolbarListaSelected.setOnMenuItemClickListener(item -> {
+        barraLista.inflateMenu(R.menu.menu_vista);
+        ModoVista.pintarIcono(this, barraLista.getMenu());
+        barraLista.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.accion_vista) {
                 ModoVista.alternar(this);
-                ModoVista.pintarIcono(this, toolbarListaSelected.getMenu());
-                ModoVista.aplicar(this, recyclerViewContenido, libroListAdapter);
+                ModoVista.pintarIcono(this, barraLista.getMenu());
+                ModoVista.aplicar(this, rejillaContenido, adaptadorLibros);
                 return true;
             }
             return false;
         });
 
-        recyclerViewContenido = binding.listRecyclerContentLista;
+        rejillaContenido = binding.listRecyclerContentLista;
 
 
         listaId = getIntent().getStringExtra(EXTRA_LISTA_ID);
@@ -69,29 +68,17 @@ public class ContenidoLista extends AppCompatActivity {
             return;
         }
 
-        libroListAdapter = new LibroListAdapter(this, librosActuales);
-        ModoVista.aplicar(this, recyclerViewContenido, libroListAdapter);
+        adaptadorLibros = new LibroListAdapter(this, librosActuales);
+        ModoVista.aplicar(this, rejillaContenido, adaptadorLibros);
 
         observarLista();
 
         //las listas fijas (favoritos y leidos) tambien admiten quitar libros:
         //ahi el swipe simplemente desmarca
-        new MySwipeHelper(this, recyclerViewContenido, 200) {
-            @Override
-            public void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MySwipeHelper.MyButton> buffer) {
-                buffer.add(new MyButton(ContenidoLista.this,
-                        getString(R.string.eliminar),
-                        30,
-                        R.drawable.ic_delete4ever,
-                        Color.parseColor("#FF3C30"),
-                        new MyButtonClickListener() {
-                            @Override
-                            public void onClick(int pos) {
-                                quitarLibro(pos);
-                            }
-                        }));
-            }
-        };
+        //Deslizar para quitar un libro de la lista. Solo en listas propias.
+        new MySwipeHelper(this, 200, getString(R.string.eliminar),
+                R.drawable.ic_delete4ever, Color.parseColor("#FF3C30"),
+                this::quitarLibro).engancharA(rejillaContenido);
     }
 
     //La lista se pinta desde Firestore: al quitar un libro no hay que refrescar a mano,
@@ -109,18 +96,18 @@ public class ContenidoLista extends AppCompatActivity {
                     finish();
                     return;
                 }
-                toolbarListaSelected.setTitle(lista.getNombreVisible(this));
+                barraLista.setTitle(lista.getNombreVisible(this));
                 pintar(lista.getLibros());
             });
             return;
         }
         Lista fija = repo.getListaPorId(listaId);
-        toolbarListaSelected.setTitle(fija != null ? fija.getNombreVisible(this) : getString(R.string.title_listas));
+        barraLista.setTitle(fija != null ? fija.getNombreVisible(this) : getString(R.string.title_listas));
     }
 
     private void pintar(List<Libro> libros) {
         librosActuales = libros != null ? libros : new ArrayList<>();
-        libroListAdapter.actualizar(librosActuales);
+        adaptadorLibros.actualizar(librosActuales);
         EstadoVacio.mostrar(binding.estadoVacio.getRoot(), librosActuales.isEmpty(),
                 R.drawable.ic_listas, R.string.vacio_lista_titulo, R.string.vacio_lista_detalle);
     }

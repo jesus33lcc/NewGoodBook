@@ -25,18 +25,18 @@ import com.squareup.picasso.Picasso;
 public class LibroData extends AppCompatActivity {
     private ActivityLibroDataBinding binding;
     private View view;
-    private Libro bookSelected;
-    ImageView portadaIMG;
-    TextView tituloTXT;
-    TextView autorTXT;
-    TextView numPagTXT;
-    TextView fechaPubTXT;
-    TextView generosTXT;
-    TextView descripcionTXT;
+    private Libro libroActual;
+    ImageView portadaVista;
+    TextView tituloVista;
+    TextView autorVista;
+    TextView paginasVista;
+    TextView fechaVista;
+    TextView generosVista;
+    TextView descripcionVista;
     MaterialButton btnFav;
     MaterialButton btnCheck;
     private MaterialButton btnAddList;
-    private TextView valoracionTXT, etiquetaTemas, editorialTXT;
+    private TextView valoracionVista, etiquetaTemas, editorialVista;
     private ChipGroup grupoTemas;
     public LibroData(){ }
     @Override
@@ -45,23 +45,23 @@ public class LibroData extends AppCompatActivity {
         binding = ActivityLibroDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        bookSelected = (Libro) getIntent().getSerializableExtra("libro");
+        libroActual = (Libro) getIntent().getSerializableExtra("libro");
         initView();
         setDetailsLibro();
     }
 
     private void initView(){
-        portadaIMG = binding.imageVPortada;
-        tituloTXT = binding.textTitulo;
-        autorTXT = binding.textAutor;
-        numPagTXT = binding.textNumPag;
-        fechaPubTXT = binding.textFechaPub;
-        generosTXT = binding.textGeneros;
-        descripcionTXT = binding.textDescripcion;
-        valoracionTXT = binding.textValoracion;
+        portadaVista = binding.imageVPortada;
+        tituloVista = binding.textTitulo;
+        autorVista = binding.textAutor;
+        paginasVista = binding.textNumPag;
+        fechaVista = binding.textFechaPub;
+        generosVista = binding.textGeneros;
+        descripcionVista = binding.textDescripcion;
+        valoracionVista = binding.textValoracion;
         etiquetaTemas = binding.etiquetaTemas;
         grupoTemas = binding.grupoTemas;
-        editorialTXT = binding.textEditorial;
+        editorialVista = binding.textEditorial;
         btnFav=binding.tBtnFavorite;
         btnCheck=binding.tBtnCheck;
         btnAddList=binding.tBtnAddList;
@@ -74,34 +74,34 @@ public class LibroData extends AppCompatActivity {
     }
 
     private void setDetailsLibro(){
-        if (bookSelected != null) {
-            Picasso.get().load(bookSelected.getLinkImg()).into(portadaIMG);
-            tituloTXT.setText(bookSelected.getTitulo());
-            autorTXT.setText(bookSelected.getAutor().isEmpty() ? "" : bookSelected.getAutor().get(0));
-            numPagTXT.setText(getString(R.string.formato_paginas, String.valueOf(bookSelected.getNumPag())));
-            fechaPubTXT.setText(DatosLibro.soloAnio(bookSelected.getFechaPublicacion()));
-            generosTXT.setText(bookSelected.getGeneros().isEmpty() ? "" : bookSelected.getGeneros().get(0));
-            descripcionTXT.setText(bookSelected.getDescripcion());
+        if (libroActual != null) {
+            Picasso.get().load(libroActual.getLinkImg()).into(portadaVista);
+            tituloVista.setText(libroActual.getTitulo());
+            autorVista.setText(libroActual.getAutor().isEmpty() ? "" : libroActual.getAutor().get(0));
+            paginasVista.setText(getString(R.string.formato_paginas, String.valueOf(libroActual.getNumPag())));
+            fechaVista.setText(DatosLibro.soloAnio(libroActual.getFechaPublicacion()));
+            generosVista.setText(libroActual.getGeneros().isEmpty() ? "" : libroActual.getGeneros().get(0));
+            descripcionVista.setText(libroActual.getDescripcion());
             //datos de Open Library: cada uno se esconde solo si no viene
-            DatosLibro.pintarValoracion(valoracionTXT, bookSelected);
-            DatosLibro.pintarTemas(etiquetaTemas, grupoTemas, bookSelected);
-            DatosLibro.pintarEditorial(editorialTXT, bookSelected);
+            DatosLibro.pintarValoracion(valoracionVista, libroActual);
+            DatosLibro.pintarTemas(etiquetaTemas, grupoTemas, libroActual);
+            DatosLibro.pintarEditorial(editorialVista, libroActual);
 
 
             //el estado de los dos toggles lo manda Firestore: si lo marcas aqui,
             //la pantalla Home y el otro dispositivo se enteran solos
             RepositorioUsuario repo = RepositorioUsuario.get();
             repo.getFavoritos().observe(this, libros -> DatosLibro.pintarAccion(btnFav,
-                    libros != null && libros.contains(bookSelected),
+                    libros != null && libros.contains(libroActual),
                     R.drawable.ic_favorite_on, R.drawable.ic_favorite_off));
             repo.getLeidos().observe(this, libros -> DatosLibro.pintarAccion(btnCheck,
-                    libros != null && libros.contains(bookSelected),
+                    libros != null && libros.contains(libroActual),
                     R.drawable.ic_checkbox_on, R.drawable.ic_checkbox_off));
 
-            btnFav.setOnClickListener(v -> repo.alternarFavorito(bookSelected));
-            btnCheck.setOnClickListener(v -> repo.alternarLeido(bookSelected));
+            btnFav.setOnClickListener(v -> repo.alternarFavorito(libroActual));
+            btnCheck.setOnClickListener(v -> repo.alternarLeido(libroActual));
             btnAddList.setOnClickListener(v ->
-                    AccionesLibro.mostrarDialogoAnadirALista(LibroData.this, bookSelected));
+                    AccionesLibro.mostrarDialogoAnadirALista(LibroData.this, libroActual));
         } else {
             Toast.makeText(this, R.string.libro_no_disponible, Toast.LENGTH_SHORT).show();
             finish();
