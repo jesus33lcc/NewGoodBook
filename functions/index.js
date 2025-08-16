@@ -475,11 +475,16 @@ async function leerColeccion(uid, coleccion) {
 async function leerElegidos(uid) {
   try {
     const doc = await db.collection(COL_USUARIOS).doc(uid).get();
-    const generos = doc.exists ? doc.get("generosPreferidos") : null;
-    return Array.isArray(generos) ? generos : [];
+    if (!doc.exists) return {generos: [], autores: []};
+    const generos = doc.get("generosPreferidos");
+    const autores = doc.get("autoresPreferidos");
+    return {
+      generos: Array.isArray(generos) ? generos : [],
+      autores: Array.isArray(autores) ? autores : [],
+    };
   } catch (e) {
-    logger.warn(`No se pudieron leer los generos elegidos de ${uid}`, e);
-    return [];
+    logger.warn(`No se pudieron leer las preferencias de ${uid}`, e);
+    return {generos: [], autores: []};
   }
 }
 
@@ -510,10 +515,11 @@ async function perfilDeGustos(uid) {
       for (const a of (l.autor || [])) suma(autores, a, peso);
     }
   };
-  // Los generos elegidos al empezar pesan menos que un favorito de verdad: son una
-  // declaracion de intenciones, no una prueba. Pero sin ellos una cuenta nueva no
-  // tiene ningun perfil del que tirar.
-  for (const g of elegidos) suma(generos, g, PESO_ELEGIDO);
+  // Lo elegido al empezar pesa menos que un favorito de verdad: es una declaracion de
+  // intenciones, no una prueba. Pero sin ello una cuenta nueva no tiene perfil del que
+  // tirar. El autor pesa el doble que el genero, igual que al puntuar.
+  for (const g of elegidos.generos) suma(generos, g, PESO_ELEGIDO);
+  for (const a of elegidos.autores) suma(autores, a, PESO_ELEGIDO * 2);
   digerir(favoritos, PESO_FAVORITO);
   digerir(leidos, PESO_LEIDO);
   digerir(descartados, PESO_DESCARTADO);
@@ -521,7 +527,8 @@ async function perfilDeGustos(uid) {
   for (const l of historial) if (l.id) vistos.add(l.id);
 
   return {materias, generos, autores, vistos,
-    tamanio: favoritos.length + leidos.length, elegidos: elegidos.length};
+    tamanio: favoritos.length + leidos.length,
+    elegidos: elegidos.generos.length + elegidos.autores.length};
 }
 
 const mejores = (mapa, cuantos) => [...mapa.entries()]
@@ -677,7 +684,7 @@ exports.librosAleatorios = onCall(
       const semillas = termino ? [termino] :
         [...delPerfil, ...deExploracion];
       logger.info(`Perfil de ${uid}: ${perfil.tamanio} libros marcados, ` +
-          `${delPerfil.length} semillas propias, ${perfil.elegidos} generos elegidos, ` +
+          `${delPerfil.length} semillas propias, ${perfil.elegidos} preferencias elegidas, ` +
           `${perfil.vistos.size} ya vistos`);
 
       const encontrados = [];

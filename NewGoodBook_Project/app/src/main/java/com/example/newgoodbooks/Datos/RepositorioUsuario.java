@@ -43,6 +43,7 @@ public class RepositorioUsuario {
     private static final String CAMPO_LIBRO_ACTUAL = "libroActual";
     //preferencias elegidas al empezar; las lee tambien la Cloud Function
     private static final String CAMPO_GENEROS = "generosPreferidos";
+    private static final String CAMPO_AUTORES = "autoresPreferidos";
     private static final String CAMPO_ONBOARDING = "onboardingHecho";
 
     private static RepositorioUsuario instancia;
@@ -320,6 +321,19 @@ public class RepositorioUsuario {
         datos.put(CAMPO_ONBOARDING, true);
         raiz.set(datos, SetOptions.merge())
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudieron guardar los generos", e));
+    }
+
+    //Los autores elegidos son la senial mas fuerte que tiene el recomendador: puntua
+    //el autor el doble que el tema. Por eso se preguntan aparte de los generos.
+    public void guardarAutoresPreferidos(List<String> autores) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || autores == null || autores.isEmpty()) {
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put(CAMPO_AUTORES, autores);
+        raiz.set(datos, SetOptions.merge())
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudieron guardar los autores", e));
     }
 
     //Marca el proceso como hecho aunque se haya omitido: si no, volveria a salir
