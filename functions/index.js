@@ -636,7 +636,45 @@ function exigirUsuario(request) {
   return uid;
 }
 
-// Busqueda por titulo
+//Traduce el ambito elegido al lenguaje de consulta de Google Books.
+//
+//"Todo" NO es una busqueda libre: es titulo O autor. Medido el 26-07-2026, buscar
+//"vargas" a pelo devolvia 0 libros utiles mientras que inauthor:"vargas" daba 6. Una
+//palabra suelta hace que Google saque registros incompletos, que el filtro de calidad
+//tumba enteros. Y en una aplicacion de libros "todo" significa justo eso: titulo o
+//autor, no el texto interior.
+//
+//Ese "o" hay que resolverlo con DOS peticiones, no con el operador OR: Books lo acepta
+//pero no lo respeta. Medido con "Harry Potter": intitle: devuelve las siete novelas,
+//mientras que intitle:"..." OR inauthor:"..." devuelve los ensayos de un historiador
+//escoces que se llama asi y ni una sola novela. El OR no une los dos campos, le da
+//prioridad a inauthor:, y con eso "Todo" era en realidad "Autor" con otro nombre.
+function consultasDeAmbito(texto, ambito) {
+  const limpio = texto.replace(/"/g, "").trim();
+  if (ambito === "titulo") return [`intitle:"${limpio}"`];
+  if (ambito === "autor") return [`inauthor:"${limpio}"`];
+  return [`intitle:"${limpio}"`, `inauthor:"${limpio}"`];
+}
+
+//Une los resultados de las dos consultas sin repetir, alternando uno de cada. Se
+//alterna a proposito: concatenar dejaria los del autor detras de cuarenta titulos,
+//donde no los ve nadie.
+function fusionarPorTurnos(lotes) {
+  const salida = [];
+  const vistos = new Set();
+  for (let i = 0; i < Math.max(...lotes.map((l) => l.length)); i++) {
+    for (const lote of lotes) {
+      const libro = lote[i];
+      if (libro && !vistos.has(libro.id)) {
+        vistos.add(libro.id);
+        salida.push(libro);
+      }
+    }
+  }
+  return salida;
+}
+
+// Busqueda de libros, opcionalmente acotada a titulo o autor
 exports.buscarLibros = onCall(
     {secrets: [GOOGLE_BOOKS_API_KEY]},
     async (request) => {
@@ -648,18 +686,27 @@ exports.buscarLibros = onCall(
       const limite = Date.now() + PRESUPUESTO_MS;
       const idioma = String((request.data && request.data.idioma) || IDIOMA_POR_DEFECTO)
           .slice(0, 5);
-      const datos = await pedirABooks({
-        q: consulta.slice(0, 200),
+      // Ambito de la busqueda. Books ya entiende intitle: e inauthor:, que es lo que
+      // usa el recomendador a diario; aqui solo se expone al usuario. Sin ambito se
+      // busca en todo, que es lo que hacia antes.
+      const ambito = String((request.data && request.data.ambito) || "").trim();
+      const consultas = consultasDeAmbito(consulta.slice(0, 200), ambito);
+      //en paralelo: son dos peticiones independientes y la busqueda tiene un
+      //presupuesto de tiempo que no aguanta hacerlas en serie
+      const respuestas = await Promise.all(consultas.map((q) => pedirABooks({
+        q: q,
         orderBy: "relevance",
         maxResults: "40",
         printType: "books",
         langRestrict: idioma,
-      }, GOOGLE_BOOKS_API_KEY.value(), limite);
+      }, GOOGLE_BOOKS_API_KEY.value(), limite)));
 
-      if (!datos) return {libros: [], error: "no-disponible"};
-      const libros = (datos.items || [])
-          .map((v) => aLibro(v, idioma)).filter(Boolean);
-      return {libros: await enriquecer(libros, limite)};
+      //Books cae con un 503 la mitad de las veces. Basta con que responda una para
+      //dar resultados; solo se avisa de fallo si no contesta ninguna.
+      if (respuestas.every((d) => !d)) return {libros: [], error: "no-disponible"};
+      const lotes = respuestas.map((datos) => (datos && datos.items || [])
+          .map((v) => aLibro(v, idioma)).filter(Boolean));
+      return {libros: await enriquecer(fusionarPorTurnos(lotes), limite)};
     });
 
 // Lote de recomendaciones aleatorias, para llenar la cola de la pantalla Home

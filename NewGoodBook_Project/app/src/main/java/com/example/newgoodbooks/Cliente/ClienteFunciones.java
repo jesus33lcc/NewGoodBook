@@ -35,10 +35,18 @@ public class ClienteFunciones {
         return funciones;
     }
 
-    //busca libros por titulo. lista vacia si falla o no hay resultados.
-    public static List<Libro> buscarTitulo(String nombre) {
+    //Ambitos que entiende el servidor. Cadena vacia = buscar en todo.
+    public static final String AMBITO_TODO = "";
+    public static final String AMBITO_TITULO = "titulo";
+    public static final String AMBITO_AUTOR = "autor";
+
+    //busca libros. lista vacia si falla o no hay resultados.
+    public static List<Libro> buscar(String texto, String ambito) {
         Map<String, Object> datos = new HashMap<>();
-        datos.put("query", nombre);
+        datos.put("query", texto);
+        if (ambito != null && !ambito.isEmpty()) {
+            datos.put("ambito", ambito);
+        }
         return llamarYExtraer("buscarLibros", datos);
     }
 

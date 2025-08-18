@@ -28,6 +28,7 @@ public class BusquedaViewModel extends ViewModel {
 
     //la consulta ya resuelta, para no repetirla al recrearse la pantalla
     private String consultaHecha;
+    private String ambitoActual = ClienteFunciones.AMBITO_TODO;
 
     public LiveData<List<Libro>> getResultados() {
         return resultados;
@@ -37,19 +38,25 @@ public class BusquedaViewModel extends ViewModel {
         return buscando;
     }
 
-    //Idempotente a proposito: llamarlo otra vez con la misma consulta no hace nada.
-    public void buscar(String consulta) {
+    public String getAmbito() {
+        return ambitoActual;
+    }
+
+    //Idempotente a proposito: repetir la misma consulta con el mismo ambito no hace nada.
+    public void buscar(String consulta, String ambito) {
         if (consulta == null || consulta.trim().isEmpty()) {
             resultados.setValue(new ArrayList<Libro>());
             return;
         }
-        if (consulta.equals(consultaHecha)) {
+        String clave = ambito + "|" + consulta;
+        if (clave.equals(consultaHecha)) {
             return;
         }
-        consultaHecha = consulta;
+        consultaHecha = clave;
+        ambitoActual = ambito;
         buscando.setValue(true);
         executor.execute(() -> {
-            List<Libro> encontrados = ClienteFunciones.buscarTitulo(consulta);
+            List<Libro> encontrados = ClienteFunciones.buscar(consulta, ambito);
             resultados.postValue(encontrados);
             buscando.postValue(false);
         });
