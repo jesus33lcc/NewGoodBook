@@ -60,7 +60,19 @@
             android:paddingVertical="20dp" />
     </ScrollView>
 
-    <!-- Paso 2: portadas -->
+    <!-- Paso 2: autores -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rejillaAutores"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/margen_contenido"
+        android:paddingVertical="16dp"
+        android:visibility="gone"
+        tools:listitem="@layout/item_autor" />
+
+    <!-- Paso 3: portadas -->
     <FrameLayout
         android:id="@+id/pasoLibros"
         android:layout_width="match_parent"

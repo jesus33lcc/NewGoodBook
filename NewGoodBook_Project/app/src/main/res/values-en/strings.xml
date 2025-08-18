@@ -152,4 +152,6 @@
     <string name="borrar_cuenta_ok">Account deleted</string>
     <string name="borrar_cuenta_ko">The account could not be deleted. Try again later.</string>
     <string name="borrando_cuenta">Deleting…</string>
+    <string name="onboarding_titulo_autores">And which of these?</string>
+    <string name="onboarding_detalle_autores">Pick the authors you like. They come from the genres you chose.</string>
 </resources>

@@ -152,4 +152,6 @@
     <string name="borrar_cuenta_ok">Cuenta eliminada</string>
     <string name="borrar_cuenta_ko">No se ha podido eliminar la cuenta. Inténtalo más tarde.</string>
     <string name="borrando_cuenta">Eliminando…</string>
+    <string name="onboarding_titulo_autores">Y de estos, ¿quién?</string>
+    <string name="onboarding_detalle_autores">Elige los autores que te suenen bien. Se sacan de los géneros que has marcado.</string>
 </resources>

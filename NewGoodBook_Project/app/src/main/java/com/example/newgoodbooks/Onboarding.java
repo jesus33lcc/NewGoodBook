@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
+import com.example.newgoodbooks.Fragments.AdapterList.AutorAdapter;
 import com.example.newgoodbooks.Fragments.AdapterList.PortadaAdapter;
 import com.example.newgoodbooks.Fragments.GustosViewModel;
 import com.example.newgoodbooks.Modelos.Libro;
@@ -54,7 +55,9 @@ public class Onboarding extends AppCompatActivity {
     private PortadaAdapter adaptador;
     private GustosViewModel modelo;
     private final List<String> consultas = new ArrayList<>();
-    private boolean enPasoLibros;
+    //0 generos · 1 autores · 2 libros
+    private int paso;
+    private AutorAdapter adaptadorAutores;
 
     private final RepositorioUsuario repo = RepositorioUsuario.get();
 
@@ -82,6 +85,7 @@ public class Onboarding extends AppCompatActivity {
         modelo.getCargando().observe(this, hay ->
                 cargando.setVisibility(Boolean.TRUE.equals(hay) ? View.VISIBLE : View.GONE));
         modelo.getLibros().observe(this, this::mostrarLibros);
+        modelo.getAutores().observe(this, this::mostrarAutores);
 
         btnContinuar.setOnClickListener(v -> avanzar());
         binding.btnOmitir.setOnClickListener(v -> {
@@ -123,7 +127,7 @@ public class Onboarding extends AppCompatActivity {
     }
 
     private void avanzar() {
-        if (!enPasoLibros) {
+        if (paso == 0) {
             List<String> generos = generosElegidos();
             if (generos.size() < MINIMO_GENEROS) {
                 Toast.makeText(this, R.string.onboarding_pide_generos, Toast.LENGTH_SHORT).show();
@@ -134,10 +138,20 @@ public class Onboarding extends AppCompatActivity {
             for (String genero : generos) {
                 consultas.add("subject:\"" + genero + "\"");
             }
+            //Una sola peticion para los dos pasos que quedan: de estos libros salen
+            //tambien los autores, asi que no hay que preguntar dos veces.
+            modelo.traerLibros(consultas);
+            pasarAAutores();
+            return;
+        }
+        if (paso == 1) {
+            if (adaptadorAutores != null) {
+                repo.guardarAutoresPreferidos(adaptadorAutores.getElegidos());
+            }
             pasarALibros();
             return;
         }
-        //segundo paso: lo elegido pasa a favoritos y de ahi al perfil del recomendador
+        //ultimo paso: lo elegido pasa a favoritos y de ahi al perfil del recomendador
         if (adaptador != null) {
             for (Libro libro : adaptador.getElegidos()) {
                 repo.anadirFavorito(libro);
@@ -147,14 +161,31 @@ public class Onboarding extends AppCompatActivity {
         irAPrincipal();
     }
 
+    private void pasarAAutores() {
+        paso = 1;
+        tituloPaso.setText(R.string.onboarding_titulo_autores);
+        detallePaso.setText(R.string.onboarding_detalle_autores);
+        pasoGeneros.setVisibility(View.GONE);
+        binding.rejillaAutores.setVisibility(View.VISIBLE);
+        binding.rejillaAutores.setLayoutManager(
+                new GridLayoutManager(this, Math.max(2, columnas() - 1)));
+    }
+
+    private void mostrarAutores(List<AutorAdapter.Autor> autores) {
+        if (autores == null || autores.isEmpty()) {
+            return;
+        }
+        adaptadorAutores = new AutorAdapter(this, autores);
+        binding.rejillaAutores.setAdapter(adaptadorAutores);
+    }
+
     private void pasarALibros() {
-        enPasoLibros = true;
+        paso = 2;
         tituloPaso.setText(R.string.onboarding_titulo_libros);
         detallePaso.setText(R.string.onboarding_detalle_libros);
         btnContinuar.setText(R.string.onboarding_empezar);
-        pasoGeneros.setVisibility(View.GONE);
+        binding.rejillaAutores.setVisibility(View.GONE);
         pasoLibros.setVisibility(View.VISIBLE);
-        modelo.traerLibros(consultas);
     }
 
     private void mostrarLibros(List<Libro> libros) {
