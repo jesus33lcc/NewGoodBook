@@ -71,7 +71,17 @@ public final class DatosLibro {
         pildora.setVisibility(View.VISIBLE);
     }
 
+    //Aviso de que se ha tocado un tema, para que la pantalla decida que hacer.
+    public interface AlTocarTema {
+        void enTema(String tema);
+    }
+
     public static void pintarTemas(TextView etiqueta, ChipGroup grupo, Libro libro) {
+        pintarTemas(etiqueta, grupo, libro, null);
+    }
+
+    public static void pintarTemas(TextView etiqueta, ChipGroup grupo, Libro libro,
+                                   AlTocarTema alTocar) {
         if (grupo == null) {
             return;
         }
@@ -88,9 +98,12 @@ public final class DatosLibro {
         for (String tema : temas.subList(0, Math.min(MAX_TEMAS, temas.size()))) {
             Chip chip = new Chip(contexto);
             chip.setText(tema);
-            //informativos: sin ellos el chip sale pulsable y con marca de seleccion
-            chip.setClickable(false);
             chip.setCheckable(false);
+            //Pulsables solo si hay quien atienda: si no, se quedan informativos como antes.
+            chip.setClickable(alTocar != null);
+            if (alTocar != null) {
+                chip.setOnClickListener(v -> alTocar.enTema(tema));
+            }
             grupo.addView(chip);
         }
         grupo.setVisibility(View.VISIBLE);

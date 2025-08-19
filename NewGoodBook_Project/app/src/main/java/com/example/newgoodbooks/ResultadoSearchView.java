@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Fragments.AdapterList.LibroListAdapter;
 import com.example.newgoodbooks.Fragments.BusquedaViewModel;
 import com.example.newgoodbooks.Modelos.Libro;
@@ -22,6 +23,8 @@ import java.util.List;
 public class ResultadoSearchView extends AppCompatActivity {
     //clave del extra que manda Explorar
     public static final String EXTRA_CONSULTA = "titulo_a_buscar";
+    //ambito con el que se abre: lo usa la ficha al tocar un autor o un tema
+    public static final String EXTRA_AMBITO = "ambito";
 
     private ActivityResultadoSearchViewBinding binding;
     private LibroListAdapter adaptador;
@@ -53,6 +56,15 @@ public class ResultadoSearchView extends AppCompatActivity {
             return false;
         });
 
+        String ambitoInicial = getIntent().getStringExtra(EXTRA_AMBITO);
+        if (ClienteFunciones.AMBITO_AUTOR.equals(ambitoInicial)) {
+            binding.ambitoAutor.setChecked(true);
+        } else if (ClienteFunciones.AMBITO_TITULO.equals(ambitoInicial)) {
+            binding.ambitoTitulo.setChecked(true);
+        }
+        binding.grupoAmbito.setOnCheckedStateChangeListener((grupo, marcados) ->
+                modelo.buscar(consulta, ambitoElegido()));
+
         mostrarLibros(new ArrayList<Libro>());
 
         modelo.getBuscando().observe(this, this::pintarEstado);
@@ -60,7 +72,18 @@ public class ResultadoSearchView extends AppCompatActivity {
             mostrarLibros(libros != null ? libros : new ArrayList<Libro>());
             pintarEstado(Boolean.FALSE);
         });
-        modelo.buscar(consulta);
+        modelo.buscar(consulta, ambitoElegido());
+    }
+
+    private String ambitoElegido() {
+        int marcado = binding.grupoAmbito.getCheckedChipId();
+        if (marcado == R.id.ambitoAutor) {
+            return ClienteFunciones.AMBITO_AUTOR;
+        }
+        if (marcado == R.id.ambitoTitulo) {
+            return ClienteFunciones.AMBITO_TITULO;
+        }
+        return ClienteFunciones.AMBITO_TODO;
     }
 
     private void mostrarLibros(List<Libro> libros) {

@@ -17,6 +17,39 @@
         app:title="@string/title_resultados"
         app:titleTextColor="@color/hero_texto" />
 
+    <!-- Acotar la busqueda. Quien no toque nada busca en todo, como siempre. -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/grupoAmbito"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/margen_contenido"
+        android:paddingTop="10dp"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/ambitoTodo"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/ambito_todo" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/ambitoTitulo"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ambito_titulo" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/ambitoAutor"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ambito_autor" />
+    </com.google.android.material.chip.ChipGroup>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

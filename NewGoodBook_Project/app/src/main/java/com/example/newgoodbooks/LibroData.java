@@ -5,6 +5,7 @@ import com.example.newgoodbooks.databinding.ActivityLibroDataBinding;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Modelos.Libro;
+import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.UI.AccionesLibro;
 import com.example.newgoodbooks.UI.DatosLibro;
 import com.google.android.material.chip.ChipGroup;
@@ -73,6 +75,17 @@ public class LibroData extends AppCompatActivity {
         DatosLibro.pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
     }
 
+    //Abre la busqueda ya acotada. Es la forma natural de tirar del hilo desde la ficha.
+    private void buscar(String texto, String ambito) {
+        if (texto == null || texto.trim().isEmpty()) {
+            return;
+        }
+        Intent ir = new Intent(this, ResultadoSearchView.class);
+        ir.putExtra(ResultadoSearchView.EXTRA_CONSULTA, texto);
+        ir.putExtra(ResultadoSearchView.EXTRA_AMBITO, ambito);
+        startActivity(ir);
+    }
+
     private void setDetailsLibro(){
         if (libroActual != null) {
             Picasso.get().load(libroActual.getLinkImg()).into(portadaVista);
@@ -83,8 +96,14 @@ public class LibroData extends AppCompatActivity {
             generosVista.setText(libroActual.getGeneros().isEmpty() ? "" : libroActual.getGeneros().get(0));
             descripcionVista.setText(libroActual.getDescripcion());
             //datos de Open Library: cada uno se esconde solo si no viene
+            //El autor deja de ser texto muerto: al tocarlo se buscan sus libros.
+            autorVista.setOnClickListener(v -> buscar(
+                    libroActual.getAutor().isEmpty() ? null : libroActual.getAutor().get(0),
+                    ClienteFunciones.AMBITO_AUTOR));
+
             DatosLibro.pintarValoracion(valoracionVista, libroActual);
-            DatosLibro.pintarTemas(etiquetaTemas, grupoTemas, libroActual);
+            DatosLibro.pintarTemas(etiquetaTemas, grupoTemas, libroActual, tema ->
+                    buscar(tema, ClienteFunciones.AMBITO_TODO));
             DatosLibro.pintarEditorial(editorialVista, libroActual);
 
 

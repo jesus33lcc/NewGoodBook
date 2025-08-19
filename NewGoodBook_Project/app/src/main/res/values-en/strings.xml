@@ -154,4 +154,7 @@
     <string name="borrando_cuenta">Deleting…</string>
     <string name="onboarding_titulo_autores">And which of these?</string>
     <string name="onboarding_detalle_autores">Pick the authors you like. They come from the genres you chose.</string>
+    <string name="ambito_todo">All</string>
+    <string name="ambito_titulo">Title</string>
+    <string name="ambito_autor">Author</string>
 </resources>

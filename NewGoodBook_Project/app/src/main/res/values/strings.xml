@@ -154,4 +154,7 @@
     <string name="borrando_cuenta">Eliminando…</string>
     <string name="onboarding_titulo_autores">Y de estos, ¿quién?</string>
     <string name="onboarding_detalle_autores">Elige los autores que te suenen bien. Se sacan de los géneros que has marcado.</string>
+    <string name="ambito_todo">Todo</string>
+    <string name="ambito_titulo">Título</string>
+    <string name="ambito_autor">Autor</string>
 </resources>
