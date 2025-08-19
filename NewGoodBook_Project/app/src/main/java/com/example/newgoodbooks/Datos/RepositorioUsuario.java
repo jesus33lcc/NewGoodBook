@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.newgoodbooks.Modelos.Lectura;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +40,7 @@ public class RepositorioUsuario {
     private static final String COL_HISTORIAL = "historial";
     private static final String COL_LISTAS = "listas";
     private static final String COL_DESCARTADOS = "descartados";
+    private static final String COL_LECTURAS = "lecturas";
     //campo del documento raiz: el libro que se esta enseniando ahora en Principal
     private static final String CAMPO_LIBRO_ACTUAL = "libroActual";
     //preferencias elegidas al empezar; las lee tambien la Cloud Function
@@ -55,6 +57,11 @@ public class RepositorioUsuario {
     private final MutableLiveData<List<Libro>> leidos = new MutableLiveData<>(new ArrayList<Libro>());
     private final MutableLiveData<List<Libro>> historial = new MutableLiveData<>(new ArrayList<Libro>());
     private final MutableLiveData<List<Lista>> listas = new MutableLiveData<>(new ArrayList<Lista>());
+    //por donde va el usuario en cada libro, indexado por id de libro
+    private final MutableLiveData<Map<String, Lectura>> lecturas =
+            new MutableLiveData<>(new HashMap<String, Lectura>());
+    //el libro de cada lectura en curso, para poder ensenarlo en Listas
+    private final Map<String, Libro> librosEnCurso = new HashMap<>();
 
     private String uidEscuchado;
 
@@ -90,6 +97,7 @@ public class RepositorioUsuario {
         escucharLibros(raiz.collection(COL_HISTORIAL).orderBy("visto", Query.Direction.DESCENDING)
                 .limit(MAX_HISTORIAL), historial, null);
         escucharListas(raiz.collection(COL_LISTAS));
+        escucharLecturas(raiz.collection(COL_LECTURAS));
     }
 
     //Corta las escuchas y vacia el estado en memoria (al cerrar sesion)
@@ -103,6 +111,32 @@ public class RepositorioUsuario {
         leidos.postValue(new ArrayList<Libro>());
         historial.postValue(new ArrayList<Libro>());
         listas.postValue(new ArrayList<Lista>());
+        lecturas.postValue(new HashMap<String, Lectura>());
+        librosEnCurso.clear();
+    }
+
+    private void escucharLecturas(CollectionReference coleccion) {
+        escuchas.add(coleccion.addSnapshotListener((instantanea, error) -> {
+            if (error != null) {
+                Log.w(TAG, "Fallo escuchando lecturas", error);
+                return;
+            }
+            Map<String, Lectura> salida = new HashMap<>();
+            librosEnCurso.clear();
+            if (instantanea != null) {
+                for (QueryDocumentSnapshot doc : instantanea) {
+                    Lectura lectura = Lectura.desdeMapa(doc.getData());
+                    if (lectura != null) {
+                        salida.put(doc.getId(), lectura);
+                        Libro libro = Libro.desdeMapa(doc.getData());
+                        if (libro != null) {
+                            librosEnCurso.put(doc.getId(), libro);
+                        }
+                    }
+                }
+            }
+            lecturas.postValue(salida);
+        }));
     }
 
     private void escucharLibros(Query consulta, MutableLiveData<List<Libro>> destino,
@@ -160,6 +194,56 @@ public class RepositorioUsuario {
 
     public LiveData<List<Lista>> getListas() {
         return listas;
+    }
+
+    public LiveData<Map<String, Lectura>> getLecturas() {
+        return lecturas;
+    }
+
+    public Lectura lecturaDe(Libro libro) {
+        Map<String, Lectura> actuales = lecturas.getValue();
+        if (libro == null || libro.getId() == null || actuales == null) {
+            return null;
+        }
+        return actuales.get(libro.getId());
+    }
+
+    //Los libros que el usuario tiene a medias, para ensenarlos los primeros en Listas.
+    public List<Libro> getLibrosLeyendo() {
+        List<Libro> salida = new ArrayList<>();
+        Map<String, Lectura> actuales = lecturas.getValue();
+        if (actuales == null) {
+            return salida;
+        }
+        for (Map.Entry<String, Lectura> e : actuales.entrySet()) {
+            Libro libro = librosEnCurso.get(e.getKey());
+            if (e.getValue().estaLeyendo() && libro != null) {
+                salida.add(libro);
+            }
+        }
+        return salida;
+    }
+
+    //Guarda por donde va. Marcar "leido" NO pasa por aqui: eso sigue siendo la
+    //coleccion de leidos, para no tener dos verdades sobre el mismo hecho.
+    public void guardarLectura(Libro libro, String estado, int pagina) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>(libro.aMapa());
+        datos.putAll(new Lectura(estado, pagina).aMapa());
+        raiz.collection(COL_LECTURAS).document(libro.getId()).set(datos)
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo guardar la lectura", e));
+    }
+
+    public void olvidarLectura(Libro libro) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        raiz.collection(COL_LECTURAS).document(libro.getId()).delete()
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo borrar la lectura", e));
     }
 
     public boolean esFavorito(Libro libro) {
