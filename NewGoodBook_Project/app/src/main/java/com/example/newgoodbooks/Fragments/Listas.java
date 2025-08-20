@@ -15,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
+import com.example.newgoodbooks.Fragments.AdapterList.LeyendoAdapter;
 import com.example.newgoodbooks.Fragments.AdapterList.ListaAdapter;
 import com.example.newgoodbooks.Helper.MySwipeHelper;
+import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.databinding.FragmentListasBinding;
@@ -38,6 +40,7 @@ public class Listas extends Fragment {
     private View vacioListas;
     private ListaAdapter adaptadorFijas;
     private ListaAdapter adaptadorPersonales;
+    private LeyendoAdapter adaptadorLeyendo;
     //copia de lo ultimo que ha llegado de Firestore, para resolver la posicion del swipe
     private List<Lista> misListas = new ArrayList<>();
     private final RepositorioUsuario repo = RepositorioUsuario.get();
@@ -77,6 +80,18 @@ public class Listas extends Fragment {
             //sin listas propias se explica que hacer, en vez de dejar un hueco en blanco
             vacioListas.setVisibility(misListas.isEmpty() ? View.VISIBLE : View.GONE);
         });
+        //Lo que se esta leyendo, arriba del todo. La seccion entera se esconde si no
+        //hay nada a medias: una cabecera sola sobre un hueco parece un fallo.
+        adaptadorLeyendo = new LeyendoAdapter(getActivity(), new ArrayList<>(), null);
+        binding.rejillaLeyendo.setAdapter(adaptadorLeyendo);
+        repo.getLecturas().observe(getViewLifecycleOwner(), lecturas -> {
+            List<Libro> aMedias = repo.getLibrosLeyendo();
+            adaptadorLeyendo.actualizar(aMedias, lecturas);
+            int visible = aMedias.isEmpty() ? View.GONE : View.VISIBLE;
+            binding.etiquetaLeyendo.setVisibility(visible);
+            binding.rejillaLeyendo.setVisibility(visible);
+        });
+
         //las dos listas fijas se derivan de favoritos y leidos
         repo.getFavoritos().observe(getViewLifecycleOwner(),
                 libros -> adaptadorFijas.actualizar(repo.getListasImborrables()));

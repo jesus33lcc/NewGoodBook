@@ -157,4 +157,9 @@
     <string name="ambito_todo">Todo</string>
     <string name="ambito_titulo">Título</string>
     <string name="ambito_autor">Autor</string>
+    <string name="estado_quiero">Quiero leerlo</string>
+    <string name="estado_leyendo">Leyendo</string>
+    <string name="actualizar_pagina">Actualizar página</string>
+    <string name="formato_progreso">Página %1$d de %2$d · %3$d %%</string>
+    <string name="seccion_leyendo">Leyendo ahora</string>
 </resources>

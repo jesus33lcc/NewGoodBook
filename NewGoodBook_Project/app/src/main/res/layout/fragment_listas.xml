@@ -22,6 +22,24 @@
         app:title="@string/title_listas"
         app:titleTextColor="@color/hero_texto" />
 
+    <!-- Lo que estas leyendo va primero: es lo unico de la aplicacion que cambia cada
+         dia, y enterrarlo bajo las dos listas fijas era desaprovecharlo. La seccion
+         entera desaparece si no hay nada a medias. -->
+    <TextView
+        android:id="@+id/etiquetaLeyendo"
+        style="@style/EncabezadoSeccion"
+        android:text="@string/seccion_leyendo"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rejillaLeyendo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="1"
+        tools:listitem="@layout/item_leyendo" />
+
     <TextView
         style="@style/EncabezadoSeccion"
         android:text="@string/seccion_siempre_contigo" />
