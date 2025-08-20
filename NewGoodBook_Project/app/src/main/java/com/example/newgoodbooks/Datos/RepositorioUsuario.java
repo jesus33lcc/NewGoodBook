@@ -41,6 +41,7 @@ public class RepositorioUsuario {
     private static final String COL_LISTAS = "listas";
     private static final String COL_DESCARTADOS = "descartados";
     private static final String COL_LECTURAS = "lecturas";
+    private static final String COL_NOTAS = "notas";
     //campo del documento raiz: el libro que se esta enseniando ahora en Principal
     private static final String CAMPO_LIBRO_ACTUAL = "libroActual";
     //preferencias elegidas al empezar; las lee tambien la Cloud Function
@@ -244,6 +245,48 @@ public class RepositorioUsuario {
         }
         raiz.collection(COL_LECTURAS).document(libro.getId()).delete()
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudo borrar la lectura", e));
+    }
+
+    // ---------- notas personales ----------
+
+    //Lectura suelta: la nota solo hace falta al abrir la ficha y no interesa que cambie
+    //bajo los dedos mientras se escribe.
+    public void leerNota(Libro libro, AlLeerTexto respuesta) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            respuesta.enTexto(null);
+            return;
+        }
+        raiz.collection(COL_NOTAS).document(libro.getId()).get()
+                .addOnSuccessListener(doc -> {
+                    Object texto = doc.get("texto");
+                    respuesta.enTexto(texto == null ? null : String.valueOf(texto));
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "No se pudo leer la nota", e);
+                    respuesta.enTexto(null);
+                });
+    }
+
+    public interface AlLeerTexto {
+        void enTexto(@Nullable String texto);
+    }
+
+    //Guardar una nota vacia seria dejar basura: se borra el documento.
+    public void guardarNota(Libro libro, String texto) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        DocumentReference doc = raiz.collection(COL_NOTAS).document(libro.getId());
+        if (texto == null || texto.trim().isEmpty()) {
+            doc.delete().addOnFailureListener(e -> Log.w(TAG, "No se pudo borrar la nota", e));
+            return;
+        }
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("texto", texto.trim());
+        datos.put("actualizado", System.currentTimeMillis());
+        doc.set(datos).addOnFailureListener(e -> Log.w(TAG, "No se pudo guardar la nota", e));
     }
 
     public boolean esFavorito(Libro libro) {
