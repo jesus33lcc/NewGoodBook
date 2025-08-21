@@ -162,4 +162,12 @@
     <string name="actualizar_pagina">Actualizar página</string>
     <string name="formato_progreso">Página %1$d de %2$d · %3$d %%</string>
     <string name="seccion_leyendo">Leyendo ahora</string>
+    <string name="etiqueta_nota">Mi nota</string>
+    <string name="nota_pista">Lo que quieras recordar de este libro</string>
+    <string name="compartir">Compartir</string>
+    <string name="compartir_texto">«%1$s», de %2$s. Te lo recomiendo desde NewGoodBook.</string>
+    <string name="seccion_mi_anio">Mi año</string>
+    <string name="mi_anio_libros">libros terminados</string>
+    <string name="mi_anio_paginas">páginas</string>
+    <string name="mi_anio_generos">Lo que más lees</string>
 </resources>

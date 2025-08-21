@@ -160,6 +160,57 @@ public class LibroData extends AppCompatActivity {
                 .show();
     }
 
+    //Compartir el libro por el menu del sistema. Texto plano a proposito: no hay una
+    //web propia a la que enlazar todavia, y una imagen generada seria mas pesada de
+    //hacer que de valor. El mismo menu sirve para dar a conocer la aplicacion.
+    private void montarCompartir() {
+        binding.toolbarLibro.inflateMenu(R.menu.menu_libro);
+        binding.toolbarLibro.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() != R.id.accion_compartir || libroActual == null) {
+                return false;
+            }
+            String autor = libroActual.getAutor().isEmpty() ? "" : libroActual.getAutor().get(0);
+            Intent envio = new Intent(Intent.ACTION_SEND);
+            envio.setType("text/plain");
+            envio.putExtra(Intent.EXTRA_SUBJECT, libroActual.getTitulo());
+            envio.putExtra(Intent.EXTRA_TEXT,
+                    getString(R.string.compartir_texto, libroActual.getTitulo(), autor));
+            startActivity(Intent.createChooser(envio, getString(R.string.compartir)));
+            return true;
+        });
+    }
+
+    //Nota personal. Plegada por defecto: un campo de texto siempre visible y siempre
+    //vacio convierte la ficha en un formulario. Se abre al tocar la etiqueta, o solo
+    //si ya hay algo escrito.
+    private void montarNota() {
+        binding.etiquetaNota.setOnClickListener(v -> {
+            boolean visible = binding.capaNota.getVisibility() == View.VISIBLE;
+            binding.capaNota.setVisibility(visible ? View.GONE : View.VISIBLE);
+            if (!visible) {
+                binding.campoNota.requestFocus();
+            }
+        });
+        repo.leerNota(libroActual, texto -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            binding.campoNota.setText(texto == null ? "" : texto);
+            binding.capaNota.setVisibility(
+                    texto == null || texto.isEmpty() ? View.GONE : View.VISIBLE);
+        });
+    }
+
+    //Se guarda al salir, sin boton. Un boton de guardar en una nota personal es una
+    //forma de perder texto: se sale de la pantalla y lo escrito se va con ella.
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (libroActual != null && binding != null) {
+            repo.guardarNota(libroActual, String.valueOf(binding.campoNota.getText()));
+        }
+    }
+
     //Abre la busqueda ya acotada. Es la forma natural de tirar del hilo desde la ficha.
     private void buscar(String texto, String ambito) {
         if (texto == null || texto.trim().isEmpty()) {
@@ -191,6 +242,8 @@ public class LibroData extends AppCompatActivity {
                     buscar(tema, ClienteFunciones.AMBITO_TODO));
             DatosLibro.pintarEditorial(editorialVista, libroActual);
             montarEstadoLectura();
+            montarNota();
+            montarCompartir();
             pintarLectura();
 
 

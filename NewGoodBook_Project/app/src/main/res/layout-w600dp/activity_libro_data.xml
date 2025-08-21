@@ -299,6 +299,43 @@
                 android:textSize="17sp"
                 tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
 
+
+            <!-- Nota personal. Plegada bajo la sinopsis y sin boton de guardar: se
+                 guarda sola al salir. Un boton de guardar en una nota es una forma
+                 de perder texto. El campo solo se abre si se toca o si ya hay algo. -->
+            <TextView
+                android:id="@+id/etiquetaNota"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:letterSpacing="0.12"
+                android:paddingHorizontal="@dimen/margen_contenido"
+                android:paddingVertical="10dp"
+                android:text="@string/etiqueta_nota"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/capaNota"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margen_contenido"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/nota_pista"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoNota"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/chamberi_text_regular"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
             <!-- Temas y editorial: datos de Open Library. Se ocultan enteros si el
                  libro no los trae, que pasa a menudo. -->
             <TextView

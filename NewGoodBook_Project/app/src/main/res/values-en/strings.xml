@@ -162,4 +162,12 @@
     <string name="actualizar_pagina">Update page</string>
     <string name="formato_progreso">Page %1$d of %2$d · %3$d %%</string>
     <string name="seccion_leyendo">Reading now</string>
+    <string name="etiqueta_nota">My note</string>
+    <string name="nota_pista">Whatever you want to remember about this book</string>
+    <string name="compartir">Share</string>
+    <string name="compartir_texto">“%1$s”, by %2$s. Recommended from NewGoodBook.</string>
+    <string name="seccion_mi_anio">My year</string>
+    <string name="mi_anio_libros">books finished</string>
+    <string name="mi_anio_paginas">pages</string>
+    <string name="mi_anio_generos">What you read most</string>
 </resources>
