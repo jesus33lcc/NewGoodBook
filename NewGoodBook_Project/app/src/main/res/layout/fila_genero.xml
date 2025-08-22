@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Un genero y cuanto pesa, en barra. Dorada porque marca estado, no decora. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="5dp">
+
+    <TextView
+        android:id="@+id/nombreGenero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        tools:text="Novela histórica" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/barraGenero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:indicatorColor="@color/md_tertiary"
+        app:trackCornerRadius="4dp"
+        app:trackThickness="6dp" />
+</LinearLayout>

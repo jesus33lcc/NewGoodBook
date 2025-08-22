@@ -15,6 +15,9 @@ import androidx.fragment.app.Fragment;
 
 import android.content.pm.PackageManager;
 
+import java.text.NumberFormat;
+import java.util.Map;
+
 import android.widget.Toast;
 
 import com.example.newgoodbooks.App;
@@ -23,6 +26,7 @@ import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Inicio;
 import com.example.newgoodbooks.Onboarding;
 import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.UI.Estadisticas;
 import com.example.newgoodbooks.databinding.FragmentAjustesBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 //cerraba la sesion nada mas rozarla. Aqui salir es una accion deliberada y con
 //confirmacion, y ademas hay sitio para el tema, el idioma y los creditos.
 public class Ajustes extends Fragment {
+    private final RepositorioUsuario repo = RepositorioUsuario.get();
     private FragmentAjustesBinding binding;
 
     //el orden de los tres modos tiene que coincidir con el de las etiquetas del dialogo
@@ -83,8 +88,39 @@ public class Ajustes extends Fragment {
         filaGustos.setOnClickListener(v -> startActivity(
                 new android.content.Intent(requireContext(), Onboarding.class)));
 
+        montarMiAnio();
+
         binding.btnCerrarSesion.setOnClickListener(v -> confirmarCierre());
         binding.btnBorrarCuenta.setOnClickListener(v -> confirmarBorradoCuenta());
+    }
+
+    //"Mi año": tres cifras y nada mas. Sin rachas ni medallas: esto es una aplicacion
+    //de libros, no un juego. El bloque entero se esconde si no hay libros suficientes.
+    private void montarMiAnio() {
+        repo.getLeidos().observe(getViewLifecycleOwner(), leidos -> {
+            Estadisticas cuentas = Estadisticas.de(leidos);
+            int visible = cuentas.hayBastante() ? View.VISIBLE : View.GONE;
+            binding.etiquetaMiAnio.setVisibility(visible);
+            binding.bloqueMiAnio.setVisibility(visible);
+            if (!cuentas.hayBastante()) {
+                return;
+            }
+            binding.cifraLibros.setText(String.valueOf(cuentas.libros));
+            binding.cifraPaginas.setText(
+                    NumberFormat.getInstance().format(cuentas.paginas));
+
+            binding.listaGeneros.removeAllViews();
+            int tope = Math.max(1, cuentas.masRepetido());
+            for (Map.Entry<String, Integer> genero : cuentas.generos) {
+                View fila = getLayoutInflater().inflate(R.layout.fila_genero,
+                        binding.listaGeneros, false);
+                ((TextView) fila.findViewById(R.id.nombreGenero)).setText(genero.getKey());
+                ((com.google.android.material.progressindicator.LinearProgressIndicator)
+                        fila.findViewById(R.id.barraGenero))
+                        .setProgress(Math.round(genero.getValue() * 100f / tope));
+                binding.listaGeneros.addView(fila);
+            }
+        });
     }
 
     private void pintarCuenta(View vista) {

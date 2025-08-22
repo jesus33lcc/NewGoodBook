@@ -82,6 +82,94 @@
                 android:id="@+id/filaIdioma"
                 layout="@layout/fila_ajuste" />
 
+            <!-- ===== Mi año ===== -->
+            <!-- Bloque entero oculto hasta que haya libros suficientes: unas
+                 estadisticas a cero se leen como una promesa incumplida. -->
+            <TextView
+                android:id="@+id/etiquetaMiAnio"
+                style="@style/EncabezadoSeccion"
+                android:text="@string/seccion_mi_anio"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/bloqueMiAnio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/margen_contenido"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/cifraLibros"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/chamberi_text_semibold"
+                            android:textColor="@color/md_tertiary"
+                            android:textSize="30sp"
+                            tools:text="12" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mi_anio_libros"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/cifraPaginas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/chamberi_text_semibold"
+                            android:textColor="@color/md_tertiary"
+                            android:textSize="30sp"
+                            tools:text="3.847" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mi_anio_paginas"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:letterSpacing="0.12"
+                    android:text="@string/mi_anio_generos"
+                    android:textAllCaps="true"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/listaGeneros"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
             <!-- ===== Acerca de ===== -->
             <TextView
                 style="@style/EncabezadoSeccion"
