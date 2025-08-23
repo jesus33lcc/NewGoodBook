@@ -123,7 +123,8 @@
     <string name="acerca_licencia">Licence</string>
     <string name="acerca_licencia_detalle">GPL-3.0</string>
     <string name="acerca_datos">Book data</string>
-    <string name="acerca_datos_detalle">Google Books API</string>
+    <string name="acerca_datos_detalle">Google Books and Open Library</string>
+    <string name="sin_navegador">No browser available to open it</string>
     <string name="sesion_sin_nombre">No name</string>
     <string name="lista_favoritos">Favourite books</string>
     <string name="lista_leidos">Books read</string>

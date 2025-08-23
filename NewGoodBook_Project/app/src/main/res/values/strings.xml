@@ -123,7 +123,9 @@
     <string name="acerca_licencia">Licencia</string>
     <string name="acerca_licencia_detalle">GPL-3.0</string>
     <string name="acerca_datos">Datos de los libros</string>
-    <string name="acerca_datos_detalle">API de Google Books</string>
+    <string name="acerca_datos_detalle">Google Books y Open Library</string>
+    <string name="sin_navegador">No hay ningún navegador para abrirlo</string>
+    <string name="url_repositorio" translatable="false">https://github.com/jesus33lcc/NewGoodBook</string>
     <string name="sesion_sin_nombre">Sin nombre</string>
     <string name="lista_favoritos">Libros Favoritos</string>
     <string name="lista_leidos">Libros Leídos</string>

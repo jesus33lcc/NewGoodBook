@@ -1,7 +1,9 @@
 package com.example.newgoodbooks.Fragments;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,15 +72,20 @@ public class Ajustes extends Fragment {
         filaIdioma.setOnClickListener(v -> elegirIdioma());
         refrescarApariencia();
 
-        //informativas: no se pulsan, solo cuentan de que esta hecha la aplicacion
         rellenar(binding.filaVersion.getRoot(),
                 getString(R.string.acerca_version), versionInstalada());
-        rellenar(binding.filaCreditos.getRoot(),
-                getString(R.string.acerca_hecha_por), getString(R.string.acerca_hecha_por_detalle));
         rellenar(binding.filaLicencia.getRoot(),
                 getString(R.string.acerca_licencia), getString(R.string.acerca_licencia_detalle));
+        //el credito nombra las DOS fuentes de datos: Google Books da la ficha del libro
+        //y Open Library la valoracion y las materias
         rellenar(binding.filaDatos.getRoot(),
                 getString(R.string.acerca_datos), getString(R.string.acerca_datos_detalle));
+
+        //Quienes la han hecho lleva al repositorio, que es donde de verdad se ve.
+        View filaCreditos = binding.filaCreditos.getRoot();
+        rellenar(filaCreditos, getString(R.string.acerca_hecha_por),
+                getString(R.string.acerca_hecha_por_detalle));
+        filaCreditos.setOnClickListener(v -> abrir(getString(R.string.url_repositorio)));
 
         //Rehacer la eleccion de gustos: ademas de util, es la unica forma de llegar al
         //onboarding cuando la cuenta ya existe.
@@ -86,7 +93,7 @@ public class Ajustes extends Fragment {
         rellenar(filaGustos, getString(R.string.ajuste_gustos),
                 getString(R.string.ajuste_gustos_detalle));
         filaGustos.setOnClickListener(v -> startActivity(
-                new android.content.Intent(requireContext(), Onboarding.class)));
+                new Intent(requireContext(), Onboarding.class)));
 
         montarMiAnio();
 
@@ -153,6 +160,20 @@ public class Ajustes extends Fragment {
     private static void rellenar(View fila, String titulo, String valor) {
         ((TextView) fila.findViewById(R.id.tituloAjuste)).setText(titulo);
         ((TextView) fila.findViewById(R.id.valorAjuste)).setText(valor);
+    }
+
+    //Abre una direccion en el navegador.
+    //
+    //Se lanza y se recoge el fallo, en vez de preguntar antes con resolveActivity: desde
+    //Android 11 una aplicacion no ve los paquetes ajenos salvo que los declare en
+    //<queries>, asi que resolveActivity devolvia null y decia que no habia navegador
+    //aunque estuviera Chrome instalado.
+    private void abrir(String direccion) {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(direccion)));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(requireContext(), R.string.sin_navegador, Toast.LENGTH_SHORT).show();
+        }
     }
 
     //deja las dos filas mostrando lo que hay elegido ahora mismo
