@@ -71,9 +71,10 @@
     <string name="lista_eliminada">Lista eliminada</string>
     <string name="lista_no_disponible">No se ha podido abrir la lista</string>
     <string name="lista_confirmar_borrado">¿Seguro que quieres eliminar \'%1$s\'?</string>
-    <string name="sin_listas">Todavía no tienes ninguna lista. Crea una en Listas.</string>
     <string name="libro_anadido">Añadido a \'%1$s\'</string>
-    <string name="libro_ya_en_lista">Ese libro ya está en \'%1$s\'</string>
+    <string name="listo">Listo</string>
+    <string name="libro_quitado">Quitado de \'%1$s\'</string>
+    <string name="listas_actualizadas">%1$d listas actualizadas</string>
     <string name="libro_eliminado">Libro eliminado</string>
 
     <!-- Explorar -->

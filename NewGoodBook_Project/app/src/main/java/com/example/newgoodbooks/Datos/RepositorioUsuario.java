@@ -341,6 +341,12 @@ public class RepositorioUsuario {
         return actuales.get(indice);
     }
 
+    //Copia de las listas propias del usuario. Se devuelve copiada para que quien la
+    //recorra no pueda tocar lo que Firestore mantiene al dia.
+    public List<Lista> getListasPersonales() {
+        return new ArrayList<>(valorListasOVacio());
+    }
+
     private static List<Libro> valorOVacio(MutableLiveData<List<Libro>> fuente) {
         List<Libro> valor = fuente.getValue();
         return valor != null ? new ArrayList<>(valor) : new ArrayList<Libro>();
@@ -521,13 +527,24 @@ public class RepositorioUsuario {
     }
 
     public void crearLista(String nombre) {
+        crearLista(nombre, null);
+    }
+
+    //Crea la lista, opcionalmente con un libro ya dentro. Nace con el libro en vez de
+    //crearla y anadirselo despues porque el id lo asigna Firestore al escribir: habria
+    //que esperar a esa respuesta, y sin red la lista quedaria vacia hasta que volviera.
+    public void crearLista(String nombre, Libro primerLibro) {
         DocumentReference raiz = raizUsuario();
         if (raiz == null || nombre == null || nombre.trim().isEmpty()) {
             return;
         }
+        List<Map<String, Object>> libros = new ArrayList<>();
+        if (primerLibro != null) {
+            libros.add(primerLibro.aMapa());
+        }
         Map<String, Object> datos = new HashMap<>();
         datos.put("nombre", nombre.trim());
-        datos.put("libros", new ArrayList<Map<String, Object>>());
+        datos.put("libros", libros);
         datos.put("creada", System.currentTimeMillis());
         raiz.collection(COL_LISTAS).add(datos)
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudo crear la lista", e));

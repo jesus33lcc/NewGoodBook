@@ -71,9 +71,10 @@
     <string name="lista_eliminada">List deleted</string>
     <string name="lista_no_disponible">Could not open the list</string>
     <string name="lista_confirmar_borrado">Delete \'%1$s\'?</string>
-    <string name="sin_listas">You do not have any lists yet. Create one in Lists.</string>
     <string name="libro_anadido">Added to \'%1$s\'</string>
-    <string name="libro_ya_en_lista">That book is already in \'%1$s\'</string>
+    <string name="listo">Done</string>
+    <string name="libro_quitado">Removed from \'%1$s\'</string>
+    <string name="listas_actualizadas">%1$d lists updated</string>
     <string name="libro_eliminado">Book removed</string>
 
     <!-- Explore -->

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Fragments.AdapterList.LeyendoAdapter;
@@ -21,11 +20,10 @@ import com.example.newgoodbooks.Helper.MySwipeHelper;
 import com.example.newgoodbooks.Modelos.Libro;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
+import com.example.newgoodbooks.UI.DialogoNuevaLista;
 import com.example.newgoodbooks.databinding.FragmentListasBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import androidx.appcompat.widget.PopupMenu;
 
 import java.util.ArrayList;
@@ -107,60 +105,10 @@ public class Listas extends Fragment {
                 this::confirmarBorradoPorPosicion).engancharA(rejillaListasPropias);
     }
 
-    //Crear lista. El campo es de Material y el error sale DEBAJO del propio campo, no
-    //como aviso flotante: antes el dialogo se cerraba al fallar y habia que empezar de
-    //cero para leer un mensaje que aparecia en la otra punta de la pantalla.
+    //El dialogo vive en UI/DialogoNuevaLista porque tambien se abre desde "Anadir a
+    //lista"; tenerlo aqui obligaba a duplicarlo con su validacion.
     public void mostrarDialogoNuevaLista(){
-        View contenido = getLayoutInflater().inflate(R.layout.dialogo_nueva_lista, null);
-        TextInputLayout capa = contenido.findViewById(R.id.capaNombreLista);
-        TextInputEditText campo = contenido.findViewById(R.id.campoNombreLista);
-
-        androidx.appcompat.app.AlertDialog dialogo = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.nueva_lista)
-                .setView(contenido)
-                .setPositiveButton(R.string.crear, null)
-                .setNegativeButton(R.string.cancelar, null)
-                .create();
-
-        //El boton se engancha DESPUES de mostrar el dialogo: asi se puede validar sin
-        //que se cierre, que es lo que hace que el error se pueda leer y corregir.
-        dialogo.setOnShowListener(d -> dialogo.getButton(
-                androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    String nombre = String.valueOf(campo.getText()).trim();
-                    String error = validarNombre(nombre);
-                    if (error != null) {
-                        capa.setError(error);
-                        return;
-                    }
-                    capa.setError(null);
-                    repo.crearLista(nombre);
-                    dialogo.dismiss();
-                }));
-        dialogo.show();
-    }
-
-    //Devuelve el motivo por el que el nombre no vale, o null si esta bien.
-    private String validarNombre(String nombre) {
-        if (nombre.isEmpty()) {
-            return getString(R.string.lista_sin_nombre);
-        }
-        if (nombre.length() > 40) {
-            return getString(R.string.lista_nombre_largo);
-        }
-        //tambien contra los nombres traducidos: con la app en ingles se podia
-        //crear una lista llamada igual que una de las fijas
-        if (nombre.equalsIgnoreCase(Lista.NOMBRE_FAVORITOS)
-                || nombre.equalsIgnoreCase(Lista.NOMBRE_LEIDOS)
-                || nombre.equalsIgnoreCase(getString(R.string.lista_favoritos))
-                || nombre.equalsIgnoreCase(getString(R.string.lista_leidos))) {
-            return getString(R.string.lista_nombre_reservado);
-        }
-        for (String existente : repo.getNombresListasPersonales()) {
-            if (existente.equalsIgnoreCase(nombre)) {
-                return getString(R.string.lista_nombre_existente);
-            }
-        }
-        return null;
+        DialogoNuevaLista.mostrar(requireContext(), repo::crearLista);
     }
 
     //Menu de la fila. Es la via visible para borrar; el deslizamiento sigue existiendo
