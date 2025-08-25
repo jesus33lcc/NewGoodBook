@@ -50,7 +50,7 @@
                     android:id="@+id/nombreCuenta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/chamberi_text_semibold"
+                    android:fontFamily="@font/tipografia_semibold"
                     android:textColor="?attr/colorOnSurface"
                     android:textSize="17sp"
                     tools:text="Jesús" />
@@ -114,7 +114,7 @@
                             android:id="@+id/cifraLibros"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/chamberi_text_semibold"
+                            android:fontFamily="@font/tipografia_semibold"
                             android:textColor="@color/md_tertiary"
                             android:textSize="30sp"
                             tools:text="12" />
@@ -137,7 +137,7 @@
                             android:id="@+id/cifraPaginas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/chamberi_text_semibold"
+                            android:fontFamily="@font/tipografia_semibold"
                             android:textColor="@color/md_tertiary"
                             android:textSize="30sp"
                             tools:text="3.847" />

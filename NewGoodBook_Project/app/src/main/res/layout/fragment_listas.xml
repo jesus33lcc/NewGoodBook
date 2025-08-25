@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:fontFamily="@font/chamberi_text_semibold"
+                android:fontFamily="@font/tipografia_semibold"
                 android:text="@string/vacio_listas_titulo"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="17sp" />
@@ -117,7 +117,7 @@
         android:layout_marginHorizontal="@dimen/margen_contenido"
         android:layout_marginBottom="16dp"
         android:minWidth="@dimen/ancho_max_boton"
-        android:fontFamily="@font/chamberi_text_semibold"
+        android:fontFamily="@font/tipografia_semibold"
         android:paddingVertical="12dp"
         android:text="@string/nueva_lista"
         android:textSize="15sp"

@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:fontFamily="@font/chamberi_text_semibold"
+        android:fontFamily="@font/tipografia_semibold"
         android:textColor="?attr/colorOnSurface"
         android:textSize="17sp" />
 

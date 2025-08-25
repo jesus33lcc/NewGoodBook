@@ -28,7 +28,7 @@
             android:id="@+id/tituloPaso"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/chamberi_text_semibold"
+            android:fontFamily="@font/tipografia_semibold"
             android:text="@string/onboarding_titulo_generos"
             android:textColor="@color/hero_texto"
             android:textSize="24sp" />
@@ -116,7 +116,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="@dimen/margen_contenido"
         android:minWidth="@dimen/ancho_max_boton"
-        android:fontFamily="@font/chamberi_text_semibold"
+        android:fontFamily="@font/tipografia_semibold"
         android:paddingVertical="12dp"
         android:text="@string/onboarding_continuar"
         android:textSize="16sp"

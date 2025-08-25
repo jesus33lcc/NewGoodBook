@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/chamberi_text_semibold"
+            android:fontFamily="@font/tipografia_semibold"
             android:maxLines="2"
             android:textColor="?attr/colorOnSurface"
             android:textSize="17sp"

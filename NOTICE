@@ -11,6 +11,16 @@ siquiera la garantía implícita de COMERCIALIZACIÓN o de APTITUD PARA UN PROP�
 PARTICULAR. Consulta la Licencia Pública General de GNU para más detalles.
 
 
+TIPOGRAFÍA
+----------
+
+La letra de la aplicación es Spectral, de Production Type, distribuida bajo la SIL
+Open Font License 1.1. Los ficheros están en
+NewGoodBook_Project/app/src/main/res/font y el texto de su licencia, en la raíz del
+repositorio, en LICENSE-Spectral.txt. La OFL es independiente de la GPL
+y solo afecta a los ficheros de fuente.
+
+
 EXCEPCIÓN DE ENLAZADO
 ---------------------
 

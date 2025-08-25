@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:fontFamily="@font/chamberi_text_semibold"
+                android:fontFamily="@font/tipografia_semibold"
                 android:text="@string/crear_cuenta"
                 android:textColor="@color/hero_texto"
                 android:textSize="26sp" />
@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="22dp"
-                android:fontFamily="@font/chamberi_text_semibold"
+                android:fontFamily="@font/tipografia_semibold"
                 android:paddingVertical="12dp"
                 android:text="@string/registrarse"
                 android:textSize="16sp"

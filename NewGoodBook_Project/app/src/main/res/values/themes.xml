@@ -34,15 +34,15 @@
         <item name="android:statusBarColor">@color/md_surface</item>
         <item name="android:windowLightStatusBar">@bool/barra_estado_clara</item>
 
-        <item name="fontFamily">@font/chamberi_text_regular</item>
-        <item name="android:fontFamily">@font/chamberi_text_regular</item>
+        <item name="fontFamily">@font/tipografia_regular</item>
+        <item name="android:fontFamily">@font/tipografia_regular</item>
 
         <!-- LA FUENTE, DE VERDAD. Poner fontFamily en el tema NO basta: los componentes
              de Material traen su propio textAppearance, y el fontFamily de un
              textAppearance gana al del tema. Por eso los chips salian en Roboto mientras
-             el resto de la aplicacion iba en Chamberi. Sobrescribiendo la escala
-             tipografica se arregla en un sitio y vale para chips, botones, dialogos,
-             avisos y campos de texto. -->
+             el resto de la aplicacion iba con la letra del proyecto. Sobrescribiendo la
+             escala tipografica se arregla en un sitio y vale para chips, botones,
+             dialogos, avisos y campos de texto. -->
         <item name="textAppearanceTitleLarge">@style/Texto.Titulo</item>
         <item name="textAppearanceTitleMedium">@style/Texto.Titulo</item>
         <item name="textAppearanceTitleSmall">@style/Texto.Titulo</item>
@@ -54,21 +54,29 @@
         <item name="textAppearanceLabelSmall">@style/Texto.Etiqueta</item>
     </style>
 
+    <!-- ==========================================================================
+         LA LETRA DE LA APLICACION SE CAMBIA EN UN SOLO SITIO: sustituyendo los tres
+         ficheros de res/font (tipografia_light, tipografia_regular y
+         tipografia_semibold). El nombre del recurso no dice que tipografia es a
+         proposito, para que cambiarla no obligue a tocar ni un XML mas.
+         Hoy son Spectral (SIL Open Font License 1.1, Production Type).
+         ========================================================================== -->
+
     <!-- La escala tipografica de Material, pero con la letra del proyecto. Se hereda de
          la de Material para no perder tamanios ni espaciados. -->
     <style name="Texto.Titulo" parent="TextAppearance.Material3.TitleMedium">
-        <item name="fontFamily">@font/chamberi_text_semibold</item>
-        <item name="android:fontFamily">@font/chamberi_text_semibold</item>
+        <item name="fontFamily">@font/tipografia_semibold</item>
+        <item name="android:fontFamily">@font/tipografia_semibold</item>
     </style>
 
     <style name="Texto.Cuerpo" parent="TextAppearance.Material3.BodyMedium">
-        <item name="fontFamily">@font/chamberi_text_regular</item>
-        <item name="android:fontFamily">@font/chamberi_text_regular</item>
+        <item name="fontFamily">@font/tipografia_regular</item>
+        <item name="android:fontFamily">@font/tipografia_regular</item>
     </style>
 
     <style name="Texto.Etiqueta" parent="TextAppearance.Material3.LabelLarge">
-        <item name="fontFamily">@font/chamberi_text_semibold</item>
-        <item name="android:fontFamily">@font/chamberi_text_semibold</item>
+        <item name="fontFamily">@font/tipografia_semibold</item>
+        <item name="android:fontFamily">@font/tipografia_semibold</item>
     </style>
 
     <style name="Theme.NewGoodBooks" parent="Base.Theme.NewGoodBooks" />

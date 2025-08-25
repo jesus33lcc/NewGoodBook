@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:ellipsize="end"
-            android:fontFamily="@font/chamberi_text_semibold"
+            android:fontFamily="@font/tipografia_semibold"
             android:maxLines="2"
             android:padding="9dp"
             android:textColor="@color/hero_texto"
