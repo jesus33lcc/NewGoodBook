@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Lineas de sinopsis que se ensenian en Principal antes de cortar. En
+         pantallas anchas sobra sitio, asi que caben mas. -->
+    <integer name="sinopsis_lineas">4</integer>
+</resources>

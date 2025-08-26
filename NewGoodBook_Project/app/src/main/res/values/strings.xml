@@ -47,6 +47,7 @@
     <string name="accion_leido">Leído</string>
     <string name="accion_a_lista">A lista</string>
     <string name="etiqueta_sinopsis">Sinopsis</string>
+    <string name="seguir_leyendo">Seguir leyendo</string>
     <string name="formato_paginas">%1$s págs.</string>
     <string name="reintentar">Reintentar</string>
     <string name="buscando">Buscando…</string>

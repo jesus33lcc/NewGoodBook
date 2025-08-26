@@ -11,4 +11,9 @@
     <!-- Ancho del formulario de acceso y tamano del logotipo. -->
     <dimen name="margen_formulario">24dp</dimen>
     <dimen name="tam_logo">112dp</dimen>
+    <dimen name="portada_ancho">150dp</dimen>
+    <dimen name="portada_alto">225dp</dimen>
+    <dimen name="hero_espacio_arriba">26dp</dimen>
+    <dimen name="hero_titulo">22sp</dimen>
+    <dimen name="margen_boton_texto">10dp</dimen>
 </resources>

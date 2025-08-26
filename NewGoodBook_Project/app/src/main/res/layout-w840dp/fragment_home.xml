@@ -39,6 +39,7 @@
 
             <ImageView
                 android:id="@+id/imageVPortada"
+                android:transitionName="portada"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/desc_portada"
@@ -205,28 +206,35 @@
             android:textSize="11sp"
             android:textStyle="bold" />
 
-        <ScrollView
+                <!-- Cuatro lineas y punto. El texto entero esta en la ficha, a un toque. -->
+        <TextView
+            android:id="@+id/textDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="@integer/sinopsis_lineas"
+            android:maxWidth="620dp"
+            android:fontFamily="@font/tipografia_regular"
+            android:lineSpacingMultiplier="1.35"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="16sp"
+            tools:text="Una novela del Premio Nobel de Literatura Mario Vargas Llosa." />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSeguirLeyendo"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margen_boton_texto"
+            android:text="@string/seguir_leyendo"
+            android:textSize="14sp" />
+
+        <!-- empuja las acciones de descubrimiento al fondo -->
+        <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
-
-            <!-- maxWidth acota la linea a un ancho de lectura comodo: sin esto el
-                 texto cruzaba la pantalla entera y costaba saltar de renglon -->
-            <TextView
-                android:id="@+id/textDescripcion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxWidth="620dp"
-                android:fontFamily="@font/tipografia_regular"
-                android:lineSpacingMultiplier="1.35"
-                android:paddingTop="8dp"
-                android:paddingBottom="18dp"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="16sp"
-                tools:text="Publicat el 1968, «Les dones i els dies» recull tota la poesia que Gabriel Ferrater va voler conservar." />
-        </ScrollView>
+            android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNoInteresa"

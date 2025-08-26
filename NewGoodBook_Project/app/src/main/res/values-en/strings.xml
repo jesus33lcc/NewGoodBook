@@ -47,6 +47,7 @@
     <string name="accion_leido">Read</string>
     <string name="accion_a_lista">Add to list</string>
     <string name="etiqueta_sinopsis">Synopsis</string>
+    <string name="seguir_leyendo">Keep reading</string>
     <string name="formato_paginas">%1$s pages</string>
     <string name="reintentar">Try again</string>
     <string name="buscando">Searching…</string>
