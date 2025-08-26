@@ -23,9 +23,19 @@ import com.google.android.material.button.MaterialButton;
 import com.example.newgoodbooks.UI.AccionesLibro;
 import com.example.newgoodbooks.UI.DatosLibro;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
+import android.content.Intent;
+import androidx.core.app.ActivityOptionsCompat;
+import com.example.newgoodbooks.LibroData;
+import com.example.newgoodbooks.Modelos.Libro;
+import com.example.newgoodbooks.UI.ColorDeLibro;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 public class HomeFragment extends Fragment {
+
+    //tiene que coincidir con el android:transitionName de las dos portadas
+    public static final String TRANSICION_PORTADA = "portada";
+
     private FragmentHomeBinding binding;
     private HomeViewModel mViewModel;
     private TextView titulo;
@@ -75,9 +85,31 @@ public class HomeFragment extends Fragment {
                 //sin portada (o sin libro) se limpia: Picasso revienta con cadena vacia
                 if (s == null || s.trim().isEmpty()) {
                     portada.setImageDrawable(null);
-                } else {
-                    Picasso.get().load(s).into(portada);
+                    ColorDeLibro.pintarFondo(binding.bloquePortada, ColorDeLibro.MARINO, true);
+                    return;
                 }
+                //el tono se saca cuando la imagen ya esta pintada, no antes
+                Picasso.get().load(s).into(portada, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (binding == null) {
+                            return;
+                        }
+                        ColorDeLibro.desdeLaPortada(portada, tono -> {
+                            if (binding != null) {
+                                ColorDeLibro.pintarFondo(binding.bloquePortada, tono, true);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        if (binding != null) {
+                            ColorDeLibro.pintarFondo(binding.bloquePortada,
+                                    ColorDeLibro.MARINO, true);
+                        }
+                    }
+                });
             }
         });
 
@@ -114,6 +146,11 @@ public class HomeFragment extends Fragment {
         //estado activo, pero heredaba el color primario del estilo por defecto
         DatosLibro.pintarAccion(btnAddList, false, R.drawable.ic_addlist, R.drawable.ic_addlist);
 
+        //La sinopsis aqui va recortada; el texto entero esta en la ficha, a un toque.
+        //Tanto el enlace como la propia portada llevan a ella.
+        binding.btnSeguirLeyendo.setOnClickListener(v -> abrirFicha());
+        portada.setOnClickListener(v -> abrirFicha());
+
         botonSig.setOnClickListener(v -> mViewModel.cambioLibro());
         btnNoInteresa.setOnClickListener(v -> mViewModel.descartarLibro());
         //los toggles solo avisan al repositorio: el estado vuelve por Firestore
@@ -126,6 +163,20 @@ public class HomeFragment extends Fragment {
         mViewModel.restaurarOCargar();
 
         return root;
+    }
+
+    //Abre la ficha del libro que se esta ensenando. La portada viaja con la transicion
+    //de elemento compartido: crece hasta su sitio en la ficha en vez de que la pantalla
+    //salte de golpe.
+    private void abrirFicha() {
+        Libro libro = mViewModel.getLibroMostrado();
+        if (libro == null || getActivity() == null) {
+            return;
+        }
+        Intent ir = new Intent(requireContext(), LibroData.class);
+        ir.putExtra("libro", libro);
+        startActivity(ir, ActivityOptionsCompat.makeSceneTransitionAnimation(
+                requireActivity(), portada, TRANSICION_PORTADA).toBundle());
     }
 
     private void refrescarEstado() {

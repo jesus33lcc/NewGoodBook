@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Clave para recordar en la propia vista que tono tiene pintado ahora, y poder
+         fundir del anterior al nuevo. setTag con clave exige un id de recurso real. -->
+    <item name="tono_hero" type="id" />
+</resources>

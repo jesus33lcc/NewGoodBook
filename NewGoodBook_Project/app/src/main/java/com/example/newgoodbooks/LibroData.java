@@ -23,6 +23,8 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.button.MaterialButton;
 import androidx.core.content.ContextCompat;
 import android.content.res.ColorStateList;
+import com.example.newgoodbooks.UI.ColorDeLibro;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 public class LibroData extends AppCompatActivity {
@@ -224,7 +226,20 @@ public class LibroData extends AppCompatActivity {
 
     private void setDetailsLibro(){
         if (libroActual != null) {
-            Picasso.get().load(libroActual.getLinkImg()).into(portadaVista);
+            //La ficha se tine con el mismo tono que Principal, para que al entrar el
+            //color no cambie: es la misma escena, mas grande.
+            Picasso.get().load(libroActual.getLinkImg()).into(portadaVista, new Callback() {
+                @Override
+                public void onSuccess() {
+                    ColorDeLibro.desdeLaPortada(portadaVista,
+                            tono -> ColorDeLibro.pintarFondo(binding.bloquePortada, tono, false));
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    ColorDeLibro.pintarFondo(binding.bloquePortada, ColorDeLibro.MARINO, false);
+                }
+            });
             tituloVista.setText(libroActual.getTitulo());
             autorVista.setText(libroActual.getAutor().isEmpty() ? "" : libroActual.getAutor().get(0));
             paginasVista.setText(getString(R.string.formato_paginas, String.valueOf(libroActual.getNumPag())));

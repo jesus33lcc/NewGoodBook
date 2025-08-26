@@ -72,5 +72,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
     implementation("com.squareup.picasso:picasso:2.71828")
+    //saca el tono dominante de cada portada para tenir el fondo de la ficha
+    implementation("androidx.palette:palette:1.0.0")
 }
 
