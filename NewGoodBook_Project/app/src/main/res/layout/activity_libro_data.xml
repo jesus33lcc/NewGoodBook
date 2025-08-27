@@ -54,6 +54,7 @@
 
                     <ImageView
                         android:id="@+id/imageVPortada"
+                        android:transitionName="portada"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/desc_portada"

@@ -1,6 +1,11 @@
 package com.example.newgoodbooks.Fragments.AdapterList;
 
 import android.content.Context;
+import android.app.Activity;
+import android.content.ContextWrapper;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
+import com.example.newgoodbooks.Fragments.HomeIU.HomeFragment;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,15 +50,42 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
         holder.tituloLibro.setText(itemLibro.getTitulo());
         holder.autorLibro.setText(primerAutor(itemLibro));
         Picasso.get().load(itemLibro.getLinkImg()).into(holder.portadaLibro);
+        //Un nombre distinto por fila. Si todas las portadas visibles se llamaran igual,
+        //el sistema no sabria cual es la que viaja y al volver aterrizaria en otra.
+        ViewCompat.setTransitionName(holder.portadaLibro, "portada_" + itemLibro.getId());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent viewLibroData = new Intent(v.getContext(), LibroData.class);
                 viewLibroData.putExtra("libro", itemLibro);
-                context.startActivity(viewLibroData);
+                abrirConLaPortada(viewLibroData, holder.portadaLibro);
             }
         });
+    }
+
+    //La portada crece hasta su sitio en la ficha en vez de que la pantalla salte.
+    //Solo se puede hacer desde una Activity: si el contexto no lo es (o el aparato no
+    //da para la animacion) se abre de la forma de siempre.
+    private void abrirConLaPortada(Intent destino, View portada) {
+        Activity actividad = actividadDe(context);
+        if (actividad == null) {
+            context.startActivity(destino);
+            return;
+        }
+        actividad.startActivity(destino, ActivityOptionsCompat
+                .makeSceneTransitionAnimation(actividad, portada, HomeFragment.TRANSICION_PORTADA)
+                .toBundle());
+    }
+
+    private static Activity actividadDe(Context contexto) {
+        while (contexto instanceof ContextWrapper) {
+            if (contexto instanceof Activity) {
+                return (Activity) contexto;
+            }
+            contexto = ((ContextWrapper) contexto).getBaseContext();
+        }
+        return null;
     }
 
     private static String primerAutor(Libro libro) {
