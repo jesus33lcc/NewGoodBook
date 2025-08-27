@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Fila de lista. El icono va en un circulo tenue en vez de suelto, y se anade el
-  recuento de libros, que era una de las cosas aprobadas en la propuesta.
-  El texto usa colores del tema: antes estaba fijado a negro y desaparecia en oscuro.
+  Fila de lista.
+
+  Cada lista ensena sus primeras portadas apiladas en vez de un icono. Una aplicacion
+  de libros tiene el mejor material grafico posible y lo estaba escondiendo detras de
+  cuatro circulos grises identicos: no se distinguian entre si y la pantalla quedaba
+  vacia. Las portadas hacen de icono y de contenido a la vez.
+
+  El icono sigue existiendo para las listas que estan vacias, que no tienen portadas
+  que ensenar.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,19 +19,59 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="@dimen/margen_contenido"
-    android:paddingVertical="14dp">
+    android:paddingVertical="12dp">
 
     <FrameLayout
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:background="@drawable/fondo_icono_lista">
+        android:id="@+id/pilaPortadas"
+        android:layout_width="@dimen/pila_ancho"
+        android:layout_height="@dimen/pila_alto">
+
+        <!-- Tres huecos fijos, que se rellenan de derecha a izquierda para que la
+             primera portada quede encima. Se crean en el layout y no en codigo para
+             que el reciclado de la fila no tenga que anadir ni quitar vistas. -->
+        <ImageView
+            android:id="@+id/portadaTres"
+            android:layout_width="@dimen/pila_portada"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/fondo_portada_pila"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
 
         <ImageView
-            android:id="@+id/iconoTypeLista_img"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/desc_icono_lista" />
+            android:id="@+id/portadaDos"
+            android:layout_width="@dimen/pila_portada"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/fondo_portada_pila"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/portadaUno"
+            android:layout_width="@dimen/pila_portada"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@drawable/fondo_portada_pila"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+
+        <!-- se ensena cuando la lista esta vacia y no hay portadas -->
+        <!-- cuadrado y centrado: con la altura de la pila el circulo salia ovalado -->
+        <FrameLayout
+            android:id="@+id/marcoIcono"
+            android:layout_width="@dimen/pila_portada"
+            android:layout_height="@dimen/pila_portada"
+            android:layout_gravity="start|center_vertical"
+            android:background="@drawable/fondo_icono_lista">
+
+            <ImageView
+                android:id="@+id/iconoTypeLista_img"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/desc_icono_lista" />
+        </FrameLayout>
     </FrameLayout>
 
     <LinearLayout

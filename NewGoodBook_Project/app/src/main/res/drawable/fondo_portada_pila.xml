@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Marco de cada portada apilada: esquinas suaves y un borde claro que separa unas
+     de otras cuando se solapan. Tambien es lo que se ve mientras la imagen carga. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?attr/colorSurfaceVariant" />
+    <corners android:radius="3dp" />
+    <stroke
+        android:width="1.5dp"
+        android:color="?attr/colorSurface" />
+</shape>

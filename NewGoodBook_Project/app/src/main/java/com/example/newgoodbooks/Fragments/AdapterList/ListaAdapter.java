@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newgoodbooks.ContenidoLista;
+import com.example.newgoodbooks.Modelos.Libro;
+import com.squareup.picasso.Picasso;
 import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.R;
 
@@ -57,6 +59,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
         final Lista lista = listas.get(position);
         holder.nombreLista.setText(lista.getNombreVisible(context));
         holder.iconoLista.setImageResource(iconoDe(lista));
+        pintarPila(holder, lista);
         int cuantos = lista.getLibros().size();
         holder.contador.setText(context.getResources()
                 .getQuantityString(R.plurals.n_libros, cuantos, cuantos));
@@ -77,6 +80,29 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
                 context.startActivity(verContenido);
             }
         });
+    }
+
+    //Las tres primeras portadas de la lista, apiladas. Si la lista esta vacia no hay
+    //nada que ensenar y vuelve el icono.
+    private void pintarPila(ListaViewHolder holder, Lista lista) {
+        List<Libro> libros = lista.getLibros();
+        boolean vacia = libros.isEmpty();
+        holder.marcoIcono.setVisibility(vacia ? View.VISIBLE : View.GONE);
+
+        for (int i = 0; i < holder.portadas.length; i++) {
+            ImageView hueco = holder.portadas[i];
+            String enlace = i < libros.size() ? libros.get(i).getLinkImg() : null;
+            if (enlace == null || enlace.trim().isEmpty()) {
+                //cancelar antes de esconder: si no, una peticion pendiente de una fila
+                //reciclada acaba pintando la portada de otra lista
+                Picasso.get().cancelRequest(hueco);
+                hueco.setImageDrawable(null);
+                hueco.setVisibility(View.GONE);
+            } else {
+                hueco.setVisibility(View.VISIBLE);
+                Picasso.get().load(enlace).into(hueco);
+            }
+        }
     }
 
     private static int iconoDe(Lista lista) {
@@ -118,12 +144,24 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
                 Lista b = siguientes.get(posNueva);
                 //el recuento se pinta en la fila, asi que un cambio de tamanio
                 //tiene que provocar repintado
+                //las portadas se pintan en la fila, asi que cambiar el primer libro
+                //tiene que provocar repintado aunque el recuento sea el mismo
                 return a.getNombre().equals(b.getNombre())
-                        && a.getLibros().size() == b.getLibros().size();
+                        && a.getLibros().size() == b.getLibros().size()
+                        && primeros(a).equals(primeros(b));
             }
         });
         this.listas = siguientes;
         diferencia.dispatchUpdatesTo(this);
+    }
+
+    //identidad de las portadas que se ven, para el DiffUtil
+    private static List<String> primeros(Lista lista) {
+        List<String> ids = new ArrayList<>();
+        for (int i = 0; i < Math.min(3, lista.getLibros().size()); i++) {
+            ids.add(String.valueOf(lista.getLibros().get(i).getLinkImg()));
+        }
+        return ids;
     }
 
     @Override
@@ -133,6 +171,9 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
 
     public static class ListaViewHolder extends RecyclerView.ViewHolder {
         private final ImageView iconoLista;
+        private final View marcoIcono;
+        //en orden de pintado: el primero queda encima
+        private final ImageView[] portadas;
         private final TextView nombreLista;
         private final TextView contador;
         private final ImageButton opciones;
@@ -140,6 +181,11 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
         public ListaViewHolder(@NonNull View itemView) {
             super(itemView);
             iconoLista = itemView.findViewById(R.id.iconoTypeLista_img);
+            marcoIcono = itemView.findViewById(R.id.marcoIcono);
+            portadas = new ImageView[]{
+                    itemView.findViewById(R.id.portadaUno),
+                    itemView.findViewById(R.id.portadaDos),
+                    itemView.findViewById(R.id.portadaTres)};
             nombreLista = itemView.findViewById(R.id.nombreLista_txt);
             contador = itemView.findViewById(R.id.contadorLista_txt);
             opciones = itemView.findViewById(R.id.opcionesLista_btn);

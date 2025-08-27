@@ -16,4 +16,7 @@
     <dimen name="hero_espacio_arriba">26dp</dimen>
     <dimen name="hero_titulo">22sp</dimen>
     <dimen name="margen_boton_texto">10dp</dimen>
+    <dimen name="pila_ancho">64dp</dimen>
+    <dimen name="pila_alto">46dp</dimen>
+    <dimen name="pila_portada">32dp</dimen>
 </resources>
