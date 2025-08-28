@@ -73,11 +73,14 @@ public class ContenidoLista extends AppCompatActivity {
 
         observarLista();
 
-        //las listas fijas (favoritos y leidos) tambien admiten quitar libros:
-        //ahi el swipe simplemente desmarca
-        //Deslizar para quitar un libro de la lista. Solo en listas propias.
-        new MySwipeHelper(this, 200, getString(R.string.eliminar),
-                R.drawable.ic_delete4ever, Color.parseColor("#FF3C30"),
+        //Deslizar quita el libro de la lista; en las fijas simplemente lo desmarca.
+        //En los descartados hace lo contrario que en el resto: devuelve el libro a las
+        //recomendaciones. Por eso ahi ni se llama "Eliminar" ni va en rojo.
+        boolean esDescarte = Lista.ID_DESCARTADOS.equals(listaId);
+        new MySwipeHelper(this, 200,
+                getString(esDescarte ? R.string.recuperar : R.string.eliminar),
+                esDescarte ? R.drawable.ic_recuperar : R.drawable.ic_delete4ever,
+                Color.parseColor(esDescarte ? "#E89D10" : "#FF3C30"),
                 this::quitarLibro).engancharA(rejillaContenido);
     }
 
@@ -86,6 +89,9 @@ public class ContenidoLista extends AppCompatActivity {
     private void observarLista() {
         if (Lista.ID_FAVORITOS.equals(listaId)) {
             repo.getFavoritos().observe(this, this::pintar);
+        } else if (Lista.ID_DESCARTADOS.equals(listaId)) {
+            //aqui deslizar no borra nada: devuelve el libro al recomendador
+            repo.getDescartados().observe(this, this::pintar);
         } else if (Lista.ID_LEIDOS.equals(listaId)) {
             repo.getLeidos().observe(this, this::pintar);
         } else {
@@ -117,6 +123,8 @@ public class ContenidoLista extends AppCompatActivity {
             return;
         }
         repo.quitarLibroDeLista(listaId, librosActuales.get(index));
-        Toast.makeText(this, getString(R.string.libro_eliminado), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(Lista.ID_DESCARTADOS.equals(listaId)
+                ? R.string.descarte_deshecho : R.string.libro_eliminado),
+                Toast.LENGTH_SHORT).show();
     }
 }

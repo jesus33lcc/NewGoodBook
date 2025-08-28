@@ -173,4 +173,11 @@
     <string name="mi_anio_libros">books finished</string>
     <string name="mi_anio_paginas">pages</string>
     <string name="mi_anio_generos">What you read most</string>
+    <string name="lista_descartados">Dismissed</string>
+    <string name="descarte_deshecho">Back in your recommendations</string>
+    <string name="ajuste_descartados">Dismissed books</string>
+    <string name="ajuste_descartados_detalle">See and restore what you set aside</string>
+    <string name="descarte_hecho">Set aside from your recommendations</string>
+    <string name="deshacer">Undo</string>
+    <string name="recuperar">Restore</string>
 </resources>

@@ -174,4 +174,11 @@
     <string name="mi_anio_libros">libros terminados</string>
     <string name="mi_anio_paginas">páginas</string>
     <string name="mi_anio_generos">Lo que más lees</string>
+    <string name="lista_descartados">Descartados</string>
+    <string name="descarte_deshecho">Vuelve a las recomendaciones</string>
+    <string name="ajuste_descartados">Libros descartados</string>
+    <string name="ajuste_descartados_detalle">Ver y recuperar los que apartaste</string>
+    <string name="descarte_hecho">Apartado de las recomendaciones</string>
+    <string name="deshacer">Deshacer</string>
+    <string name="recuperar">Recuperar</string>
 </resources>

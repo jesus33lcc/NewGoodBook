@@ -302,13 +302,21 @@ public class HomeViewModel extends AndroidViewModel {
 
     //Descarta el libro que se ve y pasa al siguiente. El descarte viaja a Firestore
     //y el servidor lo usa para restar peso a sus materias y a su autor.
-    public void descartarLibro() {
+    //Descarta y devuelve el libro apartado, para poder ofrecer deshacerlo. Un descarte
+    //es permanente y ademas resta peso en el recomendador: sin marcha atras, un toque
+    //por error se queda para siempre.
+    public Libro descartarLibro() {
         Libro descartado = libroMostrado;
         if (descartado == null) {
-            return;
+            return null;
         }
         repo.descartar(descartado);
         cambioLibro();
+        return descartado;
+    }
+
+    public void recuperarDescartado(Libro libro) {
+        repo.olvidarDescarte(libro);
     }
 
     public void alternarFavorito() {

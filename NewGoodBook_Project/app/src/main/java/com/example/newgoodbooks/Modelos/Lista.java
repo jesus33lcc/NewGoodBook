@@ -15,11 +15,15 @@ public class Lista implements Serializable {
     //documentos reales y usan los ids sinteticos de abajo.
     public static final String ID_FAVORITOS = "__favoritos";
     public static final String ID_LEIDOS = "__leidos";
+    //No es una lista de verdad: es lo que el usuario ha apartado. Se trata como
+    //lista para poder ensenarla y vaciarla con la pantalla que ya existe.
+    public static final String ID_DESCARTADOS = "__descartados";
     //Nombres de las listas fijas. Viven aqui y no en strings.xml porque tambien se
     //usan desde clases sin Context (el repositorio), y porque hacen de identificador
     //ademas de etiqueta. Antes estaban repetidos como literal en tres ficheros.
     public static final String NOMBRE_FAVORITOS = "Libros Favoritos";
     public static final String NOMBRE_LEIDOS = "Libros Leidos";
+    public static final String NOMBRE_DESCARTADOS = "Descartados";
 
     //Nombre para ensenar en pantalla. Las dos listas fijas se traducen; las que crea el
     //usuario se quedan tal y como las escribio. Los de arriba siguen siendo constantes
@@ -30,6 +34,9 @@ public class Lista implements Serializable {
         }
         if (ID_LEIDOS.equals(id)) {
             return contexto.getString(R.string.lista_leidos);
+        }
+        if (ID_DESCARTADOS.equals(id)) {
+            return contexto.getString(R.string.lista_descartados);
         }
         return nombre;
     }
@@ -82,7 +89,8 @@ public class Lista implements Serializable {
 
     //true si es una de las dos listas que no se pueden borrar ni renombrar
     public boolean esImborrable() {
-        return ID_FAVORITOS.equals(id) || ID_LEIDOS.equals(id);
+        return ID_FAVORITOS.equals(id) || ID_LEIDOS.equals(id)
+                || ID_DESCARTADOS.equals(id);
     }
 
     public String getId() {

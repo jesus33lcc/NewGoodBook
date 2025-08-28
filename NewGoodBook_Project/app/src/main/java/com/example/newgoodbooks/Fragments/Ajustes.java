@@ -27,6 +27,8 @@ import com.example.newgoodbooks.App;
 import com.example.newgoodbooks.Cliente.ClienteFunciones;
 import com.example.newgoodbooks.Datos.RepositorioUsuario;
 import com.example.newgoodbooks.Inicio;
+import com.example.newgoodbooks.ContenidoLista;
+import com.example.newgoodbooks.Modelos.Lista;
 import com.example.newgoodbooks.Onboarding;
 import com.example.newgoodbooks.R;
 import com.example.newgoodbooks.UI.Estadisticas;
@@ -98,10 +100,29 @@ public class Ajustes extends Fragment {
         filaGustos.setOnClickListener(v -> startActivity(
                 new Intent(requireContext(), Onboarding.class)));
 
+        montarDescartados();
         montarMiAnio();
 
         binding.btnCerrarSesion.setOnClickListener(v -> confirmarCierre());
         binding.btnBorrarCuenta.setOnClickListener(v -> confirmarBorradoCuenta());
+    }
+
+    //Los libros apartados, con su recuento. La fila entera se esconde mientras no haya
+    //ninguno: una opcion que siempre lleva a una pantalla vacia solo estorba.
+    private void montarDescartados() {
+        View fila = binding.filaDescartados.getRoot();
+        repo.getDescartados().observe(getViewLifecycleOwner(), apartados -> {
+            int cuantos = apartados == null ? 0 : apartados.size();
+            fila.setVisibility(cuantos == 0 ? View.GONE : View.VISIBLE);
+            rellenar(fila, getString(R.string.ajuste_descartados),
+                    getResources().getQuantityString(R.plurals.n_libros, cuantos, cuantos),
+                    R.drawable.ic_delete4ever);
+        });
+        fila.setOnClickListener(v -> {
+            Intent ir = new Intent(requireContext(), ContenidoLista.class);
+            ir.putExtra(ContenidoLista.EXTRA_LISTA_ID, Lista.ID_DESCARTADOS);
+            startActivity(ir);
+        });
     }
 
     //"Mi año": tres cifras y nada mas. Sin rachas ni medallas: esto es una aplicacion

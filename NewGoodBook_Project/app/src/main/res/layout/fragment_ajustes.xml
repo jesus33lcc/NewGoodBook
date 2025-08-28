@@ -69,6 +69,12 @@
                 android:id="@+id/filaGustos"
                 layout="@layout/fila_ajuste" />
 
+            <!-- Los libros apartados. Hasta ahora un descarte era definitivo y no habia
+                 forma de verlos ni de recuperarlos. -->
+            <include
+                android:id="@+id/filaDescartados"
+                layout="@layout/fila_ajuste" />
+
             <!-- ===== Apariencia ===== -->
             <TextView
                 style="@style/EncabezadoSeccion"

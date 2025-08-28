@@ -57,6 +57,9 @@ public class RepositorioUsuario {
     private final MutableLiveData<List<Libro>> favoritos = new MutableLiveData<>(new ArrayList<Libro>());
     private final MutableLiveData<List<Libro>> leidos = new MutableLiveData<>(new ArrayList<Libro>());
     private final MutableLiveData<List<Libro>> historial = new MutableLiveData<>(new ArrayList<Libro>());
+    //Los descartados tambien se escuchan: hasta ahora solo se escribian, y por eso no
+    //habia forma de ver lo descartado ni de dar marcha atras.
+    private final MutableLiveData<List<Libro>> descartados = new MutableLiveData<>(new ArrayList<Libro>());
     private final MutableLiveData<List<Lista>> listas = new MutableLiveData<>(new ArrayList<Lista>());
     //por donde va el usuario en cada libro, indexado por id de libro
     private final MutableLiveData<Map<String, Lectura>> lecturas =
@@ -97,6 +100,8 @@ public class RepositorioUsuario {
         escucharLibros(raiz.collection(COL_LEIDOS), leidos, null);
         escucharLibros(raiz.collection(COL_HISTORIAL).orderBy("visto", Query.Direction.DESCENDING)
                 .limit(MAX_HISTORIAL), historial, null);
+        escucharLibros(raiz.collection(COL_DESCARTADOS)
+                .orderBy("descartado", Query.Direction.DESCENDING), descartados, null);
         escucharListas(raiz.collection(COL_LISTAS));
         escucharLecturas(raiz.collection(COL_LECTURAS));
     }
@@ -111,6 +116,7 @@ public class RepositorioUsuario {
         favoritos.postValue(new ArrayList<Libro>());
         leidos.postValue(new ArrayList<Libro>());
         historial.postValue(new ArrayList<Libro>());
+        descartados.postValue(new ArrayList<Libro>());
         listas.postValue(new ArrayList<Lista>());
         lecturas.postValue(new HashMap<String, Lectura>());
         librosEnCurso.clear();
@@ -316,6 +322,10 @@ public class RepositorioUsuario {
         if (Lista.ID_LEIDOS.equals(id)) {
             return new Lista(Lista.ID_LEIDOS, Lista.NOMBRE_LEIDOS, valorOVacio(leidos));
         }
+        if (Lista.ID_DESCARTADOS.equals(id)) {
+            return new Lista(Lista.ID_DESCARTADOS, Lista.NOMBRE_DESCARTADOS,
+                    valorOVacio(descartados));
+        }
         for (Lista lista : valorListasOVacio()) {
             if (lista.getId().equals(id)) {
                 return lista;
@@ -423,6 +433,21 @@ public class RepositorioUsuario {
         //merge: el documento raiz puede no existir todavia y no hay que pisar lo demas
         raiz.set(datos, SetOptions.merge())
                 .addOnFailureListener(e -> Log.w(TAG, "No se pudo guardar el libro en curso", e));
+    }
+
+    public LiveData<List<Libro>> getDescartados() {
+        return descartados;
+    }
+
+    //Deshacer un descarte. Vuelve a dejar el libro disponible para el recomendador y
+    //le quita la senial negativa que le habia puesto.
+    public void olvidarDescarte(Libro libro) {
+        DocumentReference raiz = raizUsuario();
+        if (raiz == null || libro == null || libro.getId() == null) {
+            return;
+        }
+        raiz.collection(COL_DESCARTADOS).document(libro.getId()).delete()
+                .addOnFailureListener(e -> Log.w(TAG, "No se pudo deshacer el descarte", e));
     }
 
     //Descartar un libro. No es solo "no me lo enseñes mas": es la unica senial
@@ -600,6 +625,10 @@ public class RepositorioUsuario {
         }
         if (Lista.ID_LEIDOS.equals(listaId)) {
             alternarEnColeccion(COL_LEIDOS, libro, true);
+            return;
+        }
+        if (Lista.ID_DESCARTADOS.equals(listaId)) {
+            olvidarDescarte(libro);
             return;
         }
         Lista lista = getListaPorId(listaId);

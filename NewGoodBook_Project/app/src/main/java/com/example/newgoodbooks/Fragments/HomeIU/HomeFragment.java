@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.newgoodbooks.R;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.example.newgoodbooks.UI.AccionesLibro;
 import com.example.newgoodbooks.UI.DatosLibro;
 import com.example.newgoodbooks.databinding.FragmentHomeBinding;
@@ -152,7 +153,7 @@ public class HomeFragment extends Fragment {
         portada.setOnClickListener(v -> abrirFicha());
 
         botonSig.setOnClickListener(v -> mViewModel.cambioLibro());
-        btnNoInteresa.setOnClickListener(v -> mViewModel.descartarLibro());
+        btnNoInteresa.setOnClickListener(v -> descartarConDeshacer());
         //los toggles solo avisan al repositorio: el estado vuelve por Firestore
         btnFav.setOnClickListener(v -> mViewModel.alternarFavorito());
         btnCheck.setOnClickListener(v -> mViewModel.alternarLeido());
@@ -163,6 +164,22 @@ public class HomeFragment extends Fragment {
         mViewModel.restaurarOCargar();
 
         return root;
+    }
+
+    //Descarta el libro y ofrece deshacerlo. El aviso se ancla a la barra de navegacion
+    //porque el layout no es un CoordinatorLayout y si no se pinta encima de ella.
+    private void descartarConDeshacer() {
+        Libro apartado = mViewModel.descartarLibro();
+        if (apartado == null || getView() == null) {
+            return;
+        }
+        Snackbar aviso = Snackbar.make(getView(), R.string.descarte_hecho, Snackbar.LENGTH_LONG)
+                .setAction(R.string.deshacer, v -> mViewModel.recuperarDescartado(apartado));
+        View barra = requireActivity().findViewById(R.id.nav_view);
+        if (barra != null) {
+            aviso.setAnchorView(barra);
+        }
+        aviso.show();
     }
 
     //Abre la ficha del libro que se esta ensenando. La portada viaja con la transicion
