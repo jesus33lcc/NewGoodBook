@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -73,25 +74,27 @@ public class Ajustes extends Fragment {
         refrescarApariencia();
 
         rellenar(binding.filaVersion.getRoot(),
-                getString(R.string.acerca_version), versionInstalada());
+                getString(R.string.acerca_version), versionInstalada(), R.drawable.ic_info);
         rellenar(binding.filaLicencia.getRoot(),
-                getString(R.string.acerca_licencia), getString(R.string.acerca_licencia_detalle));
+                getString(R.string.acerca_licencia), getString(R.string.acerca_licencia_detalle),
+                R.drawable.ic_licencia);
         //el credito nombra las DOS fuentes de datos: Google Books da la ficha del libro
         //y Open Library la valoracion y las materias
         rellenar(binding.filaDatos.getRoot(),
-                getString(R.string.acerca_datos), getString(R.string.acerca_datos_detalle));
+                getString(R.string.acerca_datos), getString(R.string.acerca_datos_detalle),
+                R.drawable.ic_datos);
 
         //Quienes la han hecho lleva al repositorio, que es donde de verdad se ve.
         View filaCreditos = binding.filaCreditos.getRoot();
         rellenar(filaCreditos, getString(R.string.acerca_hecha_por),
-                getString(R.string.acerca_hecha_por_detalle));
+                getString(R.string.acerca_hecha_por_detalle), R.drawable.ic_persona);
         filaCreditos.setOnClickListener(v -> abrir(getString(R.string.url_repositorio)));
 
         //Rehacer la eleccion de gustos: ademas de util, es la unica forma de llegar al
         //onboarding cuando la cuenta ya existe.
         View filaGustos = binding.filaGustos.getRoot();
         rellenar(filaGustos, getString(R.string.ajuste_gustos),
-                getString(R.string.ajuste_gustos_detalle));
+                getString(R.string.ajuste_gustos_detalle), R.drawable.ic_estrella);
         filaGustos.setOnClickListener(v -> startActivity(
                 new Intent(requireContext(), Onboarding.class)));
 
@@ -158,8 +161,24 @@ public class Ajustes extends Fragment {
     }
 
     private static void rellenar(View fila, String titulo, String valor) {
+        rellenar(fila, titulo, valor, 0);
+    }
+
+    //Con icono. Sin el (icono = 0) el hueco se esconde, para que una fila sin icono no
+    //quede desalineada respecto a las demas de su tarjeta.
+    private static void rellenar(View fila, String titulo, String valor, int icono) {
         ((TextView) fila.findViewById(R.id.tituloAjuste)).setText(titulo);
-        ((TextView) fila.findViewById(R.id.valorAjuste)).setText(valor);
+        TextView valorVista = fila.findViewById(R.id.valorAjuste);
+        valorVista.setText(valor);
+        valorVista.setVisibility(valor == null || valor.isEmpty() ? View.GONE : View.VISIBLE);
+
+        View marco = fila.findViewById(R.id.marcoIconoAjuste);
+        if (icono == 0) {
+            marco.setVisibility(View.GONE);
+            return;
+        }
+        marco.setVisibility(View.VISIBLE);
+        ((ImageView) fila.findViewById(R.id.iconoAjuste)).setImageResource(icono);
     }
 
     //Abre una direccion en el navegador.
@@ -180,11 +199,13 @@ public class Ajustes extends Fragment {
     private void refrescarApariencia() {
         String[] temas = {getString(R.string.tema_sistema), getString(R.string.tema_claro),
                 getString(R.string.tema_oscuro)};
-        rellenar(filaTema, getString(R.string.ajuste_tema), temas[indiceTema()]);
+        rellenar(filaTema, getString(R.string.ajuste_tema), temas[indiceTema()],
+                R.drawable.ic_tema);
 
         String[] idiomas = {getString(R.string.idioma_sistema), getString(R.string.idioma_es),
                 getString(R.string.idioma_en)};
-        rellenar(filaIdioma, getString(R.string.ajuste_idioma), idiomas[indiceIdioma()]);
+        rellenar(filaIdioma, getString(R.string.ajuste_idioma), idiomas[indiceIdioma()],
+                R.drawable.ic_idioma);
     }
 
     private int indiceTema() {

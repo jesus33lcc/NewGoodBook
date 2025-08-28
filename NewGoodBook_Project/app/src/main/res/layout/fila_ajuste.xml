@@ -1,32 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Fila de ajuste: titulo arriba y valor actual debajo. Se reutiliza en toda la
-  pantalla para que las opciones y los datos informativos se lean igual.
+  Fila de ajuste.
+
+  Lleva un icono a la izquierda para que la vista encuentre las cosas de un vistazo:
+  antes eran nueve filas de texto plano con el mismo peso y nada guiaba la mirada.
+
+  El icono lo pone quien monta la fila. Si no se le da ninguno se esconde, y entonces
+  la fila se lee igual que antes.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingHorizontal="@dimen/margen_contenido"
-    android:paddingVertical="14dp">
+    android:paddingVertical="13dp">
 
-    <TextView
-        android:id="@+id/tituloAjuste"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="16sp"
-        tools:text="Tema" />
+    <FrameLayout
+        android:id="@+id/marcoIconoAjuste"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/fondo_icono_lista">
 
-    <TextView
-        android:id="@+id/valorAjuste"
-        android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iconoAjuste"
+            android:layout_width="19dp"
+            android:layout_height="19dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            app:tint="?attr/colorPrimary" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="14sp"
-        tools:text="Según el sistema" />
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tituloAjuste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            tools:text="Tema" />
+
+        <TextView
+            android:id="@+id/valorAjuste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            tools:text="Según el sistema" />
+    </LinearLayout>
 
 </LinearLayout>
