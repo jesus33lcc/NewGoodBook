@@ -9,7 +9,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.core.graphics.ColorUtils;
 import androidx.palette.graphics.Palette;
 
 import com.example.newgoodbooks.R;
@@ -63,11 +62,8 @@ public final class ColorDeLibro {
         if (color == 0) {
             return MARINO;
         }
-        float[] hsl = new float[3];
-        ColorUtils.colorToHSL(color, hsl);
-        hsl[1] = Math.min(Math.max(hsl[1], SATURACION_MINIMA), 0.95f);
-        hsl[2] = LUMINOSIDAD;
-        return ColorUtils.HSLToColor(hsl);
+        float saturacion = Math.min(Math.max(Tono.aHsl(color)[1], SATURACION_MINIMA), 0.95f);
+        return Tono.conSaturacionYLuz(color, saturacion, LUMINOSIDAD);
     }
 
     private static int primero(int... colores) {
@@ -81,7 +77,7 @@ public final class ColorDeLibro {
 
     //el color en el centro del resplandor; en el borde siempre es el marino
     public static int fondoCentro(int tono) {
-        return ColorUtils.blendARGB(MARINO, tono, PESO_CENTRO);
+        return Tono.mezclar(MARINO, tono, PESO_CENTRO);
     }
 
     //Pide la paleta de la imagen que ya tiene pintada el ImageView. Se hace aqui y no
@@ -123,7 +119,7 @@ public final class ColorDeLibro {
         ValueAnimator fundido = ValueAnimator.ofFloat(0f, 1f);
         fundido.setDuration(MS_FUNDIDO);
         fundido.addUpdateListener(paso -> hero.setBackground(resplandor(
-                ColorUtils.blendARGB(anterior, tono, paso.getAnimatedFraction()), hero)));
+                Tono.mezclar(anterior, tono, paso.getAnimatedFraction()), hero)));
         fundido.start();
     }
 
