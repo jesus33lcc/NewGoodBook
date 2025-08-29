@@ -23,6 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.LibroViewHolder> {
+
+    //Aviso de pulsacion larga. En cuadricula no hay deslizamiento posible, asi que esta
+    //es la via para las acciones sobre un libro.
+    public interface AlMantenerPulsado {
+        void enPosicion(int posicion);
+    }
+
+    private AlMantenerPulsado alMantener;
+
+    public void setAlMantenerPulsado(AlMantenerPulsado escucha) {
+        this.alMantener = escucha;
+    }
     private Context context;
     private List<Libro> listLibroDatos;
     //true = cuadricula. Se infla otro layout, pero los ids son los mismos, asi que
@@ -61,6 +73,14 @@ public class LibroListAdapter extends RecyclerView.Adapter<LibroListAdapter.Libr
                 viewLibroData.putExtra("libro", itemLibro);
                 abrirConLaPortada(viewLibroData, holder.portadaLibro);
             }
+        });
+        holder.itemView.setOnLongClickListener(alMantener == null ? null : v -> {
+            //se resuelve al pulsar, no al enlazar: la lista puede haber cambiado
+            int actual = holder.getBindingAdapterPosition();
+            if (actual != RecyclerView.NO_POSITION) {
+                alMantener.enPosicion(actual);
+            }
+            return true;
         });
     }
 

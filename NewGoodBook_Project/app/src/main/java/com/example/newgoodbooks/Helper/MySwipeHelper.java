@@ -54,9 +54,16 @@ public class MySwipeHelper extends ItemTouchHelper.SimpleCallback {
         this.alPulsar = alPulsar;
     }
 
+    private ItemTouchHelper enganche;
+
     //Engancharlo es explicito: antes lo hacia el constructor por su cuenta.
+    //
+    //SOLO sirve en listas de una columna. El boton se dibuja al ancho del elemento, asi
+    //que en cuadricula se pintaba encima de las celdas vecinas y llegaban a verse tres
+    //botones a la vez. Quien monte la pantalla tiene que soltarlo al pasar a cuadricula.
     public void engancharA(RecyclerView lista) {
-        new ItemTouchHelper(this).attachToRecyclerView(lista);
+        enganche = new ItemTouchHelper(this);
+        enganche.attachToRecyclerView(lista);
         lista.setOnTouchListener((v, evento) -> {
             if (filaAbierta == null) {
                 return false;
@@ -73,6 +80,18 @@ public class MySwipeHelper extends ItemTouchHelper.SimpleCallback {
             }
             return false;
         });
+    }
+
+    //Deja de escuchar la rejilla. Se usa al pasar a cuadricula.
+    public void soltar(RecyclerView lista) {
+        if (enganche != null) {
+            enganche.attachToRecyclerView(null);
+            enganche = null;
+        }
+        filaAbierta = null;
+        if (lista != null) {
+            lista.setOnTouchListener(null);
+        }
     }
 
     @Override
